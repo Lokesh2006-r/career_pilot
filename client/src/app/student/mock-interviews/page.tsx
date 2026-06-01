@@ -27,6 +27,8 @@ interface EvaluationReport {
   communicationScore: number;
   confidenceScore: number;
   detailedEvaluation: string;
+  summary?: string;
+  gaps?: string[];
 }
 
 interface DBInterviewSession {
@@ -377,72 +379,32 @@ export default function MockInterviews() {
     setConsoleError("");
   };
 
-  // Sandboxed client runtime compilation simulation
-  const runCodeSandbox = () => {
+  // AI-powered compiler execution via backend Gemini sandbox simulation
+  const runCodeSandbox = async () => {
     setIsRunningCode(true);
     setConsoleOutput("Initializing runtime sandbox compiler environment...\n");
     setConsoleError("");
 
-    setTimeout(() => {
-      if (selectedLanguage === "javascript") {
-        let logs: string[] = [];
-        const originalLog = console.log;
-        
-        console.log = (...args) => {
-          logs.push(args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' '));
-        };
-        
-        try {
-          // Execute Javascript locally
-          const runner = new Function(codeText);
-          runner();
-          console.log = originalLog;
-          setConsoleOutput(prev => prev + `[SUCCESS] Output Execution Stream:\n\n` + (logs.join('\n') || "(No stdout logged)"));
-        } catch (err: any) {
-          console.log = originalLog;
-          setConsoleError(err.message);
-          setConsoleOutput(prev => prev + `\n[ERROR] Runtime compilation execution failed.`);
-        }
+    try {
+      const response = await fetch("http://localhost:5000/api/interview/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language: selectedLanguage, code: codeText })
+      });
+      const data = await response.json();
+      
+      if (data.stderr) {
+        setConsoleError(data.stderr);
+        setConsoleOutput(prev => prev + `\n[ERROR] Runtime compilation execution failed.`);
       } else {
-        // Mock compilation syntax checking for backend languages
-        const hasMain = codeText.includes("main");
-        const hasPrint = codeText.includes("print") || codeText.includes("cout") || codeText.includes("System.out.print");
-        
-        let mockLogs = `[INFO] Parsing compiler AST tree nodes for ${selectedLanguage.toUpperCase()}...\n`;
-        mockLogs += `[INFO] Allocating subprocess threads...\n`;
-        
-        if (selectedLanguage === "cpp" && !codeText.includes("#include")) {
-          setConsoleError("Compilation error: Missing standard IO headers (e.g. #include <iostream>)");
-          setConsoleOutput(mockLogs + `\n[ERROR] Build pipeline failed.`);
-          setIsRunningCode(false);
-          return;
-        }
-        
-        if (selectedLanguage === "java" && !codeText.includes("class")) {
-          setConsoleError("Compilation error: Missing public class definition.");
-          setConsoleOutput(mockLogs + `\n[ERROR] Build pipeline failed.`);
-          setIsRunningCode(false);
-          return;
-        }
-
-        setTimeout(() => {
-          mockLogs += `[SUCCESS] Compilation complete.\n`;
-          mockLogs += `[EXECUTE] Running mock binary loop...\n`;
-          mockLogs += `------------------------------------------------\n`;
-          mockLogs += hasPrint ? `Simulated terminal output:\nHello from sandboxed ${selectedLanguage.toUpperCase()} environment!\nAverage response latency: 54.25 ms\n` : `Code executed. (No print output statements found)\n`;
-          mockLogs += `------------------------------------------------\n`;
-          mockLogs += `Metrics details:\n`;
-          mockLogs += `- Process exit code: 0 (Normal Exit)\n`;
-          mockLogs += `- CPU Execution runtime: ${(0.05 + Math.random() * 0.1).toFixed(3)}s\n`;
-          mockLogs += `- RAM overhead: ${(11.5 + Math.random() * 3).toFixed(1)} MB\n`;
-          
-          setConsoleOutput(mockLogs);
-          setIsRunningCode(false);
-        }, 400);
-        return;
+        setConsoleOutput(prev => prev + `[SUCCESS] Compilation complete.\n[EXECUTE] Running binary...\n------------------------------------------------\n` + (data.stdout || "(No stdout logged)") + `\n------------------------------------------------`);
       }
+    } catch (err: any) {
+      setConsoleError(err.message || "Failed to communicate with sandbox environment.");
+      setConsoleOutput(prev => prev + `\n[ERROR] Connection to compilation sandbox failed.`);
+    } finally {
       setIsRunningCode(false);
-    }, 300);
+    }
   };
 
   const handleSubmitAnswer = () => {
@@ -1091,6 +1053,18 @@ export default function MockInterviews() {
                         <textarea
                           value={codeText}
                           onChange={(e) => setCodeText(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Tab") {
+                              e.preventDefault();
+                              const start = e.currentTarget.selectionStart;
+                              const end = e.currentTarget.selectionEnd;
+                              const newVal = codeText.substring(0, start) + "  " + codeText.substring(end);
+                              setCodeText(newVal);
+                              setTimeout(() => {
+                                e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2;
+                              }, 0);
+                            }
+                          }}
                           className="w-full bg-transparent text-zinc-150 outline-none resize-none leading-6 font-mono text-[11px]"
                         />
                       </div>
@@ -1304,7 +1278,6 @@ export default function MockInterviews() {
               <ScoreCircle score={report.confidenceScore} label="Tone Integrity Vector" colorClass="stroke-orange-500" glowColor="rgba(249,115,22,0.5)" />
             </div>
 
-            {/* Structured study roadmap feedback */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="p-5 rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800/60">
                 <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
@@ -1312,7 +1285,7 @@ export default function MockInterviews() {
                   Twin Assessment Summary
                 </h4>
                 <p className="text-xs text-zinc-650 dark:text-zinc-300 leading-relaxed font-semibold">
-                  You successfully communicated core system methodologies. Your answers demonstrated logical execution flows and structured logic matching mid-to-senior profiles.
+                  {report.summary || "You successfully communicated core system methodologies. Your answers demonstrated logical execution flows and structured logic matching mid-to-senior profiles."}
                 </p>
               </div>
 
@@ -1322,9 +1295,15 @@ export default function MockInterviews() {
                   Identified Skill Gaps
                 </h4>
                 <ul className="text-xs text-zinc-655 dark:text-zinc-300 space-y-1.5 font-semibold list-disc list-inside">
-                  <li>Elaborate on database replication lags.</li>
-                  <li>Incorporate concrete latency metrics in action logs.</li>
-                  <li>Clarify network handshake structures in detail.</li>
+                  {report.gaps && report.gaps.length > 0 ? (
+                    report.gaps.map((gap, i) => <li key={i}>{gap}</li>)
+                  ) : (
+                    <>
+                      <li>Elaborate on database replication lags.</li>
+                      <li>Incorporate concrete latency metrics in action logs.</li>
+                      <li>Clarify network handshake structures in detail.</li>
+                    </>
+                  )}
                 </ul>
               </div>
             </div>
@@ -1504,6 +1483,31 @@ export default function MockInterviews() {
                   <h4 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Detailed Evaluation Summary</h4>
                   <div className="p-5 bg-zinc-50 dark:bg-zinc-955/45 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed font-semibold whitespace-pre-wrap">
                     {selectedHistorySession.report.detailedEvaluation}
+                  </div>
+                </div>
+
+                {/* Dynamic Summary & Gaps inside history modal */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/35 border border-zinc-200 dark:border-zinc-800">
+                    <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-2">Twin Assessment Summary</h4>
+                    <p className="text-xs text-zinc-650 dark:text-zinc-300 font-semibold leading-relaxed">
+                      {selectedHistorySession.report.summary || "You successfully communicated core system methodologies. Your answers demonstrated logical execution flows and structured logic matching mid-to-senior profiles."}
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/35 border border-zinc-200 dark:border-zinc-800">
+                    <h4 className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-2">Identified Skill Gaps</h4>
+                    <ul className="text-xs text-zinc-650 dark:text-zinc-300 space-y-1 font-semibold list-disc list-inside">
+                      {selectedHistorySession.report.gaps && selectedHistorySession.report.gaps.length > 0 ? (
+                        selectedHistorySession.report.gaps.map((gap, i) => <li key={i}>{gap}</li>)
+                      ) : (
+                        <>
+                          <li>Elaborate on database replication lags.</li>
+                          <li>Incorporate concrete latency metrics in action logs.</li>
+                          <li>Clarify network handshake structures in detail.</li>
+                        </>
+                      )}
+                    </ul>
                   </div>
                 </div>
 

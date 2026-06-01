@@ -267,7 +267,13 @@ export const answerQuestion = async (req: Request, res: Response): Promise<void>
           technicalScore: scores[0],
           communicationScore: scores[1],
           confidenceScore: scores[2],
-          detailedEvaluation: "You demonstrated solid knowledge in core topics. For improvement, structure your technical answers using the STAR method (Situation, Task, Action, Result) and try to specify performance metrics where applicable. (Offline Mode)"
+          detailedEvaluation: "You demonstrated solid knowledge in core topics. For improvement, structure your technical answers using the STAR method (Situation, Task, Action, Result) and try to specify performance metrics where applicable. (Offline Mode)",
+          summary: "You demonstrated a strong foundation in core engineering paradigms and communicated your concepts clearly.",
+          gaps: [
+            "Structure technical responses using the STAR method.",
+            "Elaborate with concrete performance metrics or latency trade-offs.",
+            "Discuss potential edge cases or failure modes for the proposed design."
+          ]
         };
 
         // Save offline completed interview to MongoDB
@@ -379,6 +385,8 @@ Generate a JSON object containing:
   - communicationScore: number (0-100) — score for clarity and structure
   - confidenceScore: number (0-100) — score for tone and certainty
   - detailedEvaluation: string — a detailed, professional, constructive summary (2-3 paragraphs) listing exactly what they did well, specific technical gaps or incorrect assumptions they made, and clear actionable steps to improve before a real placement interview.
+  - summary: string — a concise 1-2 sentence assessment summarizing their overall performance matching the role requirements.
+  - gaps: array of strings — 3 to 4 specific gaps or improvement areas identified in their answers (such as specific concepts they missed, incorrect assumptions they made).
 
 Return ONLY a valid JSON object. No explanation, no markdown.`;
 
@@ -395,7 +403,13 @@ Return ONLY a valid JSON object. No explanation, no markdown.`;
           technicalScore: 80,
           communicationScore: 82,
           confidenceScore: 78,
-          detailedEvaluation: "Good interview overall. Work on deep-diving into system design tradeoffs."
+          detailedEvaluation: "Good interview overall. Work on deep-diving into system design tradeoffs.",
+          summary: "Good interview overall. Demonstrated clear potential in role competencies.",
+          gaps: [
+            "Elaborate further on scalability issues.",
+            "Refine code modularity under load.",
+            "Demonstrate familiarity with more edge cases."
+          ]
         }
       };
 
@@ -460,6 +474,56 @@ export const getInterviewHistory = async (req: Request, res: Response): Promise<
     res.status(200).json(sessions);
   } catch (error: any) {
     console.error('[Get History Error]:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+};
+
+export const executeCode = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { language, code } = req.body as { language: string; code: string };
+    if (!language || !code) {
+      res.status(400).json({ error: 'Language and code are required' });
+      return;
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      res.status(200).json({ success: true, stdout: `${language} mock executed successfully (Offline Mode)`, stderr: '' });
+      return;
+    }
+
+    const prompt = `You are a secure, sandboxed code execution environment (compiler and runner).
+The user wants to execute the following code block in the ${language} programming language:
+
+\`\`\`${language}
+${code}
+\`\`\`
+
+Analyze the code. If there are syntax errors, compile errors, runtime errors, or uncaught exceptions, capture them. If there are no errors, simulate execution and capture the standard output (stdout).
+Provide the execution details. Return ONLY a valid JSON object matching this structure:
+{
+  "success": true if executed with exit code 0 else false,
+  "stdout": "output standard stream contents",
+  "stderr": "compilation or runtime errors if success is false else empty string"
+}
+Do NOT return any markdown, explanation, or wrap the JSON in anything other than the raw JSON itself. Ensure standard error messages look authentic (e.g. including line numbers if applicable).`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+
+    const text = response.text || '{}';
+    const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    let result = { success: false, stdout: '', stderr: 'Execution simulation failed.' };
+    try {
+      result = JSON.parse(jsonStr);
+    } catch (err) {
+      console.error('Failed to parse Gemini code execution result JSON:', err);
+    }
+
+    res.status(200).json(result);
+  } catch (error: any) {
+    console.error('[Execute Code Error]:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 };

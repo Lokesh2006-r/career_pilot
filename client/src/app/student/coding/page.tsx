@@ -54,10 +54,10 @@ interface ProfileData {
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 function DifficultyPill({ diff }: { diff: string }) {
   const map: Record<string, string> = {
-    Easy:    "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20",
-    Medium:  "text-yellow-400 bg-yellow-500/10 border border-yellow-500/20",
-    Hard:    "text-red-400 bg-red-500/10 border border-red-500/20",
-    Unknown: "text-zinc-500 bg-zinc-800/50 border border-zinc-700/20",
+    Easy:    "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20",
+    Medium:  "text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20",
+    Hard:    "text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20",
+    Unknown: "text-zinc-600 dark:text-zinc-400 bg-zinc-500/10 border border-zinc-500/20",
   };
   return (
     <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${map[diff] ?? map.Unknown}`}>
@@ -68,13 +68,13 @@ function DifficultyPill({ diff }: { diff: string }) {
 
 function StatusPill({ status }: { status: string }) {
   const map: Record<string, string> = {
-    Accepted: "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20",
-    TLE:      "text-orange-400 bg-orange-500/10 border border-orange-500/20",
-    WA:       "text-red-400 bg-red-500/10 border border-red-500/20",
-    MLE:      "text-purple-400 bg-purple-500/10 border border-purple-500/20",
+    Accepted: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20",
+    TLE:      "text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20",
+    WA:       "text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20",
+    MLE:      "text-purple-600 dark:text-purple-400 bg-purple-500/10 border border-purple-500/20",
   };
   return (
-    <span className={`px-2.5 py-1 rounded-full text-[9px] font-extrabold uppercase border ${map[status] ?? "text-zinc-400 border-zinc-700"}`}>
+    <span className={`px-2.5 py-1 rounded-full text-[9px] font-extrabold uppercase border ${map[status] ?? "text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700"}`}>
       {status}
     </span>
   );
@@ -109,16 +109,16 @@ function DonutChart({ easy, medium, hard, total }: { easy: number; medium: numbe
           })}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-extrabold text-white">{total}</span>
-          <span className="text-[10px] text-zinc-400 font-bold uppercase">Solved</span>
+          <span className="text-2xl font-extrabold text-zinc-900 dark:text-white">{total}</span>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold uppercase">Solved</span>
         </div>
       </div>
       <div className="flex flex-col gap-2.5">
         {segs.map((seg) => (
           <div key={seg.label} className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: seg.color }} />
-            <span className="text-xs text-zinc-400 font-medium w-16">{seg.label}</span>
-            <span className="text-xs font-extrabold text-white">{seg.count}</span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium w-16">{seg.label}</span>
+            <span className="text-xs font-extrabold text-zinc-900 dark:text-white">{seg.count}</span>
           </div>
         ))}
       </div>
@@ -214,13 +214,13 @@ function PlatformCard({
       <div className="flex items-center gap-2.5">
         <div className={`w-8 h-8 rounded-lg ${bgColor} flex items-center justify-center text-sm`}>{icon}</div>
         <div>
-          <p className="text-xs font-bold text-white group-hover:text-indigo-300 transition-colors">{platform}</p>
+          <p className="text-xs font-bold text-zinc-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{platform}</p>
           <p className={`text-[10px] font-semibold ${color}`}>{ratingLabel}</p>
         </div>
       </div>
       <div className="text-right">
-        <p className="text-sm font-extrabold text-white">{rating}</p>
-        <p className="text-[9px] text-zinc-500">{sub}</p>
+        <p className="text-sm font-extrabold text-zinc-900 dark:text-white">{rating}</p>
+        <p className="text-[9px] text-zinc-500 dark:text-zinc-400">{sub}</p>
       </div>
     </>
   );
@@ -228,7 +228,7 @@ function PlatformCard({
   if (isLink) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer"
-        className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/40 border border-zinc-800/30 hover:border-zinc-700/60 transition-all group"
+        className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800/30 hover:border-zinc-350 dark:hover:border-zinc-700/60 transition-all group"
       >
         {cardContent}
       </a>
@@ -238,8 +238,8 @@ function PlatformCard({
   return (
     <div
       onClick={onClick}
-      className={`flex items-center justify-between p-3 rounded-xl bg-zinc-900/40 border border-zinc-800/30 transition-all ${
-        onClick ? "hover:border-zinc-700/60 cursor-pointer group active:scale-[0.98]" : ""
+      className={`flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800/30 transition-all ${
+        onClick ? "hover:border-zinc-350 dark:hover:border-zinc-700/60 cursor-pointer group active:scale-[0.98]" : ""
       }`}
     >
       {cardContent}
@@ -480,7 +480,7 @@ export default function CodingTracker() {
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight">Coding Tracker</h1>
-          <p className="text-zinc-400 text-sm mt-0.5">
+          <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-0.5">
             {hasHandles
               ? `Live data · LeetCode${savedHandles.codeforces ? " · Codeforces" : ""}${savedHandles.codechef ? " · CodeChef" : ""}`
               : "Connect your profiles to see real-time stats"}
@@ -491,7 +491,7 @@ export default function CodingTracker() {
             <button
               onClick={() => fetchProfile(savedHandles.leetcode, savedHandles.codeforces, savedHandles.codechef, selectedYear)}
               disabled={loading}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-700 hover:border-indigo-500/50 text-zinc-400 hover:text-white font-bold text-sm transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-indigo-500/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white font-bold text-sm transition-all disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
               Refresh
@@ -551,57 +551,47 @@ export default function CodingTracker() {
       )}
 
       {/* ── Main dashboard (after data loads) ───────────────────────────────── */}
-      {(loading || data) && (
-        <div className="flex flex-col lg:flex-row gap-6">
-
-          {/* ── Left sidebar ──────────────────────────────────────────────────── */}
-          <aside className="lg:w-72 flex-shrink-0 space-y-4">
-
-            {/* Profile card */}
+      {(lc || cf || cc) && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <aside className="lg:col-span-1 space-y-5">
             <div className="glass-panel rounded-2xl p-5">
-              <div className="flex flex-col items-center text-center mb-5">
-                {loading ? (
-                  <div className="w-16 h-16 rounded-2xl bg-zinc-800 animate-pulse mb-3" />
-                ) : lc?.avatar ? (
-                  <img src={lc.avatar} alt={lc.username} className="w-16 h-16 rounded-2xl object-cover mb-3 ring-2 ring-indigo-500/30" />
-                ) : (
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg shadow-indigo-500/30 mb-3">
-                    {(lc?.username || savedHandles.leetcode || "S")[0].toUpperCase()}
-                  </div>
-                )}
+              <div className="flex flex-col items-center text-center mb-6">
+                <div className="w-20 h-20 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-2xl font-black text-zinc-500 mb-4 ring-4 ring-white dark:ring-zinc-950">
+                  {(lc?.username || savedHandles.leetcode || "S")[0].toUpperCase()}
+                </div>
                 {loading ? (
                   <><Skeleton className="h-4 w-32 mb-1" /><Skeleton className="h-3 w-24" /></>
                 ) : (
                   <>
-                    <h2 className="text-base font-extrabold text-white">{lc?.realName || lc?.username || savedHandles.leetcode}</h2>
-                    <p className="text-xs text-zinc-500 mt-0.5">@{lc?.username || savedHandles.leetcode}</p>
+                    <h2 className="text-base font-extrabold text-zinc-900 dark:text-white">{lc?.realName || lc?.username || savedHandles.leetcode}</h2>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">@{lc?.username || savedHandles.leetcode}</p>
                   </>
                 )}
                 <div className="flex gap-1.5 mt-2.5 flex-wrap justify-center">
-                  {savedHandles.leetcode   && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20">LeetCode</span>}
-                  {savedHandles.codeforces && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20">Codeforces</span>}
-                  {savedHandles.codechef   && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/20">CodeChef</span>}
+                  {savedHandles.leetcode   && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20">LeetCode</span>}
+                  {savedHandles.codeforces && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20">Codeforces</span>}
+                  {savedHandles.codechef   && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20">CodeChef</span>}
                 </div>
               </div>
 
               {/* Streak */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 mb-3">
-                <Flame className="w-5 h-5 text-orange-400 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/20 dark:border-orange-500/30 mb-3">
+                <Flame className="w-5 h-5 text-orange-500 flex-shrink-0" />
                 <div>
-                  <p className="text-xs text-zinc-400 font-medium">LeetCode Streak</p>
+                  <p className="text-[10px] text-orange-600 dark:text-orange-300 font-black uppercase tracking-widest">LeetCode Streak</p>
                   {loading ? <Skeleton className="h-5 w-20 mt-1" /> : (
-                    <p className="text-lg font-extrabold text-white">{lc?.streak ?? "—"} Days</p>
+                    <p className="text-lg font-extrabold text-orange-900 dark:text-white">{lc?.streak ?? "—"} Days</p>
                   )}
                 </div>
               </div>
 
               {/* Total solved */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-                <Target className="w-5 h-5 text-indigo-400 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 dark:border-indigo-500/30">
+                <Target className="w-5 h-5 text-indigo-500 dark:text-indigo-400 flex-shrink-0" />
                 <div>
-                  <p className="text-xs text-zinc-400 font-medium">Total Solved</p>
+                  <p className="text-[10px] text-indigo-600 dark:text-indigo-300 font-black uppercase tracking-widest">Total Solved</p>
                   {loading ? <Skeleton className="h-5 w-20 mt-1" /> : (
-                    <p className="text-lg font-extrabold text-white">{totalSolved}</p>
+                    <p className="text-lg font-extrabold text-indigo-900 dark:text-white">{totalSolved}</p>
                   )}
                 </div>
               </div>
@@ -621,7 +611,7 @@ export default function CodingTracker() {
                       rating={lc.rating || "Unrated"}
                       ratingLabel={lc.globalRank ? `Rank #${lc.globalRank.toLocaleString()} · Top ${lc.topPct?.toFixed(1)}%` : "Contest Rating"}
                       sub={`${lc.solved} solved`}
-                      color="text-amber-400" bgColor="bg-amber-500/10"
+                      color="text-amber-600 dark:text-amber-400" bgColor="bg-amber-500/10"
                       href={`https://leetcode.com/${lc.username}`}
                     />
                   ) : (
@@ -641,7 +631,7 @@ export default function CodingTracker() {
                       rating={cf.rating || "Unrated"}
                       ratingLabel={`${cf.rank} (max: ${cf.maxRating})`}
                       sub={`${cf.solved} solved`}
-                      color="text-blue-400" bgColor="bg-blue-500/10"
+                      color="text-blue-600 dark:text-blue-400" bgColor="bg-blue-500/10"
                       href={`https://codeforces.com/profile/${cf.handle}`}
                     />
                   ) : (
@@ -661,7 +651,7 @@ export default function CodingTracker() {
                       rating={cc.rating > 0 ? cc.rating : "N/A"}
                       ratingLabel={cc.rating > 0 ? `${cc.stars} · High: ${cc.highRating}` : "Rating via JS — see note"}
                       sub={`${cc.solved} solved (est.)`}
-                      color="text-red-400" bgColor="bg-red-500/10"
+                      color="text-red-600 dark:text-red-400" bgColor="bg-red-500/10"
                       href={`https://codechef.com/users/${cc.username}`}
                     />
                   ) : cc?.error ? (
@@ -689,7 +679,7 @@ export default function CodingTracker() {
           </aside>
 
           {/* ── Right content ─────────────────────────────────────────────────── */}
-          <div className="flex-1 min-w-0 space-y-5">
+          <div className="lg:col-span-2 space-y-5">
 
             {/* Breakdown + Rating sparkline */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -766,9 +756,13 @@ export default function CodingTracker() {
                     const firstDayDate = new Date(year, month, day);
                     const firstDayWeekday = firstDayDate.getDay();
 
-                    // Pad the start of the first column
+                    // Pad the start of the month
                     for (let i = 0; i < firstDayWeekday; i++) {
-                      currentColumn.push({ val: -2, count: 0, date: "" });
+                      currentColumn.push({ date: "", val: -2, count: 0 });
+                      if (currentColumn.length === 7) {
+                        columns.push(currentColumn);
+                        currentColumn = [];
+                      }
                     }
 
                     monthDays.forEach(cell => {
@@ -778,46 +772,34 @@ export default function CodingTracker() {
                         currentColumn = [];
                       }
                     });
+                    if (currentColumn.length > 0) columns.push(currentColumn);
 
-                    // Pad the end of the last column
-                    if (currentColumn.length > 0) {
-                      while (currentColumn.length < 7) {
-                        currentColumn.push({ val: -2, count: 0, date: "" });
-                      }
-                      columns.push(currentColumn);
-                    }
-
-                    return {
-                      monthKey,
-                      columns,
-                    };
+                    return { monthKey, columns };
                   });
 
-                  const getMonthLabel = (key: string) => {
-                    const [year, month] = key.split("-");
-                    const date = new Date(Number(year), Number(month) - 1, 1);
+                  const totalSubmissionsPastYear = heatmap.flat().reduce((sum, c) => sum + (c.val > 0 ? c.count : 0), 0);
+                  const getMonthLabel = (m: string) => {
+                    const date = new Date(m + "-01");
                     return date.toLocaleDateString("en-US", { month: "short" });
                   };
-
-                  const totalSubmissionsPastYear = allCells.reduce((acc, cell) => acc + (cell.count || 0), 0);
 
                   return (
                     <div className="space-y-4">
                       {/* LeetCode Heatmap Header */}
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-800/40 pb-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800/40 pb-3">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-lg font-extrabold text-white">{totalSubmissionsPastYear}</span>
-                          <span className="text-xs text-zinc-400 font-semibold">submissions in the past one year</span>
+                          <span className="text-lg font-extrabold text-zinc-900 dark:text-white">{totalSubmissionsPastYear}</span>
+                          <span className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">submissions in the past one year</span>
                           <span title="LeetCode submissions over the last 12 months" className="cursor-help">
-                            <Info className="w-3.5 h-3.5 text-zinc-500" />
+                            <Info className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
                           </span>
                         </div>
                         <div className="flex items-center gap-4 flex-wrap">
-                          <span className="text-xs text-zinc-500 font-semibold">
-                            Total active days: <strong className="text-zinc-300 font-bold">{data?.overallActiveDays ?? lc.totalActiveDays}</strong>
+                          <span className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">
+                            Total active days: <strong className="text-zinc-900 dark:text-white font-bold">{data?.overallActiveDays ?? lc.totalActiveDays}</strong>
                           </span>
-                          <span className="text-xs text-zinc-500 font-semibold">
-                            Max streak: <strong className="text-zinc-300 font-bold">{data?.overallMaxStreak ?? lc.streak}</strong>
+                          <span className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">
+                            Max streak: <strong className="text-zinc-900 dark:text-white font-bold">{data?.overallMaxStreak ?? lc.streak}</strong>
                           </span>
                           <select
                             value={selectedYear}
@@ -825,7 +807,7 @@ export default function CodingTracker() {
                               setSelectedYear(e.target.value);
                               fetchProfile(savedHandles.leetcode, savedHandles.codeforces, savedHandles.codechef, e.target.value);
                             }}
-                            className="bg-zinc-900 border border-zinc-800 hover:border-zinc-700/60 rounded-xl px-3 py-1.5 text-xs text-zinc-300 font-bold cursor-pointer transition-colors focus:outline-none focus:border-indigo-500"
+                            className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700/60 rounded-xl px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 font-bold cursor-pointer transition-colors focus:outline-none focus:border-indigo-500"
                           >
                             <option value="current">Current</option>
                             <option value="2026">2026</option>
@@ -888,15 +870,15 @@ export default function CodingTracker() {
 
             {/* Tabs */}
             <div className="glass-panel rounded-2xl overflow-hidden">
-              <div className="flex border-b border-zinc-800/50">
+              <div className="flex border-b border-zinc-200 dark:border-zinc-800/50">
                 {(["overview", "submissions", "topics"] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={`px-5 py-3.5 text-xs font-bold uppercase tracking-widest transition-colors ${
                       activeTab === tab
-                        ? "text-indigo-400 border-b-2 border-indigo-500 bg-indigo-500/5"
-                        : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/30"
+                        ? "text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-500 bg-indigo-500/5"
+                        : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/30"
                     }`}
                   >
                     {tab === "overview" ? "🏅 Overview" : tab === "submissions" ? "📋 Submissions" : "🎯 Topics"}
@@ -910,10 +892,10 @@ export default function CodingTracker() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
                     {loading ? Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-20" />) : (
                       <>
-                        <StatCard label="LeetCode Solved" value={savedHandles.leetcode ? lc?.solved : undefined} icon={<Code className="w-4 h-4 text-amber-400" />} bg="bg-amber-500/10" />
-                        <StatCard label="Codeforces Solved" value={savedHandles.codeforces ? cf?.solved : undefined} icon={<Zap className="w-4 h-4 text-blue-400" />} bg="bg-blue-500/10" />
-                        <StatCard label="CodeChef Solved" value={savedHandles.codechef ? cc?.solved : undefined} icon={<Star className="w-4 h-4 text-red-400" />} bg="bg-red-500/10" />
-                        <StatCard label="Total Problems" value={totalSolved} icon={<Trophy className="w-4 h-4 text-indigo-400" />} bg="bg-indigo-500/10" highlight />
+                        <StatCard label="LeetCode Solved" value={savedHandles.leetcode ? lc?.solved : undefined} icon={<Code className="w-4 h-4 text-amber-500" />} bg="bg-amber-500/10" />
+                        <StatCard label="Codeforces Solved" value={savedHandles.codeforces ? cf?.solved : undefined} icon={<Zap className="w-4 h-4 text-blue-500" />} bg="bg-blue-500/10" />
+                        <StatCard label="CodeChef Solved" value={savedHandles.codechef ? cc?.solved : undefined} icon={<Star className="w-4 h-4 text-red-500" />} bg="bg-red-500/10" />
+                        <StatCard label="Total Problems" value={totalSolved} icon={<Trophy className="w-4 h-4 text-indigo-500" />} bg="bg-indigo-500/10" highlight />
                       </>
                     )}
                   </div>
@@ -925,13 +907,13 @@ export default function CodingTracker() {
                   ) : contestHistory.length > 0 ? (
                     <div className="space-y-2">
                       {contestHistory.map((c, i) => (
-                        <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-zinc-900/40 border border-zinc-800/30 hover:border-zinc-700/50 transition-colors">
+                        <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800/30 hover:border-zinc-300 dark:hover:border-zinc-700/50 transition-colors">
                           <div>
-                            <p className="text-xs font-bold text-white truncate max-w-[200px]">{c.name}</p>
-                            <p className="text-[10px] text-zinc-500">{c.date}{c.rank ? ` · Rank #${c.rank.toLocaleString()}` : ""}</p>
+                            <p className="text-xs font-bold text-zinc-900 dark:text-white truncate max-w-[200px]">{c.name}</p>
+                            <p className="text-[10px] text-zinc-505">{c.date}{c.rank ? ` · Rank #${c.rank.toLocaleString()}` : ""}</p>
                           </div>
                           <div className="flex items-center gap-3">
-                            <span className="text-sm font-extrabold text-zinc-200">{c.rating}</span>
+                            <span className="text-sm font-extrabold text-zinc-800 dark:text-zinc-200">{c.rating}</span>
                             {c.delta !== 0 && (
                               <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.delta > 0 ? "text-emerald-400 bg-emerald-500/10" : "text-red-400 bg-red-500/10"}`}>
                                 {c.delta > 0 ? "+" : ""}{c.delta}
@@ -965,10 +947,10 @@ export default function CodingTracker() {
                       </thead>
                       <tbody className="divide-y divide-zinc-800/30">
                         {subs.map((s, i) => (
-                          <tr key={i} className="hover:bg-zinc-800/20 transition-colors group">
+                          <tr key={i} className="hover:bg-zinc-150/30 dark:hover:bg-zinc-800/20 transition-colors group">
                             <td className="px-5 py-3.5">
                               <a href={s.url} target="_blank" rel="noopener noreferrer"
-                                className="font-bold text-white group-hover:text-indigo-400 transition-colors flex items-center gap-1">
+                                className="font-bold text-zinc-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors flex items-center gap-1">
                                 {s.problem}
                                 <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" />
                               </a>
@@ -1054,13 +1036,13 @@ function StatCard({ label, value, icon, bg, highlight }: {
   label: string; value?: number; icon: React.ReactNode; bg: string; highlight?: boolean;
 }) {
   return (
-    <div className={`flex flex-col gap-2 p-3 rounded-xl border ${highlight ? "bg-indigo-500/10 border-indigo-500/20" : "bg-zinc-900/50 border-zinc-800/40"}`}>
+    <div className={`flex flex-col gap-2 p-3 rounded-xl border ${highlight ? "bg-indigo-500/10 border-indigo-500/20" : "bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800/40"}`}>
       <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center`}>{icon}</div>
       <div>
-        <p className={`text-xl font-extrabold ${highlight ? "text-indigo-300" : "text-white"}`}>
+        <p className={`text-xl font-extrabold ${highlight ? "text-indigo-600 dark:text-indigo-300" : "text-zinc-900 dark:text-white"}`}>
           {value !== undefined ? value.toLocaleString() : "—"}
         </p>
-        <p className="text-[10px] text-zinc-500 font-medium">{label}</p>
+        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 font-medium">{label}</p>
       </div>
     </div>
   );

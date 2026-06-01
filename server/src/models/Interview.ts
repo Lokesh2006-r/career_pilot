@@ -11,6 +11,8 @@ export interface IInterviewReport {
   communicationScore: number;
   confidenceScore: number;
   detailedEvaluation: string;
+  summary?: string;
+  gaps?: string[];
 }
 
 export interface IInterview extends Document {
@@ -42,6 +44,8 @@ const InterviewSchema = new Schema<IInterview>(
         communicationScore: { type: Number },
         confidenceScore: { type: Number },
         detailedEvaluation: { type: String },
+        summary: { type: String },
+        gaps: [{ type: String }],
       },
       default: null,
     },

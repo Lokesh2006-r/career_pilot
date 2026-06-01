@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Mail, Phone, MapPin, Briefcase, GraduationCap, Github, Linkedin, Link as LinkIcon, Camera, Save, CheckCircle, Sparkles } from "lucide-react";
+import { User, Mail, Phone, MapPin, Briefcase, GraduationCap, Github, Linkedin, Link as LinkIcon, Camera, Save, CheckCircle, Sparkles, Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -75,6 +75,7 @@ export default function ProfilePage() {
             onClick={() => setIsEditing(true)}
             className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white hover:border-indigo-500/30 rounded-xl font-bold text-xs uppercase tracking-wide transition-all shadow-sm cursor-pointer"
           >
+            <Pencil className="w-4 h-4 text-indigo-500" />
             Edit Credentials
           </button>
         )}
@@ -86,6 +87,27 @@ export default function ProfilePage() {
         <div className="h-40 bg-gradient-to-r from-indigo-500 via-purple-650 to-cyan-500 relative overflow-hidden group">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0c_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0c_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
           <div className="absolute -top-12 -left-12 w-64 h-64 bg-white/5 rounded-full blur-2xl"></div>
+          
+          {/* Edit button in the top-right corner of the banner */}
+          <div className="absolute top-4 right-4 z-10">
+            {isEditing ? (
+              <button 
+                onClick={handleSave}
+                className="flex items-center gap-1.5 px-4.5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-650 hover:to-teal-650 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg active:scale-95"
+              >
+                <Save className="w-3.5 h-3.5" />
+                Save Identity
+              </button>
+            ) : (
+              <button 
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-1.5 px-4.5 py-2.5 bg-black/60 hover:bg-black/80 text-white border border-white/10 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg active:scale-95"
+              >
+                <Pencil className="w-3.5 h-3.5 text-indigo-400" />
+                Edit Profile
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="px-8 pb-8">
