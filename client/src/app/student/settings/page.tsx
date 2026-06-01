@@ -1,0 +1,242 @@
+"use client";
+
+import { useState } from "react";
+import { Settings, Shield, Sliders, RefreshCw, KeyRound, Sparkles, CheckCircle, Database } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+
+export default function SettingsPage() {
+  const { user } = useAuth();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [apiKeys, setApiKeys] = useState({
+    openai: "••••••••••••••••••••••••••••••••",
+    firebase: "••••••••••••••••••••••••••••••••",
+    ragEngine: "https://rag.student-twin-engine.ai/v1"
+  });
+
+  const [aiConfig, setAiConfig] = useState({
+    assistantVoice: "alloy",
+    speechSpeed: "1.0",
+    modelSelection: "gpt-4o-mini",
+    rigorLevel: "advanced"
+  });
+
+  const triggerToast = (msg: string) => {
+    setToastMessage(msg);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleResetData = () => {
+    // Clear custom sandbox states to defaults
+    if (user) {
+      localStorage.removeItem(`student_profile_${user.uid}`);
+      localStorage.removeItem(`applied_internships_${user.uid}`);
+      localStorage.removeItem(`coding_handles_${user.uid}`);
+      localStorage.removeItem(`daily_checklist_${user.uid}`);
+      localStorage.removeItem(`practice_logs_${user.uid}`);
+    }
+    localStorage.removeItem("student_profile");
+    localStorage.removeItem("applied_internships");
+    localStorage.removeItem("coding_metrics");
+    localStorage.removeItem("interview_sessions");
+    localStorage.removeItem("coding_handles_v3");
+    localStorage.removeItem("daily_checklist_v1");
+    localStorage.removeItem("practice_logs_v1");
+    
+    // Dispatch events to notify other tabs
+    window.dispatchEvent(new Event('profile_updated'));
+    triggerToast("Sandbox identity variables reset to default values!");
+  };
+
+  const handleSaveSettings = () => {
+    triggerToast("System parameter registers updated successfully!");
+  };
+
+  return (
+    <div className="space-y-8 animate-fade-in relative">
+      
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-6 right-6 z-50 bg-white/80 dark:bg-zinc-950/80 border border-emerald-500/30 text-emerald-500 px-5 py-3.5 rounded-2xl backdrop-blur-xl shadow-[0_10px_30px_-10px_rgba(16,185,129,0.3)] flex items-center gap-3 animate-in slide-in-from-top duration-300">
+          <CheckCircle className="w-5 h-5 animate-pulse" />
+          <span className="font-extrabold text-xs uppercase tracking-wider">{toastMessage}</span>
+        </div>
+      )}
+
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight">System Settings</h1>
+          <p className="text-zinc-550 dark:text-zinc-400 mt-1">Configure artificial twin parameters and developer API gateways.</p>
+        </div>
+        
+        <button 
+          onClick={handleSaveSettings}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-xs uppercase tracking-wide hover:shadow-[0_4px_15px_rgba(99,102,241,0.25)] active:scale-95 transition-all cursor-pointer border border-white/10"
+        >
+          Save Settings
+        </button>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Left Columns - Configuration Panels */}
+        <div className="lg:col-span-2 space-y-8">
+          
+          {/* AI Settings panel */}
+          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
+            <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+              <Sliders className="w-4.5 h-4.5 text-indigo-500" />
+              AI Assistant Orchestration
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Twin Speech Voice</label>
+                <select
+                  value={aiConfig.assistantVoice}
+                  onChange={(e) => setAiConfig({ ...aiConfig, assistantVoice: e.target.value })}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all cursor-pointer"
+                >
+                  <option value="alloy">Alloy (Balanced)</option>
+                  <option value="echo">Echo (Warm)</option>
+                  <option value="fable">Fable (Expressive)</option>
+                  <option value="onyx">Onyx (Professional)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Interview Rigor Level</label>
+                <select
+                  value={aiConfig.rigorLevel}
+                  onChange={(e) => setAiConfig({ ...aiConfig, rigorLevel: e.target.value })}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all cursor-pointer"
+                >
+                  <option value="standard">Standard Mentorship</option>
+                  <option value="advanced">Advanced Auditor (Recommended)</option>
+                  <option value="brutal">Brutal FAANG Drill</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Speech Pace Coefficient</label>
+                <select
+                  value={aiConfig.speechSpeed}
+                  onChange={(e) => setAiConfig({ ...aiConfig, speechSpeed: e.target.value })}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all cursor-pointer"
+                >
+                  <option value="0.8">0.8x (Deliberate)</option>
+                  <option value="1.0">1.0x (Natural)</option>
+                  <option value="1.2">1.2x (Fast)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Core LLM Gateway Model</label>
+                <select
+                  value={aiConfig.modelSelection}
+                  onChange={(e) => setAiConfig({ ...aiConfig, modelSelection: e.target.value })}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all cursor-pointer"
+                >
+                  <option value="gpt-4o-mini">GPT-4o Mini (Ultra-speed)</option>
+                  <option value="gpt-4o">GPT-4o (Deep Analysis)</option>
+                  <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (Logic-heavy)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* API Keys Settings panel */}
+          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
+            <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+              <KeyRound className="w-4.5 h-4.5 text-indigo-500" />
+              API Developer Gateways
+            </h2>
+            
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">OpenAI API Key Token</label>
+                <input
+                  type="password"
+                  value={apiKeys.openai}
+                  onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-550"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">RAG Vector DB Endpoint</label>
+                <input
+                  type="text"
+                  value={apiKeys.ragEngine}
+                  onChange={(e) => setApiKeys({ ...apiKeys, ragEngine: e.target.value })}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-550"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Sandbox Management */}
+        <div className="space-y-8">
+          
+          {/* Developer Sandbox Options */}
+          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border-indigo-500/15">
+            <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+              <Shield className="w-4.5 h-4.5 text-indigo-500" />
+              Sandbox Variables
+            </h2>
+            
+            <div className="space-y-4 text-xs">
+              <div className="bg-indigo-500/5 p-4 rounded-2xl border border-indigo-500/10 space-y-2.5">
+                <div className="flex items-center gap-2 text-indigo-500 font-extrabold uppercase tracking-wide text-[10px]">
+                  <Sparkles className="w-4.5 h-4.5 animate-pulse" />
+                  Twin Sync Status
+                </div>
+                <p className="text-zinc-550 dark:text-zinc-400 leading-relaxed font-semibold">
+                  Sandbox active. Speech assessments, ATS scoring, and local profile metrics bypass remote networks and store directly in local buffers.
+                </p>
+              </div>
+
+              <div className="space-y-3.5 pt-2">
+                <button
+                  onClick={handleResetData}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 hover:border-rose-500/35 text-rose-500 rounded-xl font-bold uppercase tracking-wider text-[10px] active:scale-95 transition-all cursor-pointer"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Reset Identity Data
+                </button>
+                <p className="text-[10px] text-center text-zinc-400 font-medium leading-relaxed">
+                  Resetting clears your custom profile settings, coding scores, and resume files back to developer baseline values.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* System Specs */}
+          <div className="glass-panel rounded-3xl p-6 space-y-4 shadow-sm">
+            <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+              <Database className="w-4.5 h-4.5 text-indigo-500" />
+              System Specs
+            </h2>
+            <div className="space-y-2.5 text-[10px] font-bold uppercase tracking-wider text-zinc-550 dark:text-zinc-400">
+              <div className="flex justify-between border-b border-zinc-200/50 dark:border-zinc-800/40 pb-2">
+                <span>RAG Protocol</span>
+                <span className="text-zinc-900 dark:text-white">v2.4.1</span>
+              </div>
+              <div className="flex justify-between border-b border-zinc-200/50 dark:border-zinc-800/40 pb-2">
+                <span>Next.js Framework</span>
+                <span className="text-zinc-900 dark:text-white">v15.0</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Tailwind Engine</span>
+                <span className="text-zinc-900 dark:text-white">v4.0 Alpha</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}

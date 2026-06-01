@@ -1,0 +1,33 @@
+# Dependency folders
+node_modules/
+**/node_modules/
+
+# Next.js build output
+client/.next/
+client/out/
+client/build/
+
+# Server build output
+server/dist/
+server/build/
+
+# Environment files and credentials
+.env
+.env*
+*.env
+**/.env
+**/.env*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# TypeScript build info
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
