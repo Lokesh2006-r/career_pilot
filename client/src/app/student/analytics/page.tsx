@@ -8,6 +8,8 @@ import {
   HelpCircle, ChevronRight, Activity, Sparkles 
 } from "lucide-react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface ResumeData {
   fileName: string;
@@ -58,14 +60,14 @@ export default function StudentAnalytics() {
       setError(null);
       try {
         // 1. Fetch Resume Scan
-        const resumeRes = await fetch(`http://localhost:5000/api/resume/latest/${user.uid}`);
+        const resumeRes = await fetch(`${API_BASE_URL}/api/resume/latest/${user.uid}`);
         if (resumeRes.ok) {
           const resJson = await resumeRes.json();
           if (resJson.data) setResumeData(resJson.data);
         }
 
         // 2. Fetch Mock Interviews History
-        const interviewRes = await fetch(`http://localhost:5000/api/interview/history/${user.uid}`);
+        const interviewRes = await fetch(`${API_BASE_URL}/api/interview/history/${user.uid}`);
         if (interviewRes.ok) {
           const intJson = await interviewRes.json();
           if (Array.isArray(intJson)) setInterviews(intJson);
@@ -98,7 +100,7 @@ export default function StudentAnalytics() {
           if (handles.codechef) params.set("codechef", handles.codechef);
 
           if (handles.leetcode || handles.codeforces || handles.codechef) {
-            const codingRes = await fetch(`http://localhost:5000/api/coding/profile?${params}`);
+            const codingRes = await fetch(`${API_BASE_URL}/api/coding/profile?${params}`);
             if (codingRes.ok) {
               const codingJson = await codingRes.json();
               if (codingJson.success && codingJson.data) {

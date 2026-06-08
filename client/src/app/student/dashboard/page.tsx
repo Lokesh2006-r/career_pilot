@@ -10,6 +10,7 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Message {
   role: 'user' | 'model';
@@ -306,13 +307,13 @@ export default function StudentDashboardOverview() {
     const fetchAllData = async () => {
       setStatsLoading(true);
       try {
-        const resumeRes = await fetch(`http://localhost:5000/api/resume/latest/${user.uid}`);
+        const resumeRes = await fetch(`${API_BASE_URL}/api/resume/latest/${user.uid}`);
         if (resumeRes.ok) {
           const resJson = await resumeRes.json();
           if (resJson.data) setResumeData(resJson.data);
         }
 
-        const interviewRes = await fetch(`http://localhost:5000/api/interview/history/${user.uid}`);
+        const interviewRes = await fetch(`${API_BASE_URL}/api/interview/history/${user.uid}`);
         if (interviewRes.ok) {
           const intJson = await interviewRes.json();
           if (Array.isArray(intJson)) setInterviews(intJson);
@@ -344,7 +345,7 @@ export default function StudentDashboardOverview() {
           if (handles.codechef) params.set("codechef", handles.codechef);
 
           if (handles.leetcode || handles.codeforces || handles.codechef) {
-            const codingRes = await fetch(`http://localhost:5000/api/coding/profile?${params}`);
+            const codingRes = await fetch(`${API_BASE_URL}/api/coding/profile?${params}`);
             if (codingRes.ok) {
               const codingJson = await codingRes.json();
               if (codingJson.success && codingJson.data) setCodingProfile(codingJson.data);
@@ -378,7 +379,7 @@ export default function StudentDashboardOverview() {
     setIsSending(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/chat", {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: updatedMessages, uid: user?.uid }),

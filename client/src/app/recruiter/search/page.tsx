@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, BrainCircuit, ShieldCheck, Cpu, Code, Target, FileText, Send, X, Sparkles, Filter, CheckCircle2, UserCheck, MessageSquare } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
 
 // ... (keeping Candidate and Message interfaces, MOCK_CANDIDATES array unchanged)
 interface Candidate {
@@ -177,7 +178,7 @@ export default function CandidateSearch() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/chat", {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
