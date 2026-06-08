@@ -90,16 +90,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
   }
 ];
 
-const SEED_LOGS: PracticeLog[] = [
-  { id: "s1", date: new Date(Date.now() - 86400000 * 0).toISOString().split('T')[0], category: "coding", duration: 45, notes: "Solved LeetCode 239: Sliding Window Maximum. Optimized with deque in O(N)." },
-  { id: "s2", date: new Date(Date.now() - 86400000 * 1).toISOString().split('T')[0], category: "interview", duration: 30, notes: "AI Mock Interview on Backend Engineering. Got feedback to improve concurrency details." },
-  { id: "s3", date: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0], category: "revision", duration: 25, notes: "Revised TCP flow control, sliding window protocol, and congestion window parameters." },
-  { id: "s4", date: new Date(Date.now() - 86400000 * 3).toISOString().split('T')[0], category: "coding", duration: 60, notes: "Solved 2 medium array problems on LeetCode. Focused on two-pointer patterns." },
-  { id: "s5", date: new Date(Date.now() - 86400000 * 4).toISOString().split('T')[0], category: "resume", duration: 20, notes: "Tailored experience section with keywords: Redis caching, Docker, CI/CD pipelines." },
-  { id: "s6", date: new Date(Date.now() - 86400000 * 6).toISOString().split('T')[0], category: "coding", duration: 50, notes: "Codeforces contest practice. Solved Division 2 problems A and B." },
-  { id: "s7", date: new Date(Date.now() - 86400000 * 7).toISOString().split('T')[0], category: "revision", duration: 30, notes: "Read about Database Indexing structures. Compared B-Trees vs Hash maps." },
-  { id: "s8", date: new Date(Date.now() - 86400000 * 9).toISOString().split('T')[0], category: "interview", duration: 45, notes: "Conducted mock behavioral questions with AI Twin. Formatted using STAR method." }
-];
+const SEED_LOGS: PracticeLog[] = [];
 
 export default function StudentDashboardOverview() {
   const { user } = useAuth();
@@ -602,7 +593,7 @@ export default function StudentDashboardOverview() {
     const totalDays = weeks * 7;
     const nowMs = Date.now();
 
-    // Map logs to days
+    // 1. Map real practice logs to days
     practiceLogs.forEach(l => {
       const dateVal = new Date(l.date);
       const diffMs = nowMs - dateVal.getTime();
@@ -618,18 +609,34 @@ export default function StudentDashboardOverview() {
       }
     });
 
-    // Blend coding activity seed values
-    const seedOffset = totalSolved > 50 ? 2 : 1;
-    for (let w = 0; w < weeks; w++) {
-      for (let d = 0; d < 7; d++) {
-        if (grid[w][d] === 0) {
-          const index = w * 7 + d;
-          if (index % 11 === 0) grid[w][d] = 1;
-          else if (index % 17 === 0) grid[w][d] = 2;
-          else if (index % 29 === 0) grid[w][d] = seedOffset;
+    // 2. Map real coding submissions (LeetCode, Codeforces, CodeChef) to days
+    const dailySubmissions: Record<string, number> = {};
+    const mergeCalendar = (daily: Record<string, number> | undefined) => {
+      if (!daily) return;
+      for (const [date, cnt] of Object.entries(daily)) {
+        dailySubmissions[date] = (dailySubmissions[date] || 0) + cnt;
+      }
+    };
+
+    if (codingProfile?.leetcode) mergeCalendar(codingProfile.leetcode.dailySubmissions);
+    if (codingProfile?.codeforces) mergeCalendar(codingProfile.codeforces.dailySubmissions);
+    if (codingProfile?.codechef) mergeCalendar(codingProfile.codechef.dailySubmissions);
+
+    Object.entries(dailySubmissions).forEach(([dateStr, cnt]) => {
+      if (cnt <= 0) return;
+      const dateVal = new Date(dateStr);
+      const diffMs = nowMs - dateVal.getTime();
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      if (diffDays >= 0 && diffDays < totalDays) {
+        const dayIdx = totalDays - 1 - diffDays;
+        const w = Math.floor(dayIdx / 7);
+        const d = dayIdx % 7;
+        if (w >= 0 && w < weeks && d >= 0 && d < 7) {
+          const score = cnt <= 2 ? 1 : cnt <= 5 ? 2 : 3;
+          grid[w][d] = Math.max(grid[w][d], score);
         }
       }
-    }
+    });
 
     return grid;
   };
@@ -954,7 +961,11 @@ export default function StudentDashboardOverview() {
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-zinc-400 font-bold">Less</span>
                 {[0, 1, 2, 3].map(v => (
-                  <div key={v} className={`w-3.5 h-3.5 rounded-sm ${["bg-zinc-150 dark:bg-zinc-800/40", "bg-indigo-500/20", "bg-indigo-500/55", "bg-indigo-500"][v]}`} />
+                  <div 
+                    key={v} 
+                    className="w-3.5 h-3.5 rounded-sm border border-black/5 dark:border-white/5" 
+                    style={{ backgroundColor: `var(--heatmap-bg-${v})` }}
+                  />
                 ))}
                 <span className="text-[10px] text-zinc-400 font-bold">More</span>
               </div>
@@ -965,16 +976,12 @@ export default function StudentDashboardOverview() {
                 {heatmapGrid.map((week, wi) => (
                   <div key={wi} className="flex flex-col gap-1.5">
                     {week.map((day, di) => {
-                      const colors = [
-                        "bg-zinc-150 dark:bg-zinc-800/40 hover:scale-125", 
-                        "bg-indigo-500/20 hover:scale-125 hover:ring-1 hover:ring-indigo-400", 
-                        "bg-indigo-500/55 hover:scale-125 hover:ring-1 hover:ring-indigo-450", 
-                        "bg-indigo-500 hover:scale-125 hover:ring-2 hover:ring-indigo-500"
-                      ];
+                      const level = day >= 0 && day <= 3 ? day : 0;
                       return (
                         <div 
                           key={di} 
-                          className={`w-3.5 h-3.5 rounded-sm transition-all cursor-pointer ${colors[day] || colors[0]}`}
+                          className="w-3.5 h-3.5 rounded-sm transition-all cursor-pointer hover:scale-125 hover:ring-1 hover:ring-emerald-400 border border-black/5 dark:border-white/5"
+                          style={{ backgroundColor: `var(--heatmap-bg-${level})` }}
                           title={`${day > 0 ? `${day === 1 ? 'Light' : day === 2 ? 'Medium' : 'Heavy'} Practice Logged` : "No practice logged"}`}
                         />
                       );

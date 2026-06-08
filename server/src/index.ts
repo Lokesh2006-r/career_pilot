@@ -6,6 +6,7 @@ import resumeRoutes from './routes/resume.routes';
 import chatRoutes from './routes/chat.routes';
 import interviewRoutes from './routes/interview.routes';
 import codingRoutes from './routes/coding.routes';
+import projectRoutes from './routes/project.routes';
 
 
 const app = express();
@@ -18,6 +19,7 @@ app.use('/api/resume', resumeRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/interview', interviewRoutes);
 app.use('/api/coding', codingRoutes);
+app.use('/api/projects', projectRoutes);
 
 app.get('/', (req, res) => {
   res.send('CareerPilot API is running');

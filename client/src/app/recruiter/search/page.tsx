@@ -111,6 +111,17 @@ export default function CandidateSearch() {
     }
   }, [user]);
 
+  // Track searches in local storage
+  useEffect(() => {
+    if (!user || !searchQuery.trim()) return;
+    const timer = setTimeout(() => {
+      const key = `recruiter_analytics_searches_${user.uid}`;
+      const current = parseInt(localStorage.getItem(key) || "0", 10);
+      localStorage.setItem(key, (current + 1).toString());
+    }, 1000); // 1s debounce to avoid counting every keystroke
+    return () => clearTimeout(timer);
+  }, [searchQuery, user]);
+
   // Auto-scroll chat
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -158,6 +169,12 @@ export default function CandidateSearch() {
     setChatMessages(updatedMessages);
     setInputVal("");
     setIsSending(true);
+
+    if (user) {
+      const chatKey = `recruiter_analytics_chats_${user.uid}`;
+      const currentChats = parseInt(localStorage.getItem(chatKey) || "0", 10);
+      localStorage.setItem(chatKey, (currentChats + 1).toString());
+    }
 
     try {
       const response = await fetch("http://localhost:5000/api/chat", {

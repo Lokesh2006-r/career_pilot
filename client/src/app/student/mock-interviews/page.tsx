@@ -134,13 +134,30 @@ export default function MockInterviews() {
         const englishVoices = list.filter(v => v.lang.startsWith("en"));
         setAvailableVoices(englishVoices);
         
+        // Read saved voice name from settings
+        let savedVoiceName = "";
+        const savedSettingsRaw = user?.uid 
+          ? (localStorage.getItem(`student_settings_${user.uid}`) || localStorage.getItem("student_settings"))
+          : localStorage.getItem("student_settings");
+        if (savedSettingsRaw) {
+          try {
+            const parsed = JSON.parse(savedSettingsRaw);
+            if (parsed.aiConfig?.assistantVoice) {
+              savedVoiceName = parsed.aiConfig.assistantVoice;
+            }
+          } catch (e) {
+            console.error("Failed to parse assistantVoice settings:", e);
+          }
+        }
+
         // Match natural sounding voices as priority
-        const defaultVoice = englishVoices.find(v => 
-          v.name.toLowerCase().includes("natural") || 
-          v.name.toLowerCase().includes("google") || 
-          v.name.toLowerCase().includes("aria") || 
-          v.name.toLowerCase().includes("guy")
-        ) || englishVoices[0];
+        const defaultVoice = englishVoices.find(v => v.name === savedVoiceName) || 
+                            englishVoices.find(v => 
+                              v.name.toLowerCase().includes("natural") || 
+                              v.name.toLowerCase().includes("google") || 
+                              v.name.toLowerCase().includes("aria") || 
+                              v.name.toLowerCase().includes("guy")
+                            ) || englishVoices[0];
         
         if (defaultVoice) {
           setSelectedVoiceName(defaultVoice.name);
@@ -242,8 +259,22 @@ export default function MockInterviews() {
           utterance.voice = chosenVoice;
         }
         
-        // Natural speed and pitch for conversational pacing
-        utterance.rate = 0.95;
+        // Read saved speech rate setting
+        let speed = 0.95;
+        const savedSettingsRaw = user?.uid 
+          ? (localStorage.getItem(`student_settings_${user.uid}`) || localStorage.getItem("student_settings"))
+          : localStorage.getItem("student_settings");
+        if (savedSettingsRaw) {
+          try {
+            const parsed = JSON.parse(savedSettingsRaw);
+            if (parsed.aiConfig?.speechSpeed) {
+              speed = Number(parsed.aiConfig.speechSpeed);
+            }
+          } catch (e) {
+            console.error("Failed to parse speech speed settings:", e);
+          }
+        }
+        utterance.rate = speed;
         utterance.pitch = 1.0;
         window.speechSynthesis.speak(utterance);
       }, 150);

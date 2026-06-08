@@ -21,11 +21,11 @@
   --medium-color: #52525b;
   --hard-color: #09090b;
 
-  --heatmap-bg-0: #f4f4f5;
-  --heatmap-bg-1: #d4d4d8;
-  --heatmap-bg-2: #a1a1aa;
-  --heatmap-bg-3: #71717a;
-  --heatmap-bg-4: #09090b;
+  --heatmap-bg-0: #e2e8f0;
+  --heatmap-bg-1: #86efac;
+  --heatmap-bg-2: #4ade80;
+  --heatmap-bg-3: #22c55e;
+  --heatmap-bg-4: #15803d;
 
   --indigo-50: #f4f4f5;
   --indigo-100: #e4e4e7;
@@ -103,10 +103,10 @@
   --hard-color: #ffffff;
 
   --heatmap-bg-0: #27272a;
-  --heatmap-bg-1: #3f3f46;
-  --heatmap-bg-2: #71717a;
-  --heatmap-bg-3: #a1a1aa;
-  --heatmap-bg-4: #ffffff;
+  --heatmap-bg-1: #065f46;
+  --heatmap-bg-2: #059669;
+  --heatmap-bg-3: #10b981;
+  --heatmap-bg-4: #34d399;
 
   --indigo-50: #18181b;
   --indigo-100: #27272a;
@@ -408,10 +408,10 @@ body::before {
   --hard-color: #ef4444;
 
   --heatmap-bg-0: #161b22;
-  --heatmap-bg-1: #0e4429;
-  --heatmap-bg-2: #006d32;
-  --heatmap-bg-3: #26a641;
-  --heatmap-bg-4: #39d353;
+  --heatmap-bg-1: #065f46;
+  --heatmap-bg-2: #059669;
+  --heatmap-bg-3: #10b981;
+  --heatmap-bg-4: #34d399;
 
   --indigo-50: #1e1b4b;
   --indigo-100: #312e81;

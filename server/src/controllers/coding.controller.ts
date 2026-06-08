@@ -621,6 +621,13 @@ function cfRatingToDifficulty(rating?: number): string {
   return 'Hard';
 }
 
+interface CacheEntry {
+  timestamp: number;
+  data: any;
+}
+const profileCache = new Map<string, CacheEntry>();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes TTL
+
 // ─── Express handler ───────────────────────────────────────────────────────────
 
 export async function getCodingProfile(req: Request, res: ExpressResponse) {
@@ -630,6 +637,18 @@ export async function getCodingProfile(req: Request, res: ExpressResponse) {
   if (!leetcode && !codeforces && !codechef) {
     return res.status(400).json({ error: 'Provide at least one handle (leetcode, codeforces, or codechef)' });
   }
+
+  // Create a unique cache key based on the parameters
+  const cacheKey = `${leetcode || ''}_${codeforces || ''}_${codechef || ''}_${yearParam}`;
+  
+  const cached = profileCache.get(cacheKey);
+  const now = Date.now();
+  if (cached && (now - cached.timestamp < CACHE_TTL_MS)) {
+    console.log(`[Coding Controller] ⚡ Cache hit for key: ${cacheKey}`);
+    return res.json(cached.data);
+  }
+
+  console.log(`[Coding Controller] 🌐 Cache miss. Scraping fresh profiles for key: ${cacheKey}`);
 
   const result: Record<string, any> = {};
   const errors: Record<string, string> = {};
@@ -691,10 +710,17 @@ export async function getCodingProfile(req: Request, res: ExpressResponse) {
     ...(result.codechef?.recentSubmissions     || []),
   ];
 
-  return res.json({
+  const responseData = {
     success: true,
     data: result,
     recentSubmissions: allSubs.slice(0, 12),
     errors,
+  };
+
+  profileCache.set(cacheKey, {
+    timestamp: now,
+    data: responseData
   });
+
+  return res.json(responseData);
 }

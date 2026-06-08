@@ -1,6 +1,7 @@
 "use client";
 
-import { BrainCircuit, Home, Search, UserCheck, Settings, Bell, Sparkles, TrendingUp, LogOut } from "lucide-react";
+import { useState } from "react";
+import { BrainCircuit, Home, Search, UserCheck, Settings, Bell, Sparkles, TrendingUp, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -15,6 +16,7 @@ export default function RecruiterLayout({
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const recruiterName = user?.name || "Recruiter";
 
@@ -22,8 +24,56 @@ export default function RecruiterLayout({
     <RoleGuard allowedRoles={["recruiter"]}>
       <div className="flex h-screen overflow-hidden bg-background text-foreground font-sans">
         
-        {/* Sleek Floating Glass Sidebar */}
-        <aside className="w-20 hover:w-64 group/sidebar border-r border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-950/40 backdrop-blur-xl flex flex-col transition-all duration-300 ease-out z-30 shrink-0">
+        {/* Mobile Sidebar Overlay */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 md:hidden animate-fade-in"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        {/* Mobile Sidebar Drawer */}
+        <aside className={`fixed top-0 bottom-0 left-0 w-64 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-r border-zinc-200/50 dark:border-zinc-800/40 z-50 md:hidden flex flex-col transition-transform duration-300 ease-out shrink-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}>
+          <div className="h-20 flex items-center justify-between px-5 border-b border-zinc-200/50 dark:border-zinc-800/40 shrink-0">
+            <CareerPilotLogo size={32} colored={true} showText={true} />
+            <button 
+              onClick={() => setIsSidebarOpen(false)}
+              className="p-1.5 rounded-lg border border-zinc-250 dark:border-zinc-850 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <nav className="flex-1 py-6 px-3 space-y-1.5 overflow-y-auto">
+            <MobileNavItem href="/recruiter/dashboard" icon={<Home className="w-5 h-5" />} label="Dashboard" active={pathname === "/recruiter/dashboard"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/recruiter/search" icon={<Search className="w-5 h-5" />} label="Candidate Search" active={pathname === "/recruiter/search"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/recruiter/shortlist" icon={<UserCheck className="w-5 h-5" />} label="Shortlisted" active={pathname === "/recruiter/shortlist"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/recruiter/analytics" icon={<TrendingUp className="w-5 h-5" />} label="Analytics" active={pathname === "/recruiter/analytics"} onClick={() => setIsSidebarOpen(false)} />
+          </nav>
+
+          <div className="p-3 border-t border-zinc-200/50 dark:border-zinc-800/40 space-y-1">
+            <MobileNavItem href="/recruiter/settings" icon={<Settings className="w-5 h-5" />} label="Settings" active={pathname === "/recruiter/settings"} onClick={() => setIsSidebarOpen(false)} />
+            <button
+              onClick={() => {
+                setIsSidebarOpen(false);
+                logout();
+              }}
+              className="w-full flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all duration-300 text-rose-500 hover:bg-rose-500/10 border border-transparent cursor-pointer group/logout"
+            >
+              <div className="shrink-0 group-hover/logout:scale-110 transition-transform">
+                <LogOut className="w-5 h-5" />
+              </div>
+              <span className="font-semibold text-sm tracking-wide">
+                Sign Out
+              </span>
+            </button>
+          </div>
+        </aside>
+
+        {/* Sleek Floating Glass Sidebar (Desktop) */}
+        <aside className="hidden md:flex w-20 hover:w-64 group/sidebar border-r border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-950/40 backdrop-blur-xl flex flex-col transition-all duration-300 ease-out z-30 shrink-0">
           
           <div className="h-20 flex items-center px-4.5 border-b border-zinc-200/50 dark:border-zinc-800/40 overflow-hidden shrink-0">
             {/* Collapsed Sidebar Icon */}
@@ -63,16 +113,22 @@ export default function RecruiterLayout({
         <div className="flex-1 flex flex-col overflow-hidden relative">
           
           {/* Top Header Bar */}
-          <header className="h-20 flex items-center justify-between px-8 border-b border-zinc-200/50 dark:border-zinc-800/40 bg-white/20 dark:bg-zinc-950/20 backdrop-blur-md shrink-0 z-20">
+          <header className="h-20 flex items-center justify-between px-4 sm:px-8 border-b border-zinc-200/50 dark:border-zinc-800/40 bg-white/20 dark:bg-zinc-950/20 backdrop-blur-md shrink-0 z-20">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-purple-500 animate-pulse" />
-              <h1 className="text-sm font-semibold tracking-wide text-zinc-500 dark:text-zinc-400 uppercase">
+              <button 
+                onClick={() => setIsSidebarOpen(true)}
+                className="md:hidden p-2 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-all duration-300 mr-2 shrink-0 cursor-pointer"
+              >
+                <Menu className="w-5 h-5 text-zinc-650 dark:text-zinc-400" />
+              </button>
+              <Sparkles className="w-4 h-4 text-purple-500 animate-pulse shrink-0" />
+              <h1 className="text-xs sm:text-sm font-semibold tracking-wide text-zinc-500 dark:text-zinc-400 uppercase truncate">
                 Recruiter Portal / <span className="text-zinc-900 dark:text-white capitalize">{pathname.split("/").pop()?.replace(/-/g, " ") || "Overview"}</span>
               </h1>
             </div>
 
             <div className="flex items-center gap-4">
-              <button className="p-2.5 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 shadow-sm relative group cursor-pointer">
+              <button className="hidden sm:block p-2.5 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 shadow-sm relative group cursor-pointer">
                 <Bell className="w-5 h-5 text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-purple-500 rounded-full ring-2 ring-white dark:ring-zinc-900 animate-pulse"></span>
               </button>
@@ -92,7 +148,7 @@ export default function RecruiterLayout({
           </header>
 
           {/* Content Area */}
-          <main className="flex-1 overflow-y-auto p-8 relative z-10">
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 relative z-10">
             <div className="max-w-7xl mx-auto space-y-8">
               {children}
             </div>
@@ -125,3 +181,28 @@ function NavItem({ href, icon, label, active }: { href: string; icon: React.Reac
     </Link>
   );
 }
+
+function MobileNavItem({ href, icon, label, active, onClick }: { href: string; icon: React.ReactNode; label: string; active?: boolean; onClick?: () => void }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all duration-300 group/item relative ${
+        active
+          ? "bg-purple-500/10 text-purple-500 dark:text-purple-400 border border-purple-500/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_0_15px_rgba(168,85,247,0.1)]"
+          : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/30 hover:text-zinc-900 dark:hover:text-white border border-transparent"
+      }`}
+    >
+      <div className="shrink-0 group-hover/item:scale-110 transition-transform duration-300">
+        {icon}
+      </div>
+      <span className="font-semibold text-sm tracking-wide">
+        {label}
+      </span>
+      {active && (
+        <span className="absolute left-0 w-1 h-5 bg-purple-500 dark:bg-purple-400 rounded-r-full shadow-[0_0_10px_rgba(168,85,247,0.8)]"></span>
+      )}
+    </Link>
+  );
+}
+

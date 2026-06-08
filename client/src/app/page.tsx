@@ -15,7 +15,9 @@ import {
   Cpu, 
   Star,
   Layers,
-  ArrowUpRight
+  ArrowUpRight,
+  Menu,
+  X
 } from "lucide-react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -23,6 +25,7 @@ import CareerPilotLogo from "@/components/CareerPilotLogo";
 
 export default function LandingPage() {
   const [activeTab, setActiveTab] = useState("resume");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Bento Mockup Features Data
   const mockupData = {
@@ -70,7 +73,7 @@ export default function LandingPage() {
 
       {/* Floating Header */}
       <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-7xl z-50">
-        <div className="glass-panel rounded-2xl px-6 h-16 flex items-center justify-between border-zinc-200/40 dark:border-zinc-800/40 shadow-[0_8px_32px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] bg-white/60 dark:bg-zinc-950/60 backdrop-blur-md">
+        <div className="glass-panel rounded-2xl px-4 sm:px-6 h-16 flex items-center justify-between border-zinc-200/40 dark:border-zinc-800/40 shadow-[0_8px_32px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] bg-white/60 dark:bg-zinc-950/60 backdrop-blur-md">
           <CareerPilotLogo size={38} colored={true} showText={true} />
 
           <div className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-wider">
@@ -79,17 +82,66 @@ export default function LandingPage() {
             <Link href="#stats" className="text-zinc-500 dark:text-zinc-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">Stats</Link>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
             <Link href="/login" className="hidden sm:block text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-350 hover:text-indigo-500 dark:hover:text-indigo-450 transition-colors">
               Log in
             </Link>
-            <Link href="/signup" className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-tr from-indigo-500 to-purple-600 hover:from-indigo-650 hover:to-purple-750 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:shadow-[0_4px_15px_rgba(99,102,241,0.25)] hover:-translate-y-0.5 active:scale-95 transition-all">
+            <Link href="/signup" className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:shadow-[0_4px_15px_rgba(99,102,241,0.25)] hover:-translate-y-0.5 active:scale-95 transition-all">
+              Get Started
+            </Link>
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-all cursor-pointer"
+            >
+              {isMobileMenuOpen ? <X className="w-4 h-4 text-zinc-650 dark:text-zinc-400" /> : <Menu className="w-4 h-4 text-zinc-650 dark:text-zinc-400" />}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Landing Dropdown Menu */}
+      {isMobileMenuOpen && (
+        <div className="fixed top-22 left-1/2 -translate-x-1/2 w-[92%] z-50 animate-in slide-in-from-top-4 duration-300 md:hidden">
+          <div className="glass-panel rounded-2xl p-5 border-zinc-200/50 dark:border-zinc-800/40 bg-white/95 dark:bg-zinc-950/95 shadow-xl flex flex-col gap-4 text-center font-bold text-xs uppercase tracking-wider">
+            <Link 
+              href="#features" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-2.5 text-zinc-555 dark:text-zinc-400 hover:text-indigo-500 transition-colors border-b border-zinc-100 dark:border-zinc-900"
+            >
+              Features
+            </Link>
+            <Link 
+              href="#preview" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-2.5 text-zinc-555 dark:text-zinc-400 hover:text-indigo-500 transition-colors border-b border-zinc-100 dark:border-zinc-900"
+            >
+              Platform
+            </Link>
+            <Link 
+              href="#stats" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-2.5 text-zinc-555 dark:text-zinc-400 hover:text-indigo-500 transition-colors border-b border-zinc-100 dark:border-zinc-900"
+            >
+              Stats
+            </Link>
+            <Link 
+              href="/login" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-2.5 text-indigo-500 hover:text-indigo-650 transition-colors border-b border-zinc-100 dark:border-zinc-900"
+            >
+              Log in
+            </Link>
+            <Link 
+              href="/signup" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-3 bg-gradient-to-tr from-indigo-500 to-purple-650 text-white rounded-xl hover:shadow-lg transition-all"
+            >
               Get Started
             </Link>
           </div>
         </div>
-      </header>
+      )}
 
       {/* Hero Section */}
       <section className="relative pt-32 md:pt-44 pb-20 max-w-7xl mx-auto px-6">

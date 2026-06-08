@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { 
   Sparkles, Save, Download, Plus, Trash2, User, Briefcase, 
-  BookOpen, Code, Award, FileText, Check, AlertCircle, RefreshCw 
+  BookOpen, Code, Award, FileText, Check, AlertCircle, RefreshCw, Upload 
 } from "lucide-react";
 
 interface Experience {
@@ -63,6 +63,9 @@ export default function ResumeBuilder() {
   const [activeTab, setActiveTab] = useState<"personal" | "experience" | "projects" | "education" | "skills">("personal");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [parsing, setParsing] = useState(false);
+  const [enhancingSummary, setEnhancingSummary] = useState(false);
+  const [autoEnhancing, setAutoEnhancing] = useState(false);
   const [enhancingIndex, setEnhancingIndex] = useState<{ type: "experience" | "projects"; index: number } | null>(null);
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
 
@@ -196,6 +199,151 @@ export default function ResumeBuilder() {
     }
   };
 
+  // Upload and Parse Resume
+  const handleUploadResume = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setParsing(true);
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/resume/parse-enhancer", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (result.data) {
+        const parsed = result.data;
+        setResumeData({
+          personalInfo: parsed.personalInfo || { fullName: "", email: "", phone: "", location: "", website: "", github: "", linkedin: "", summary: "", avatar: "" },
+          experience: parsed.experience?.length ? parsed.experience : [{ company: "", role: "", location: "", startDate: "", endDate: "", description: "" }],
+          projects: parsed.projects?.length ? parsed.projects : [{ title: "", techStack: "", link: "", description: "" }],
+          education: parsed.education?.length ? parsed.education : [{ institution: "", degree: "", fieldOfStudy: "", startDate: "", endDate: "", gpa: "" }],
+          skills: {
+            languages: Array.isArray(parsed.skills?.languages) ? parsed.skills.languages.join(", ") : (parsed.skills?.languages || ""),
+            frameworks: Array.isArray(parsed.skills?.frameworks) ? parsed.skills.frameworks.join(", ") : (parsed.skills?.frameworks || ""),
+            databases: Array.isArray(parsed.skills?.databases) ? parsed.skills.databases.join(", ") : (parsed.skills?.databases || ""),
+            tools: Array.isArray(parsed.skills?.tools) ? parsed.skills.tools.join(", ") : (parsed.skills?.tools || ""),
+          },
+          template: resumeData.template || "modern",
+        });
+        alert("Resume uploaded, parsed and populating form successfully!");
+      }
+    } catch (err) {
+      console.error("Failed to parse resume:", err);
+      alert("Failed to parse resume. Please try again.");
+    } finally {
+      setParsing(false);
+      e.target.value = "";
+    }
+  };
+
+  // AI Enhance Professional Summary
+  const handleAIEnhanceSummary = async (text: string) => {
+    if (!text.trim()) return;
+    setEnhancingSummary(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/resume/enhance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const data = await response.json();
+      if (data.enhancedText) {
+        setResumeData(prev => ({
+          ...prev,
+          personalInfo: {
+            ...prev.personalInfo,
+            summary: data.enhancedText
+          }
+        }));
+      }
+    } catch (err) {
+      console.error("AI summary enhancement failed", err);
+      alert("AI summary enhancement failed. Please try again.");
+    } finally {
+      setEnhancingSummary(false);
+    }
+  };
+
+  // AI Auto-Enhance All Descriptions
+  const handleAutoEnhanceAll = async () => {
+    setAutoEnhancing(true);
+    try {
+      // 1. Enhance Summary
+      let updatedSummary = resumeData.personalInfo.summary;
+      if (updatedSummary.trim()) {
+        try {
+          const res = await fetch("http://localhost:5000/api/resume/enhance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: updatedSummary }),
+          });
+          const data = await res.json();
+          if (data.enhancedText) updatedSummary = data.enhancedText;
+        } catch (e) {
+          console.error("Failed to enhance summary:", e);
+        }
+      }
+
+      // 2. Enhance Experience Descriptions
+      const updatedExperience = await Promise.all(
+        resumeData.experience.map(async (exp) => {
+          if (!exp.description.trim()) return exp;
+          try {
+            const res = await fetch("http://localhost:5000/api/resume/enhance", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: exp.description }),
+            });
+            const data = await res.json();
+            return { ...exp, description: data.enhancedText || exp.description };
+          } catch (e) {
+            console.error("Failed to enhance experience description:", exp.company, e);
+            return exp;
+          }
+        })
+      );
+
+      // 3. Enhance Projects Descriptions
+      const updatedProjects = await Promise.all(
+        resumeData.projects.map(async (proj) => {
+          if (!proj.description.trim()) return proj;
+          try {
+            const res = await fetch("http://localhost:5000/api/resume/enhance", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: proj.description }),
+            });
+            const data = await res.json();
+            return { ...proj, description: data.enhancedText || proj.description };
+          } catch (e) {
+            console.error("Failed to enhance project description:", proj.title, e);
+            return proj;
+          }
+        })
+      );
+
+      setResumeData(prev => ({
+        ...prev,
+        personalInfo: { ...prev.personalInfo, summary: updatedSummary },
+        experience: updatedExperience,
+        projects: updatedProjects,
+      }));
+
+      alert("All resume descriptions and summary auto-enhanced successfully using Gemini!");
+    } catch (err) {
+      console.error("Auto-enhance failed", err);
+      alert("Failed to auto-enhance all sections. Please try again.");
+    } finally {
+      setAutoEnhancing(false);
+    }
+  };
+
   // List Modification Handlers
   const addExperience = () => {
     setResumeData({
@@ -324,25 +472,72 @@ export default function ResumeBuilder() {
       ` }} />
 
       {/* Header Panel */}
-      <header className="flex items-center justify-between print:hidden">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden border-b border-zinc-200/50 dark:border-zinc-800/40 pb-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">AI Resume Builder</h1>
-          <p className="text-zinc-550 dark:text-zinc-400 mt-1">Design an ATS-optimized software engineer resume with real-time AI impact optimization.</p>
+          <div className="flex items-center gap-2.5">
+            <span className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-655 flex items-center justify-center text-white shadow-md">
+              <Sparkles className="w-4 h-4 animate-pulse" />
+            </span>
+            <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-tr from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500 bg-clip-text text-transparent">Resume Enhancer</h1>
+          </div>
+          <p className="text-zinc-550 dark:text-zinc-400 mt-1 text-sm">Submit your fully updated resume format to generate enhancements for your job application success.</p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <input
+            type="file"
+            id="ai-resume-upload"
+            accept=".pdf,.docx"
+            onChange={handleUploadResume}
+            className="hidden"
+          />
+          <label
+            htmlFor="ai-resume-upload"
+            className="flex items-center gap-2 px-5 py-3 bg-indigo-500/10 hover:bg-indigo-500/15 border border-indigo-500/20 hover:border-indigo-500/35 text-indigo-500 dark:text-indigo-400 rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer transition-all active:scale-95 shadow-sm"
+          >
+            {parsing ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                Parsing & Enhancing...
+              </>
+            ) : (
+              <>
+                <Upload className="w-4 h-4" />
+                Upload Resume
+              </>
+            )}
+          </label>
+
+          <button
+            onClick={handleAutoEnhanceAll}
+            disabled={autoEnhancing}
+            className="flex items-center gap-2 px-5 py-3 bg-purple-500/10 hover:bg-purple-500/15 border border-purple-500/20 hover:border-purple-500/35 text-purple-500 dark:text-purple-400 rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer transition-all active:scale-95 disabled:opacity-50 shadow-sm"
+          >
+            {autoEnhancing ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                Auto-Enhancing...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 animate-pulse" />
+                AI Auto-Enhance All
+              </>
+            )}
+          </button>
+
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl font-bold text-xs uppercase tracking-wide cursor-pointer transition-all active:scale-95"
+            className="flex items-center gap-2 px-5 py-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer transition-all active:scale-95"
           >
             {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            Save Progress
+            Save
           </button>
           
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-xs uppercase tracking-wide cursor-pointer shadow-[0_4px_15px_rgba(99,102,241,0.25)] hover:shadow-[0_4px_20px_rgba(99,102,241,0.35)] transition-all active:scale-95"
+            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer shadow-[0_4px_15px_rgba(99,102,241,0.25)] hover:shadow-[0_4px_20px_rgba(99,102,241,0.35)] transition-all active:scale-95"
           >
             <Download className="w-4 h-4" />
             Download PDF
@@ -368,459 +563,498 @@ export default function ResumeBuilder() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Form Editor Panel */}
-        <div className="lg:col-span-6 space-y-6 print:hidden">
-          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
+        <div className="lg:col-span-6 space-y-6 print:hidden max-h-[calc(100vh-200px)] overflow-y-auto pr-2 pb-8">
+          
+          {/* 1. Personal Details */}
+          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
+            <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+              <User className="w-4.5 h-4.5 text-indigo-500" />
+              Personal Information
+            </h3>
             
-            {/* Form Section Selector Tabs */}
-            <div className="flex border-b border-zinc-200/50 dark:border-zinc-800/40 pb-4 overflow-x-auto gap-2">
-              <TabButton active={activeTab === "personal"} onClick={() => setActiveTab("personal")} icon={<User className="w-4 h-4" />} label="Personal" />
-              <TabButton active={activeTab === "experience"} onClick={() => setActiveTab("experience")} icon={<Briefcase className="w-4 h-4" />} label="Experience" />
-              <TabButton active={activeTab === "projects"} onClick={() => setActiveTab("projects")} icon={<Sparkles className="w-4 h-4" />} label="Projects" />
-              <TabButton active={activeTab === "education"} onClick={() => setActiveTab("education")} icon={<BookOpen className="w-4 h-4" />} label="Education" />
-              <TabButton active={activeTab === "skills"} onClick={() => setActiveTab("skills")} icon={<Code className="w-4 h-4" />} label="Skills" />
-            </div>
-
-            {/* TAB CONTENT */}
-
-            {/* 1. Personal Details */}
-            {activeTab === "personal" && (
-              <div className="space-y-4 animate-fade-in">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Full Name</label>
-                    <input
-                      type="text"
-                      value={resumeData.personalInfo.fullName}
-                      onChange={(e) => handlePersonalInfoChange("fullName", e.target.value)}
-                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                      placeholder="Alex Mercer"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Email Address</label>
-                    <input
-                      type="email"
-                      value={resumeData.personalInfo.email}
-                      onChange={(e) => handlePersonalInfoChange("email", e.target.value)}
-                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                      placeholder="alex.mercer@gmail.com"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Phone Number</label>
-                    <input
-                      type="text"
-                      value={resumeData.personalInfo.phone}
-                      onChange={(e) => handlePersonalInfoChange("phone", e.target.value)}
-                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                      placeholder="+1 (555) 019-2834"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Location</label>
-                    <input
-                      type="text"
-                      value={resumeData.personalInfo.location}
-                      onChange={(e) => handlePersonalInfoChange("location", e.target.value)}
-                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                      placeholder="San Francisco, CA"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Website</label>
-                    <input
-                      type="text"
-                      value={resumeData.personalInfo.website}
-                      onChange={(e) => handlePersonalInfoChange("website", e.target.value)}
-                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                      placeholder="alexmercer.dev"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">GitHub Link</label>
-                    <input
-                      type="text"
-                      value={resumeData.personalInfo.github}
-                      onChange={(e) => handlePersonalInfoChange("github", e.target.value)}
-                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                      placeholder="github.com/alexmercer"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">LinkedIn Link</label>
-                    <input
-                      type="text"
-                      value={resumeData.personalInfo.linkedin}
-                      onChange={(e) => handlePersonalInfoChange("linkedin", e.target.value)}
-                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                      placeholder="linkedin.com/in/alexmercer"
-                    />
-                  </div>
-                </div>
-
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Profile Photo URL (Optional)</label>
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-405">Full Name</label>
                   <input
                     type="text"
-                    value={resumeData.personalInfo.avatar || ""}
-                    onChange={(e) => handlePersonalInfoChange("avatar", e.target.value)}
+                    value={resumeData.personalInfo.fullName}
+                    onChange={(e) => handlePersonalInfoChange("fullName", e.target.value)}
                     className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                    placeholder="https://images.unsplash.com/... or leave blank for initials avatar"
+                    placeholder="Alex Mercer"
                   />
                 </div>
-
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Professional Summary</label>
-                  <textarea
-                    rows={4}
-                    value={resumeData.personalInfo.summary}
-                    onChange={(e) => handlePersonalInfoChange("summary", e.target.value)}
-                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all resize-none leading-relaxed"
-                    placeholder="Results-driven full-stack software engineer with 2+ years of experience building secure web architectures and cloud microservices. Passionate about AI integrations and RAG search indexation frameworks..."
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-405">Email Address</label>
+                  <input
+                    type="email"
+                    value={resumeData.personalInfo.email}
+                    onChange={(e) => handlePersonalInfoChange("email", e.target.value)}
+                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                    placeholder="alex.mercer@gmail.com"
                   />
                 </div>
               </div>
-            )}
 
-            {/* 2. Professional Experience */}
-            {activeTab === "experience" && (
-              <div className="space-y-6 animate-fade-in">
-                {resumeData.experience.map((exp, idx) => (
-                  <div key={idx} className="p-5 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-900/20 relative space-y-4">
-                    <button 
-                      onClick={() => removeExperience(idx)}
-                      className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    
-                    <h4 className="text-xs font-black uppercase text-indigo-500">Position #{idx + 1}</h4>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Company Name</label>
-                        <input
-                          type="text"
-                          value={exp.company}
-                          onChange={(e) => handleExperienceChange(idx, "company", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="Uber"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Job Title / Role</label>
-                        <input
-                          type="text"
-                          value={exp.role}
-                          onChange={(e) => handleExperienceChange(idx, "role", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="Software Engineer Intern"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Location</label>
-                        <input
-                          type="text"
-                          value={exp.location}
-                          onChange={(e) => handleExperienceChange(idx, "location", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="Seattle, WA"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Start Date</label>
-                        <input
-                          type="text"
-                          value={exp.startDate}
-                          onChange={(e) => handleExperienceChange(idx, "startDate", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="May 2024"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">End Date</label>
-                        <input
-                          type="text"
-                          value={exp.endDate}
-                          onChange={(e) => handleExperienceChange(idx, "endDate", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="Aug 2024 (or Present)"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-1 relative">
-                      <div className="flex items-center justify-between">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Description / Key Achievements</label>
-                        <button
-                          type="button"
-                          disabled={!exp.description.trim() || enhancingIndex !== null}
-                          onClick={() => handleAIEnhance("experience", idx, exp.description)}
-                          className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-500 hover:text-indigo-600 disabled:opacity-50 disabled:pointer-events-none cursor-pointer transition-colors"
-                        >
-                          {enhancingIndex?.type === "experience" && enhancingIndex.index === idx ? (
-                            <>
-                              <RefreshCw className="w-3 h-3 animate-spin" />
-                              Optimizing...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-3 h-3" />
-                              AI Optimize (X-Y-Z)
-                            </>
-                          )}
-                        </button>
-                      </div>
-                      <textarea
-                        rows={3}
-                        value={exp.description}
-                        onChange={(e) => handleExperienceChange(idx, "description", e.target.value)}
-                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all resize-none leading-relaxed"
-                        placeholder="Optimized matching backend algorithm. Reduced dispatch latency of riders. Used Node.js and Redis cache."
-                      />
-                    </div>
-                  </div>
-                ))}
-
-                <button 
-                  onClick={addExperience}
-                  className="w-full py-3.5 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/40 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Another Experience
-                </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-405">Phone Number</label>
+                  <input
+                    type="text"
+                    value={resumeData.personalInfo.phone}
+                    onChange={(e) => handlePersonalInfoChange("phone", e.target.value)}
+                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                    placeholder="+1 (555) 019-2834"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-405">Location</label>
+                  <input
+                    type="text"
+                    value={resumeData.personalInfo.location}
+                    onChange={(e) => handlePersonalInfoChange("location", e.target.value)}
+                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                    placeholder="San Francisco, CA"
+                  />
+                </div>
               </div>
-            )}
 
-            {/* 3. Personal Projects */}
-            {activeTab === "projects" && (
-              <div className="space-y-6 animate-fade-in">
-                {resumeData.projects.map((proj, idx) => (
-                  <div key={idx} className="p-5 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-900/20 relative space-y-4">
-                    <button 
-                      onClick={() => removeProject(idx)}
-                      className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    
-                    <h4 className="text-xs font-black uppercase text-indigo-500">Project #{idx + 1}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-405">Website</label>
+                  <input
+                    type="text"
+                    value={resumeData.personalInfo.website}
+                    onChange={(e) => handlePersonalInfoChange("website", e.target.value)}
+                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                    placeholder="alexmercer.dev"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-405">GitHub Link</label>
+                  <input
+                    type="text"
+                    value={resumeData.personalInfo.github}
+                    onChange={(e) => handlePersonalInfoChange("github", e.target.value)}
+                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                    placeholder="github.com/alexmercer"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-405">LinkedIn Link</label>
+                  <input
+                    type="text"
+                    value={resumeData.personalInfo.linkedin}
+                    onChange={(e) => handlePersonalInfoChange("linkedin", e.target.value)}
+                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                    placeholder="linkedin.com/in/alexmercer"
+                  />
+                </div>
+              </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Project Title</label>
-                        <input
-                          type="text"
-                          value={proj.title}
-                          onChange={(e) => handleProjectChange(idx, "title", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="Student AI Twin"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Tech Stack / Core Tools</label>
-                        <input
-                          type="text"
-                          value={proj.techStack}
-                          onChange={(e) => handleProjectChange(idx, "techStack", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="React, Next.js, Gemini API, Node.js"
-                        />
-                      </div>
-                    </div>
+              <div className="space-y-1">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-405">Profile Photo URL (Optional)</label>
+                <input
+                  type="text"
+                  value={resumeData.personalInfo.avatar || ""}
+                  onChange={(e) => handlePersonalInfoChange("avatar", e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                  placeholder="https://images.unsplash.com/... or leave blank for initials avatar"
+                />
+              </div>
+            </div>
+          </div>
 
+          {/* 2. Professional Summary */}
+          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
+            <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
+              <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+                <FileText className="w-4.5 h-4.5 text-indigo-500" />
+                Professional Summary
+              </h3>
+              <button
+                type="button"
+                disabled={!resumeData.personalInfo.summary.trim() || enhancingSummary}
+                onClick={() => handleAIEnhanceSummary(resumeData.personalInfo.summary)}
+                className="inline-flex items-center gap-1.5 text-xs font-bold disabled:opacity-50 disabled:pointer-events-none cursor-pointer transition-colors bg-indigo-500/10 hover:bg-indigo-500/15 border border-indigo-500/20 hover:border-indigo-500/35 px-3 py-1.5 rounded-lg text-indigo-500 dark:text-indigo-400"
+              >
+                {enhancingSummary ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    Enhancing...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+                    AI Enhance
+                  </>
+                )}
+              </button>
+            </div>
+            
+            <div className="space-y-1">
+              <textarea
+                rows={4}
+                value={resumeData.personalInfo.summary}
+                onChange={(e) => handlePersonalInfoChange("summary", e.target.value)}
+                className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all resize-none leading-relaxed"
+                placeholder="Results-driven full-stack software engineer with 2+ years of experience building secure web architectures and cloud microservices. Passionate about AI integrations and RAG search indexation frameworks..."
+              />
+            </div>
+          </div>
+
+          {/* 3. Professional Experience */}
+          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
+            <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
+              <Briefcase className="w-4.5 h-4.5 text-indigo-500" />
+              Work Experience
+            </h3>
+            
+            <div className="space-y-6 animate-fade-in">
+              {resumeData.experience.map((exp, idx) => (
+                <div key={idx} className="p-5 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-900/20 relative space-y-4">
+                  <button 
+                    onClick={() => removeExperience(idx)}
+                    className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  
+                  <h4 className="text-xs font-black uppercase text-indigo-500">Position #{idx + 1}</h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Project Link (Optional)</label>
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-450">Company Name</label>
                       <input
                         type="text"
-                        value={proj.link}
-                        onChange={(e) => handleProjectChange(idx, "link", e.target.value)}
+                        value={exp.company}
+                        onChange={(e) => handleExperienceChange(idx, "company", e.target.value)}
                         className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                        placeholder="github.com/alexmercer/ai-twin"
+                        placeholder="Uber"
                       />
                     </div>
-
-                    <div className="space-y-1 relative">
-                      <div className="flex items-center justify-between">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Description / Deliverables</label>
-                        <button
-                          type="button"
-                          disabled={!proj.description.trim() || enhancingIndex !== null}
-                          onClick={() => handleAIEnhance("projects", idx, proj.description)}
-                          className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-500 hover:text-indigo-600 disabled:opacity-50 disabled:pointer-events-none cursor-pointer transition-colors"
-                        >
-                          {enhancingIndex?.type === "projects" && enhancingIndex.index === idx ? (
-                            <>
-                              <RefreshCw className="w-3 h-3 animate-spin" />
-                              Optimizing...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-3 h-3" />
-                              AI Optimize (X-Y-Z)
-                            </>
-                          )}
-                        </button>
-                      </div>
-                      <textarea
-                        rows={3}
-                        value={proj.description}
-                        onChange={(e) => handleProjectChange(idx, "description", e.target.value)}
-                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all resize-none leading-relaxed"
-                        placeholder="Developed a platform matching student profiles with recruiters. Integrated chatbot endpoints using Gemini models."
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Job Title / Role</label>
+                      <input
+                        type="text"
+                        value={exp.role}
+                        onChange={(e) => handleExperienceChange(idx, "role", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="Software Engineer Intern"
                       />
                     </div>
                   </div>
-                ))}
 
-                <button 
-                  onClick={addProject}
-                  className="w-full py-3.5 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/40 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Another Project
-                </button>
-              </div>
-            )}
-
-            {/* 4. Education */}
-            {activeTab === "education" && (
-              <div className="space-y-6 animate-fade-in">
-                {resumeData.education.map((edu, idx) => (
-                  <div key={idx} className="p-5 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-900/20 relative space-y-4">
-                    <button 
-                      onClick={() => removeEducation(idx)}
-                      className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    
-                    <h4 className="text-xs font-black uppercase text-indigo-500">Education #{idx + 1}</h4>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Institution / University</label>
-                        <input
-                          type="text"
-                          value={edu.institution}
-                          onChange={(e) => handleEducationChange(idx, "institution", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="Stanford University"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Degree / Qualification</label>
-                        <input
-                          type="text"
-                          value={edu.degree}
-                          onChange={(e) => handleEducationChange(idx, "degree", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="Bachelor of Science"
-                        />
-                      </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Location</label>
+                      <input
+                        type="text"
+                        value={exp.location}
+                        onChange={(e) => handleExperienceChange(idx, "location", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="Seattle, WA"
+                      />
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      <div className="col-span-2 space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Field of Study / Major</label>
-                        <input
-                          type="text"
-                          value={edu.fieldOfStudy}
-                          onChange={(e) => handleEducationChange(idx, "fieldOfStudy", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="Computer Science"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Graduation Year</label>
-                        <input
-                          type="text"
-                          value={edu.endDate}
-                          onChange={(e) => handleEducationChange(idx, "endDate", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="2025"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">GPA / Grades</label>
-                        <input
-                          type="text"
-                          value={edu.gpa}
-                          onChange={(e) => handleEducationChange(idx, "gpa", e.target.value)}
-                          className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                          placeholder="3.8 / 4.0"
-                        />
-                      </div>
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Start Date</label>
+                      <input
+                        type="text"
+                        value={exp.startDate}
+                        onChange={(e) => handleExperienceChange(idx, "startDate", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="May 2024"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">End Date</label>
+                      <input
+                        type="text"
+                        value={exp.endDate}
+                        onChange={(e) => handleExperienceChange(idx, "endDate", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="Aug 2024 (or Present)"
+                      />
                     </div>
                   </div>
-                ))}
 
-                <button 
-                  onClick={addEducation}
-                  className="w-full py-3.5 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/40 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Education Entry
-                </button>
-              </div>
-            )}
+                  <div className="space-y-1 relative">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Description / Key Achievements</label>
+                      <button
+                        type="button"
+                        disabled={!exp.description.trim() || enhancingIndex !== null}
+                        onClick={() => handleAIEnhance("experience", idx, exp.description)}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold disabled:opacity-50 disabled:pointer-events-none cursor-pointer transition-colors bg-indigo-500/10 hover:bg-indigo-500/15 border border-indigo-500/20 hover:border-indigo-500/35 px-3 py-1 rounded-lg text-indigo-500 dark:text-indigo-400"
+                      >
+                        {enhancingIndex?.type === "experience" && enhancingIndex.index === idx ? (
+                          <>
+                            <RefreshCw className="w-3 h-3 animate-spin" />
+                            Optimizing...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3 h-3" />
+                            AI Optimize
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <textarea
+                      rows={3}
+                      value={exp.description}
+                      onChange={(e) => handleExperienceChange(idx, "description", e.target.value)}
+                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all resize-none leading-relaxed"
+                      placeholder="Optimized matching backend algorithm. Reduced dispatch latency of riders. Used Node.js and Redis cache."
+                    />
+                  </div>
+                </div>
+              ))}
 
-            {/* 5. Core Skills */}
-            {activeTab === "skills" && (
-              <div className="space-y-4 animate-fade-in">
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Languages (comma-separated)</label>
-                  <input
-                    type="text"
-                    value={resumeData.skills.languages}
-                    onChange={(e) => handleSkillsChange("languages", e.target.value)}
-                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                    placeholder="TypeScript, Python, Go, Rust, C++"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Frameworks / Libraries (comma-separated)</label>
-                  <input
-                    type="text"
-                    value={resumeData.skills.frameworks}
-                    onChange={(e) => handleSkillsChange("frameworks", e.target.value)}
-                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                    placeholder="React, Next.js, Node.js, Express, FastAPI"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Databases / Caches (comma-separated)</label>
-                  <input
-                    type="text"
-                    value={resumeData.skills.databases}
-                    onChange={(e) => handleSkillsChange("databases", e.target.value)}
-                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                    placeholder="PostgreSQL, MongoDB, Redis, Cassandra"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-400">Developer Tools (comma-separated)</label>
-                  <input
-                    type="text"
-                    value={resumeData.skills.tools}
-                    onChange={(e) => handleSkillsChange("tools", e.target.value)}
-                    className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
-                    placeholder="Docker, Kubernetes, Git, AWS (S3, Lambda), CI/CD"
-                  />
-                </div>
-              </div>
-            )}
-            
+              <button 
+                onClick={addExperience}
+                className="w-full py-3.5 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/40 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+              >
+                <Plus className="w-4 h-4" />
+                Add Experience
+              </button>
+            </div>
           </div>
+
+          {/* 4. Projects */}
+          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
+            <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
+              <Sparkles className="w-4.5 h-4.5 text-indigo-500" />
+              Projects
+            </h3>
+            
+            <div className="space-y-6 animate-fade-in">
+              {resumeData.projects.map((proj, idx) => (
+                <div key={idx} className="p-5 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-900/20 relative space-y-4">
+                  <button 
+                    onClick={() => removeProject(idx)}
+                    className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  
+                  <h4 className="text-xs font-black uppercase text-indigo-500">Project #{idx + 1}</h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Project Title</label>
+                      <input
+                        type="text"
+                        value={proj.title}
+                        onChange={(e) => handleProjectChange(idx, "title", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="Student AI Twin"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Tech Stack / Core Tools</label>
+                      <input
+                        type="text"
+                        value={proj.techStack}
+                        onChange={(e) => handleProjectChange(idx, "techStack", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="React, Next.js, Gemini API, Node.js"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Project Link (Optional)</label>
+                    <input
+                      type="text"
+                      value={proj.link}
+                      onChange={(e) => handleProjectChange(idx, "link", e.target.value)}
+                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                      placeholder="github.com/alexmercer/ai-twin"
+                    />
+                  </div>
+
+                  <div className="space-y-1 relative">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Description / Deliverables</label>
+                      <button
+                        type="button"
+                        disabled={!proj.description.trim() || enhancingIndex !== null}
+                        onClick={() => handleAIEnhance("projects", idx, proj.description)}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold disabled:opacity-50 disabled:pointer-events-none cursor-pointer transition-colors bg-indigo-500/10 hover:bg-indigo-500/15 border border-indigo-500/20 hover:border-indigo-500/35 px-3 py-1 rounded-lg text-indigo-500 dark:text-indigo-400"
+                      >
+                        {enhancingIndex?.type === "projects" && enhancingIndex.index === idx ? (
+                          <>
+                            <RefreshCw className="w-3 h-3 animate-spin" />
+                            Optimizing...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3 h-3" />
+                            AI Optimize
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <textarea
+                      rows={3}
+                      value={proj.description}
+                      onChange={(e) => handleProjectChange(idx, "description", e.target.value)}
+                      className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all resize-none leading-relaxed"
+                      placeholder="Developed a platform matching student profiles with recruiters. Integrated chatbot endpoints using Gemini models."
+                    />
+                  </div>
+                </div>
+              ))}
+
+              <button 
+                onClick={addProject}
+                className="w-full py-3.5 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/40 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+              >
+                <Plus className="w-4 h-4" />
+                Add Project
+              </button>
+            </div>
+          </div>
+
+          {/* 5. Education */}
+          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
+            <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
+              <BookOpen className="w-4.5 h-4.5 text-indigo-500" />
+              Education
+            </h3>
+            
+            <div className="space-y-6 animate-fade-in">
+              {resumeData.education.map((edu, idx) => (
+                <div key={idx} className="p-5 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-900/20 relative space-y-4">
+                  <button 
+                    onClick={() => removeEducation(idx)}
+                    className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  
+                  <h4 className="text-xs font-black uppercase text-indigo-500">Education #{idx + 1}</h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Institution / University</label>
+                      <input
+                        type="text"
+                        value={edu.institution}
+                        onChange={(e) => handleEducationChange(idx, "institution", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="Stanford University"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Degree / Qualification</label>
+                      <input
+                        type="text"
+                        value={edu.degree}
+                        onChange={(e) => handleEducationChange(idx, "degree", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="Bachelor of Science"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="col-span-2 space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Field of Study / Major</label>
+                      <input
+                        type="text"
+                        value={edu.fieldOfStudy}
+                        onChange={(e) => handleEducationChange(idx, "fieldOfStudy", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="Computer Science"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Graduation Year</label>
+                      <input
+                        type="text"
+                        value={edu.endDate}
+                        onChange={(e) => handleEducationChange(idx, "endDate", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="2025"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">GPA / Grades</label>
+                      <input
+                        type="text"
+                        value={edu.gpa}
+                        onChange={(e) => handleEducationChange(idx, "gpa", e.target.value)}
+                        className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                        placeholder="3.8 / 4.0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <button 
+                onClick={addEducation}
+                className="w-full py-3.5 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/40 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+              >
+                <Plus className="w-4 h-4" />
+                Add Education Entry
+              </button>
+            </div>
+          </div>
+
+          {/* 6. Core Skills */}
+          <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
+            <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
+              <Code className="w-4.5 h-4.5 text-indigo-500" />
+              Core Skills
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Languages (comma-separated)</label>
+                <input
+                  type="text"
+                  value={resumeData.skills.languages}
+                  onChange={(e) => handleSkillsChange("languages", e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                  placeholder="TypeScript, Python, Go, Rust, C++"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Frameworks / Libraries (comma-separated)</label>
+                <input
+                  type="text"
+                  value={resumeData.skills.frameworks}
+                  onChange={(e) => handleSkillsChange("frameworks", e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                  placeholder="React, Next.js, Node.js, Express, FastAPI"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Databases / Caches (comma-separated)</label>
+                <input
+                  type="text"
+                  value={resumeData.skills.databases}
+                  onChange={(e) => handleSkillsChange("databases", e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                  placeholder="PostgreSQL, MongoDB, Redis, Cassandra"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-455">Developer Tools (comma-separated)</label>
+                <input
+                  type="text"
+                  value={resumeData.skills.tools}
+                  onChange={(e) => handleSkillsChange("tools", e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-805 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all"
+                  placeholder="Docker, Kubernetes, Git, AWS (S3, Lambda), CI/CD"
+                />
+              </div>
+            </div>
+          </div>
+
         </div>
 
         {/* Right Live Preview Panel */}

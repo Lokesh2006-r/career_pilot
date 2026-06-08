@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { Sliders, KeyRound, Shield, Database, CheckCircle, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Sliders, KeyRound, Shield, Database, CheckCircle, RefreshCw, Eye, EyeOff } from "lucide-react";
 
 export default function AdminSettings() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [showOpenAIKey, setShowOpenAIKey] = useState(false);
+  const [showFirebaseKey, setShowFirebaseKey] = useState(false);
+
   const [apiKeys, setApiKeys] = useState({
-    openai: "••••••••••••••••••••••••••••••••",
-    firebase: "••••••••••••••••••••••••••••••••",
+    openai: "",
+    firebase: "",
     ragEngine: "https://rag.student-twin-engine.ai/v1"
   });
 
@@ -18,6 +21,24 @@ export default function AdminSettings() {
     logRetention: "30 Days"
   });
 
+  // Load saved settings from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("admin_settings");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.apiKeys) {
+          setApiKeys(prev => ({ ...prev, ...parsed.apiKeys }));
+        }
+        if (parsed.platformConfig) {
+          setPlatformConfig(prev => ({ ...prev, ...parsed.platformConfig }));
+        }
+      } catch (e) {
+        console.error("Failed to parse admin settings:", e);
+      }
+    }
+  }, []);
+
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
     setShowToast(true);
@@ -25,6 +46,8 @@ export default function AdminSettings() {
   };
 
   const handleSaveSettings = () => {
+    const payload = { apiKeys, platformConfig };
+    localStorage.setItem("admin_settings", JSON.stringify(payload));
     triggerToast("Platform master settings updated successfully!");
   };
 
@@ -93,6 +116,20 @@ export default function AdminSettings() {
                   <option value="Locked">Locked (Invite only)</option>
                 </select>
               </div>
+
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-550">System Logs Retention Period</label>
+                <select
+                  value={platformConfig.logRetention}
+                  onChange={(e) => setPlatformConfig({ ...platformConfig, logRetention: e.target.value })}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-rose-550 transition-all cursor-pointer"
+                >
+                  <option value="7 Days">7 Days</option>
+                  <option value="30 Days">30 Days</option>
+                  <option value="90 Days">90 Days</option>
+                  <option value="Indefinite">Indefinite Report Retention</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -106,22 +143,42 @@ export default function AdminSettings() {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-550">OpenAI API Key Token</label>
-                <input
-                  type="password"
-                  value={apiKeys.openai}
-                  onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
-                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-rose-550"
-                />
+                <div className="relative">
+                  <input
+                    type={showOpenAIKey ? "text" : "password"}
+                    value={apiKeys.openai}
+                    onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
+                    placeholder="sk-proj-..."
+                    className="w-full pl-4 pr-11 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-rose-550"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowOpenAIKey(!showOpenAIKey)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200 transition-colors"
+                  >
+                    {showOpenAIKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-550">Firebase Configuration Token</label>
-                <input
-                  type="password"
-                  value={apiKeys.firebase}
-                  onChange={(e) => setApiKeys({ ...apiKeys, firebase: e.target.value })}
-                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-rose-550"
-                />
+                <div className="relative">
+                  <input
+                    type={showFirebaseKey ? "text" : "password"}
+                    value={apiKeys.firebase}
+                    onChange={(e) => setApiKeys({ ...apiKeys, firebase: e.target.value })}
+                    placeholder="AIzaSy..."
+                    className="w-full pl-4 pr-11 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-rose-550"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowFirebaseKey(!showFirebaseKey)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200 transition-colors"
+                  >
+                    {showFirebaseKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

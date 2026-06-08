@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { uploadResume, saveBuiltResume, loadBuiltResume, enhanceResumeText, getLatestResume } from '../controllers/resume.controller';
+import { uploadResume, saveBuiltResume, loadBuiltResume, enhanceResumeText, getLatestResume, parseResumeForEnhancer } from '../controllers/resume.controller';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/upload', upload.single('resume'), uploadResume);
+router.post('/parse-enhancer', upload.single('resume'), parseResumeForEnhancer);
 router.get('/latest/:userId', getLatestResume);
 router.post('/build/save', saveBuiltResume);
 router.get('/build/load/:userId', loadBuiltResume);

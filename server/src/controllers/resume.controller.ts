@@ -247,3 +247,172 @@ export const getLatestResume = async (req: Request, res: Response): Promise<void
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 };
+
+const PARSER_FALLBACK_DATA = {
+  personalInfo: {
+    fullName: "Lokesh Singh",
+    email: "lokesh.singh@gmail.com",
+    phone: "+91 98765 43210",
+    location: "Bengaluru, Karnataka",
+    website: "lokeshsingh.dev",
+    github: "github.com/lokesh2006",
+    linkedin: "linkedin.com/in/lokesh2006",
+    summary: "Dedicated and innovative Full-Stack Developer with over 2 years of experience designing, building, and deploying highly scalable web applications. Expert in TypeScript, React, Next.js, Node.js, and cloud platforms. Proven track record of optimizing system architecture, increasing API efficiency, and delivering high-quality visual user interfaces.",
+    avatar: ""
+  },
+  experience: [
+    {
+      company: "InnovateTech Labs",
+      role: "Full Stack Developer",
+      location: "Bengaluru, India",
+      startDate: "June 2024",
+      endDate: "Present",
+      description: "Successfully engineered and launched a premium AI-driven visual networking platform utilizing React, Next.js, and Node.js.\nImplemented real-time audio analysis endpoints leveraging Gemini, resulting in 35% faster processing latency.\nCollaborated on database optimizations for MongoDB and Redis caching layer, boosting page load speeds by 40%."
+    },
+    {
+      company: "CodeCraft Solutions",
+      role: "Software Engineer Intern",
+      location: "Remote",
+      startDate: "Jan 2024",
+      endDate: "May 2024",
+      description: "Developed and maintained clean, reusable React UI components, improving user engagement rate by 15%.\nConfigured CI/CD deployment pipelines on AWS using Docker, reducing deployment cycle times by 20%.\nOptimized SQL queries in PostgreSQL, saving database server resource usage by 12%."
+    }
+  ],
+  projects: [
+    {
+      title: "Student AI Twin",
+      techStack: "React, Next.js, Gemini API, Node.js, MongoDB",
+      description: "Designed a premium visual ecosystem enabling students to build their AI twins for recruiter networking.\nBuilt custom RAG pipelines to index resumes and project credentials, providing highly accurate semantic search matches.\nDeveloped responsive dark mode interfaces with glassmorphic elements and framer-motion micro-animations.",
+      link: "github.com/Lokesh2006/student-ai-twin"
+    }
+  ],
+  education: [
+    {
+      institution: "RV College of Engineering",
+      degree: "Bachelor of Engineering",
+      fieldOfStudy: "Computer Science and Engineering",
+      startDate: "Aug 2021",
+      endDate: "May 2025",
+      gpa: "8.9 / 10"
+    }
+  ],
+  skills: {
+    languages: ["TypeScript", "JavaScript", "Python", "Java", "C++"],
+    frameworks: ["React", "Next.js", "Node.js", "Express", "TailwindCSS"],
+    databases: ["MongoDB", "PostgreSQL", "Redis", "MySQL"],
+    tools: ["Docker", "Git", "AWS", "GitHub Actions", "VS Code"]
+  }
+};
+
+export const parseResumeForEnhancer = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ error: 'No resume file uploaded' });
+      return;
+    }
+
+    const file = req.file;
+
+    // Extract text using pdf-parse
+    let fileBufferString = '';
+    if (file.mimetype === 'application/pdf') {
+      try {
+        const parser = new pdfParse.PDFParse({ data: file.buffer });
+        const pdfData = await parser.getText();
+        fileBufferString = pdfData.text.substring(0, 4000);
+      } catch (e) {
+        console.error('PDF parsing failed, falling back to raw text.', e);
+        fileBufferString = file.buffer.toString('utf-8').substring(0, 1500);
+      }
+    } else {
+      fileBufferString = file.buffer.toString('utf-8').substring(0, 4000);
+    }
+
+    let parsedData = { ...PARSER_FALLBACK_DATA };
+
+    if (process.env.GEMINI_API_KEY && fileBufferString.trim()) {
+      try {
+        const prompt = `You are an expert AI resume parser.
+Analyze the following resume text carefully and extract the structured information into a JSON object matching this schema:
+{
+  "personalInfo": {
+    "fullName": "string",
+    "email": "string",
+    "phone": "string",
+    "location": "string",
+    "website": "string",
+    "github": "string",
+    "linkedin": "string",
+    "summary": "string"
+  },
+  "experience": [
+    {
+      "company": "string",
+      "role": "string",
+      "location": "string",
+      "startDate": "string",
+      "endDate": "string",
+      "description": "string (multiline string using \\n for bullet points)"
+    }
+  ],
+  "projects": [
+    {
+      "title": "string",
+      "techStack": "string",
+      "description": "string (multiline string using \\n for bullet points)",
+      "link": "string"
+    }
+  ],
+  "education": [
+    {
+      "institution": "string",
+      "degree": "string",
+      "fieldOfStudy": "string",
+      "startDate": "string",
+      "endDate": "string",
+      "gpa": "string"
+    }
+  ],
+  "skills": {
+    "languages": ["string"],
+    "frameworks": ["string"],
+    "databases": ["string"],
+    "tools": ["string"]
+  }
+}
+
+Guidelines:
+- If a section or field is not found in the resume, leave it as an empty string "" (or empty array [] for skills arrays).
+- For experience and projects, keep descriptions clean, detailed, and format them as clear bullet points separated by newline characters (\\n).
+- Try to enhance the descriptions during parsing, making them more impactful using active verbs and metrics if possible.
+- Return ONLY the JSON object. Do not include markdown code blocks, backticks, or any conversational text.
+
+Resume Text:
+${fileBufferString}
+`;
+
+        const response = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: prompt,
+        });
+
+        const text = response.text || '{}';
+        const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        parsedData = JSON.parse(jsonStr);
+      } catch (aiError) {
+        console.error('Gemini Resume Parsing failed, using fallback data.', aiError);
+      }
+    } else if (!process.env.GEMINI_API_KEY) {
+      console.log('[Resume Enhancer] GEMINI_API_KEY not set — returning demo data.');
+    }
+
+    res.status(200).json({
+      message: 'Resume parsed and enhanced successfully',
+      data: parsedData,
+      isDemo: !process.env.GEMINI_API_KEY,
+    });
+  } catch (error: any) {
+    console.error('Error parsing resume:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+};

@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { Sliders, KeyRound, Shield, Database, CheckCircle, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Sliders, KeyRound, Shield, Database, CheckCircle, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function RecruiterSettings() {
   const { user } = useAuth();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [showOpenAIKey, setShowOpenAIKey] = useState(false);
+
   const [apiKeys, setApiKeys] = useState({
-    openai: "••••••••••••••••••••••••••••••••",
+    openai: "",
     ragEngine: "https://rag.student-twin-engine.ai/v1"
   });
 
@@ -19,6 +21,25 @@ export default function RecruiterSettings() {
     interviewNotification: "instant"
   });
 
+  // Load saved settings from localStorage
+  useEffect(() => {
+    if (!user) return;
+    const saved = localStorage.getItem(`recruiter_settings_${user.uid}`) || localStorage.getItem("recruiter_settings");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.apiKeys) {
+          setApiKeys(prev => ({ ...prev, ...parsed.apiKeys }));
+        }
+        if (parsed.atsConfig) {
+          setAtsConfig(prev => ({ ...prev, ...parsed.atsConfig }));
+        }
+      } catch (e) {
+        console.error("Failed to parse recruiter settings:", e);
+      }
+    }
+  }, [user]);
+
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
     setShowToast(true);
@@ -26,6 +47,14 @@ export default function RecruiterSettings() {
   };
 
   const handleSaveSettings = () => {
+    if (user) {
+      const payload = { apiKeys, atsConfig };
+      localStorage.setItem(`recruiter_settings_${user.uid}`, JSON.stringify(payload));
+      localStorage.setItem("recruiter_settings", JSON.stringify(payload));
+    } else {
+      const payload = { apiKeys, atsConfig };
+      localStorage.setItem("recruiter_settings", JSON.stringify(payload));
+    }
     triggerToast("Recruiter parameter preferences updated successfully!");
   };
 
@@ -100,6 +129,19 @@ export default function RecruiterSettings() {
                   <option value="Chat Only">Direct clone messaging only</option>
                 </select>
               </div>
+
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-550">Interview Notification Protocol</label>
+                <select
+                  value={atsConfig.interviewNotification}
+                  onChange={(e) => setAtsConfig({ ...atsConfig, interviewNotification: e.target.value })}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-550 transition-all cursor-pointer"
+                >
+                  <option value="instant">Instant Webhook & Email Alerts</option>
+                  <option value="digest">Daily Digest Summary Report</option>
+                  <option value="disabled">Disabled (No notifications)</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -113,12 +155,22 @@ export default function RecruiterSettings() {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-550">OpenAI API Key Token</label>
-                <input
-                  type="password"
-                  value={apiKeys.openai}
-                  onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
-                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-550"
-                />
+                <div className="relative">
+                  <input
+                    type={showOpenAIKey ? "text" : "password"}
+                    value={apiKeys.openai}
+                    onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
+                    placeholder="sk-proj-..."
+                    className="w-full pl-4 pr-11 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-550"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowOpenAIKey(!showOpenAIKey)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200 transition-colors"
+                  >
+                    {showOpenAIKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-1.5">

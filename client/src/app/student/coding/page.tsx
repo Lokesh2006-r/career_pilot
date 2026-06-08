@@ -54,10 +54,10 @@ interface ProfileData {
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 function DifficultyPill({ diff }: { diff: string }) {
   const map: Record<string, string> = {
-    Easy:    "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20",
-    Medium:  "text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20",
-    Hard:    "text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20",
-    Unknown: "text-zinc-600 dark:text-zinc-400 bg-zinc-500/10 border border-zinc-500/20",
+    Easy:    "text-zinc-500 bg-zinc-500/10 border border-zinc-500/20",
+    Medium:  "text-zinc-600 dark:text-zinc-400 bg-zinc-500/15 border border-zinc-500/25",
+    Hard:    "text-zinc-900 dark:text-white bg-zinc-500/20 border border-zinc-500/30",
+    Unknown: "text-zinc-500 bg-zinc-500/10 border border-zinc-500/20",
   };
   return (
     <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${map[diff] ?? map.Unknown}`}>
@@ -68,10 +68,10 @@ function DifficultyPill({ diff }: { diff: string }) {
 
 function StatusPill({ status }: { status: string }) {
   const map: Record<string, string> = {
-    Accepted: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20",
-    TLE:      "text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20",
-    WA:       "text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20",
-    MLE:      "text-purple-600 dark:text-purple-400 bg-purple-500/10 border border-purple-500/20",
+    Accepted: "text-zinc-900 dark:text-white bg-zinc-500/15 border border-zinc-500/25",
+    TLE:      "text-zinc-500 bg-zinc-500/10 border border-zinc-500/20",
+    WA:       "text-zinc-400 dark:text-zinc-650 bg-zinc-500/5 border border-zinc-500/15",
+    MLE:      "text-zinc-400 dark:text-zinc-650 bg-zinc-500/5 border border-zinc-500/15",
   };
   return (
     <span className={`px-2.5 py-1 rounded-full text-[9px] font-extrabold uppercase border ${map[status] ?? "text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700"}`}>
@@ -84,9 +84,9 @@ function DonutChart({ easy, medium, hard, total }: { easy: number; medium: numbe
   const r = 52, cx = 64, cy = 64;
   const circ = 2 * Math.PI * r;
   const segs = [
-    { pct: total > 0 ? easy / total : 0,   color: "#10b981", label: "Easy",   count: easy },
-    { pct: total > 0 ? medium / total : 0, color: "#f59e0b", label: "Medium", count: medium },
-    { pct: total > 0 ? hard / total : 0,   color: "#ef4444", label: "Hard",   count: hard },
+    { pct: total > 0 ? easy / total : 0,   color: "var(--easy-color)", label: "Easy",   count: easy },
+    { pct: total > 0 ? medium / total : 0, color: "var(--medium-color)", label: "Medium", count: medium },
+    { pct: total > 0 ? hard / total : 0,   color: "var(--hard-color)", label: "Hard",   count: hard },
   ];
   let offset = 0;
   return (
@@ -141,16 +141,16 @@ function RatingSparkline({ data }: { data: ContestEntry[] }) {
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-12">
       <defs>
         <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#6366f1" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--brand-color)" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="var(--brand-color)" stopOpacity="0" />
         </linearGradient>
       </defs>
       <polygon points={area} fill="url(#sg)" />
-      <polyline points={pts} fill="none" stroke="#6366f1" strokeWidth="2" strokeLinejoin="round" />
+      <polyline points={pts} fill="none" stroke="var(--brand-color)" strokeWidth="2" strokeLinejoin="round" />
       {ratings.map((v, i) => {
         const x = (i / (ratings.length - 1)) * W;
         const y = H - ((v - min) / range) * (H - 4) - 2;
-        return <circle key={i} cx={x} cy={y} r="2.5" fill="#818cf8" />;
+        return <circle key={i} cx={x} cy={y} r="2" fill="var(--brand-color)" />;
       })}
     </svg>
   );
@@ -390,7 +390,7 @@ export default function CodingTracker() {
   const hasHandles = savedHandles.leetcode || savedHandles.codeforces || savedHandles.codechef;
 
   return (
-    <div className="colorful-theme space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
 
       {/* ── Sync Modal ───────────────────────────────────────────────────────── */}
       {modalOpen && (

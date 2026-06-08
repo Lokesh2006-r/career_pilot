@@ -1,30 +1,98 @@
 "use client";
 
-import { useState } from "react";
-import { Settings, Shield, Sliders, RefreshCw, KeyRound, Sparkles, CheckCircle, Database } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Settings, Shield, Sliders, RefreshCw, KeyRound, Sparkles, CheckCircle, Database, Eye, EyeOff, Volume2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function SettingsPage() {
   const { user } = useAuth();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  
+  const [showOpenAIKey, setShowOpenAIKey] = useState(false);
+  const [showFirebaseKey, setShowFirebaseKey] = useState(false);
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+
   const [apiKeys, setApiKeys] = useState({
-    openai: "••••••••••••••••••••••••••••••••",
-    firebase: "••••••••••••••••••••••••••••••••",
+    openai: "",
+    firebase: "",
     ragEngine: "https://rag.student-twin-engine.ai/v1"
   });
 
   const [aiConfig, setAiConfig] = useState({
-    assistantVoice: "alloy",
+    assistantVoice: "",
     speechSpeed: "1.0",
     modelSelection: "gpt-4o-mini",
     rigorLevel: "advanced"
   });
 
+  // Load browser speech synthesis voices
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      const loadVoices = () => {
+        const list = window.speechSynthesis.getVoices();
+        const englishVoices = list.filter(v => v.lang.startsWith("en"));
+        setAvailableVoices(englishVoices);
+
+        setAiConfig(prev => {
+          if (prev.assistantVoice) return prev;
+          const defaultVoice = englishVoices.find(v => 
+            v.name.toLowerCase().includes("natural") || 
+            v.name.toLowerCase().includes("google") || 
+            v.name.toLowerCase().includes("aria") || 
+            v.name.toLowerCase().includes("guy")
+          ) || englishVoices[0];
+          return { ...prev, assistantVoice: defaultVoice ? defaultVoice.name : "alloy" };
+        });
+      };
+      loadVoices();
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
+    }
+  }, []);
+
+  // Load saved settings from localStorage
+  useEffect(() => {
+    if (!user) return;
+    const saved = localStorage.getItem(`student_settings_${user.uid}`) || localStorage.getItem("student_settings");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.apiKeys) {
+          setApiKeys(prev => ({ ...prev, ...parsed.apiKeys }));
+        }
+        if (parsed.aiConfig) {
+          setAiConfig(prev => ({ ...prev, ...parsed.aiConfig }));
+        }
+      } catch (e) {
+        console.error("Failed to parse student settings:", e);
+      }
+    }
+  }, [user]);
+
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleTestVoice = () => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const text = "Hello! This is a preview of my synthesized placement twin voice.";
+      const utterance = new SpeechSynthesisUtterance(text);
+      const list = window.speechSynthesis.getVoices();
+      const chosenVoice = list.find(v => v.name === aiConfig.assistantVoice) || 
+                          list.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("natural")) ||
+                          list.find(v => v.lang.startsWith("en")) || 
+                          list[0];
+      if (chosenVoice) {
+        utterance.voice = chosenVoice;
+      }
+      utterance.rate = Number(aiConfig.speechSpeed || "1.0");
+      window.speechSynthesis.speak(utterance);
+    }
   };
 
   const handleResetData = () => {
@@ -50,6 +118,16 @@ export default function SettingsPage() {
   };
 
   const handleSaveSettings = () => {
+    if (user) {
+      const payload = { apiKeys, aiConfig };
+      localStorage.setItem(`student_settings_${user.uid}`, JSON.stringify(payload));
+      localStorage.setItem("student_settings", JSON.stringify(payload));
+      window.dispatchEvent(new Event("student_settings_updated"));
+    } else {
+      const payload = { apiKeys, aiConfig };
+      localStorage.setItem("student_settings", JSON.stringify(payload));
+      window.dispatchEvent(new Event("student_settings_updated"));
+    }
     triggerToast("System parameter registers updated successfully!");
   };
 
@@ -91,18 +169,38 @@ export default function SettingsPage() {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 md:col-span-2">
                 <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Twin Speech Voice</label>
-                <select
-                  value={aiConfig.assistantVoice}
-                  onChange={(e) => setAiConfig({ ...aiConfig, assistantVoice: e.target.value })}
-                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all cursor-pointer"
-                >
-                  <option value="alloy">Alloy (Balanced)</option>
-                  <option value="echo">Echo (Warm)</option>
-                  <option value="fable">Fable (Expressive)</option>
-                  <option value="onyx">Onyx (Professional)</option>
-                </select>
+                <div className="flex gap-2">
+                  <select
+                    value={aiConfig.assistantVoice}
+                    onChange={(e) => setAiConfig({ ...aiConfig, assistantVoice: e.target.value })}
+                    className="flex-1 px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-all cursor-pointer"
+                  >
+                    {availableVoices.length === 0 ? (
+                      <>
+                        <option value="alloy">Alloy (Balanced)</option>
+                        <option value="echo">Echo (Warm)</option>
+                        <option value="fable">Fable (Expressive)</option>
+                        <option value="onyx">Onyx (Professional)</option>
+                      </>
+                    ) : (
+                      availableVoices.map(voice => (
+                        <option key={voice.name} value={voice.name}>
+                          {voice.name} ({voice.lang}) {voice.name.toLowerCase().includes("natural") ? "🌟 Premium" : ""}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleTestVoice}
+                    className="px-4 py-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border border-zinc-250 dark:border-zinc-800 active:scale-95 cursor-pointer"
+                  >
+                    <Volume2 className="w-4 h-4 text-indigo-500" />
+                    Test Voice
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-1.5">
@@ -131,7 +229,7 @@ export default function SettingsPage() {
                 </select>
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 md:col-span-2">
                 <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Core LLM Gateway Model</label>
                 <select
                   value={aiConfig.modelSelection}
@@ -156,12 +254,42 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">OpenAI API Key Token</label>
-                <input
-                  type="password"
-                  value={apiKeys.openai}
-                  onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
-                  className="w-full px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-550"
-                />
+                <div className="relative">
+                  <input
+                    type={showOpenAIKey ? "text" : "password"}
+                    value={apiKeys.openai}
+                    onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
+                    placeholder="sk-proj-..."
+                    className="w-full pl-4 pr-11 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-550"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowOpenAIKey(!showOpenAIKey)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200 transition-colors"
+                  >
+                    {showOpenAIKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Firebase Configuration Token</label>
+                <div className="relative">
+                  <input
+                    type={showFirebaseKey ? "text" : "password"}
+                    value={apiKeys.firebase}
+                    onChange={(e) => setApiKeys({ ...apiKeys, firebase: e.target.value })}
+                    placeholder="AIzaSy..."
+                    className="w-full pl-4 pr-11 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-250 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-550"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowFirebaseKey(!showFirebaseKey)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200 transition-colors"
+                  >
+                    {showFirebaseKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-1.5">
