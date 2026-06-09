@@ -73,38 +73,62 @@ export default function StudentAnalytics() {
         }
 
         // 3. Fetch Coding Profile Telemetry
-        let savedHandlesRaw = localStorage.getItem(`coding_handles_${user.uid}`);
-        const defaultHandles = {
+        const defaultHandles = user.email === "kit27cse25@gmail.com" ? {
           leetcode: "Lokesh-123_",
           codeforces: "Lokeshr_2006",
           codechef: "kit27cse25"
+        } : {
+          leetcode: "",
+          codeforces: "",
+          codechef: ""
         };
-        
-        if (!savedHandlesRaw) {
-          localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(defaultHandles));
-          savedHandlesRaw = JSON.stringify(defaultHandles);
-        }
-        
-        if (savedHandlesRaw) {
-          let handles = JSON.parse(savedHandlesRaw);
-          // Migrate handles if placeholders are detected
-          if (handles.codeforces === "lokesh_r" || handles.codechef === "lokesh_r") {
-            handles = defaultHandles;
-            localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(defaultHandles));
-          }
 
-          const params = new URLSearchParams();
-          if (handles.leetcode) params.set("leetcode", handles.leetcode);
-          if (handles.codeforces) params.set("codeforces", handles.codeforces);
-          if (handles.codechef) params.set("codechef", handles.codechef);
-
-          if (handles.leetcode || handles.codeforces || handles.codechef) {
-            const codingRes = await fetch(`${API_BASE_URL}/api/coding/profile?${params}`);
-            if (codingRes.ok) {
-              const codingJson = await codingRes.json();
-              if (codingJson.success && codingJson.data) {
-                setCodingProfile(codingJson.data);
+        let handles = defaultHandles;
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
+          if (res.ok) {
+            const json = await res.json();
+            if (json.success && json.data && json.data.codingHandles) {
+              const h = json.data.codingHandles;
+              if (h.leetcode || h.codeforces || h.codechef) {
+                handles = h;
               }
+            }
+          }
+        } catch (err) {
+          console.error("Failed to fetch handles from DB on analytics:", err);
+        }
+
+        // Fallback to local storage if handles are still empty
+        if (!handles.leetcode && !handles.codeforces && !handles.codechef) {
+          const savedHandlesRaw = localStorage.getItem(`coding_handles_${user.uid}`);
+          if (savedHandlesRaw) {
+            try {
+              const h = JSON.parse(savedHandlesRaw);
+              if (h.leetcode || h.codeforces || h.codechef) {
+                handles = h;
+              }
+            } catch {}
+          }
+        }
+
+        if (handles.codeforces === "lokesh_r" || handles.codechef === "lokesh_r") {
+          handles = defaultHandles;
+        }
+
+        localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(handles));
+
+        const params = new URLSearchParams();
+        if (handles.leetcode) params.set("leetcode", handles.leetcode);
+        if (handles.codeforces) params.set("codeforces", handles.codeforces);
+        if (handles.codechef) params.set("codechef", handles.codechef);
+
+        if (handles.leetcode || handles.codeforces || handles.codechef) {
+          const codingRes = await fetch(`${API_BASE_URL}/api/coding/profile?${params}`);
+          if (codingRes.ok) {
+            const codingJson = await codingRes.json();
+            if (codingJson.success && codingJson.data) {
+              setCodingProfile(codingJson.data);
             }
           }
         }

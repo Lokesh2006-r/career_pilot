@@ -313,39 +313,67 @@ export default function CodingTracker() {
   // Load saved handles on mount/user change
   useEffect(() => {
     if (!user) return;
-    let raw = localStorage.getItem(`coding_handles_${user.uid}`);
     
-    // Default to student Lokesh R's actual original handles
-    const defaultHandles = {
+    // Default to student Lokesh R's actual original handles ONLY if the email is kit27cse25@gmail.com
+    const defaultHandles = user.email === "kit27cse25@gmail.com" ? {
       leetcode: "Lokesh-123_",
       codeforces: "Lokeshr_2006",
       codechef: "kit27cse25"
+    } : {
+      leetcode: "",
+      codeforces: "",
+      codechef: ""
     };
 
-    if (!raw) {
-      localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(defaultHandles));
-      raw = JSON.stringify(defaultHandles);
-    }
-    if (raw) {
+    const loadHandles = async () => {
+      let handles = defaultHandles;
+      
       try {
-        let h = JSON.parse(raw);
-        
-        // Auto-migrate if wrong/placeholder handle lokesh_r is currently saved
-        if (h.codeforces === "lokesh_r" || h.codechef === "lokesh_r") {
-          h = defaultHandles;
-          localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(defaultHandles));
+        const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data && json.data.codingHandles) {
+            const h = json.data.codingHandles;
+            if (h.leetcode || h.codeforces || h.codechef) {
+              handles = h;
+            }
+          }
         }
+      } catch (err) {
+        console.error("Failed to load handles from DB:", err);
+      }
 
-        setSavedHandles(h);
-        setLeetHandle(h.leetcode || "");
-        setCfHandle(h.codeforces || "");
-        setCcHandle(h.codechef || "");
-        // Auto-fetch if handles exist
-        if (h.leetcode || h.codeforces || h.codechef) {
-          fetchProfile(h.leetcode, h.codeforces, h.codechef, selectedYear);
+      // If handles are still empty, fall back to localStorage
+      if (!handles.leetcode && !handles.codeforces && !handles.codechef) {
+        const raw = localStorage.getItem(`coding_handles_${user.uid}`);
+        if (raw) {
+          try {
+            const h = JSON.parse(raw);
+            if (h.leetcode || h.codeforces || h.codechef) {
+              handles = h;
+            }
+          } catch {}
         }
-      } catch { /* ignore */ }
-    }
+      }
+
+      // Auto-migrate if placeholder handle is set
+      if (handles.codeforces === "lokesh_r" || handles.codechef === "lokesh_r") {
+        handles = defaultHandles;
+      }
+
+      localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(handles));
+      setSavedHandles(handles);
+      setLeetHandle(handles.leetcode || "");
+      setCfHandle(handles.codeforces || "");
+      setCcHandle(handles.codechef || "");
+
+      // Auto-fetch if handles exist
+      if (handles.leetcode || handles.codeforces || handles.codechef) {
+        fetchProfile(handles.leetcode, handles.codeforces, handles.codechef, selectedYear);
+      }
+    };
+
+    loadHandles();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, fetchProfile]);
 
@@ -367,6 +395,17 @@ export default function CodingTracker() {
     const handles = { leetcode: leetHandle.trim(), codeforces: cfHandle.trim(), codechef: ccHandle.trim() };
     if (user) {
       localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(handles));
+      try {
+        await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ codingHandles: handles })
+        });
+      } catch (err) {
+        console.error("Failed to sync coding handles to backend:", err);
+      }
     }
     setSavedHandles(handles);
     setSyncing(false);

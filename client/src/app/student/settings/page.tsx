@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Settings, Shield, Sliders, RefreshCw, KeyRound, Sparkles, CheckCircle, Database, Eye, EyeOff, Volume2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -52,23 +53,45 @@ export default function SettingsPage() {
     }
   }, []);
 
-  // Load saved settings from localStorage
+  // Load saved settings from localStorage & backend
   useEffect(() => {
     if (!user) return;
-    const saved = localStorage.getItem(`student_settings_${user.uid}`) || localStorage.getItem("student_settings");
-    if (saved) {
+
+    const loadSettings = async () => {
+      let loadedSettings = null;
+
       try {
-        const parsed = JSON.parse(saved);
-        if (parsed.apiKeys) {
-          setApiKeys(prev => ({ ...prev, ...parsed.apiKeys }));
+        const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data && json.data.settings) {
+            loadedSettings = json.data.settings;
+          }
         }
-        if (parsed.aiConfig) {
-          setAiConfig(prev => ({ ...prev, ...parsed.aiConfig }));
-        }
-      } catch (e) {
-        console.error("Failed to parse student settings:", e);
+      } catch (err) {
+        console.error("Failed to load settings from DB:", err);
       }
-    }
+
+      if (!loadedSettings) {
+        const saved = localStorage.getItem(`student_settings_${user.uid}`) || localStorage.getItem("student_settings");
+        if (saved) {
+          try {
+            loadedSettings = JSON.parse(saved);
+          } catch {}
+        }
+      }
+
+      if (loadedSettings) {
+        if (loadedSettings.apiKeys) {
+          setApiKeys(prev => ({ ...prev, ...loadedSettings.apiKeys }));
+        }
+        if (loadedSettings.aiConfig) {
+          setAiConfig(prev => ({ ...prev, ...loadedSettings.aiConfig }));
+        }
+      }
+    };
+
+    loadSettings();
   }, [user]);
 
   const triggerToast = (msg: string) => {
@@ -95,7 +118,7 @@ export default function SettingsPage() {
     }
   };
 
-  const handleResetData = () => {
+  const handleResetData = async () => {
     // Clear custom sandbox states to defaults
     if (user) {
       localStorage.removeItem(`student_profile_${user.uid}`);
@@ -103,6 +126,34 @@ export default function SettingsPage() {
       localStorage.removeItem(`coding_handles_${user.uid}`);
       localStorage.removeItem(`daily_checklist_${user.uid}`);
       localStorage.removeItem(`practice_logs_${user.uid}`);
+      localStorage.removeItem(`student_settings_${user.uid}`);
+
+      // Sync reset to backend
+      try {
+        await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fullName: "",
+            headline: "",
+            location: "",
+            email: "",
+            phone: "",
+            university: "",
+            degree: "",
+            gradYear: "",
+            github: "",
+            linkedin: "",
+            portfolio: "",
+            codingHandles: { leetcode: "", codeforces: "", codechef: "" },
+            settings: {},
+            dailyChecklist: [],
+            practiceLogs: []
+          })
+        });
+      } catch (err) {
+        console.error("Failed to sync reset to DB:", err);
+      }
     }
     localStorage.removeItem("student_profile");
     localStorage.removeItem("applied_internships");
@@ -111,20 +162,46 @@ export default function SettingsPage() {
     localStorage.removeItem("coding_handles_v3");
     localStorage.removeItem("daily_checklist_v1");
     localStorage.removeItem("practice_logs_v1");
+    localStorage.removeItem("student_settings");
     
+    // Reset state values
+    setApiKeys({
+      openai: "",
+      firebase: "",
+      ragEngine: "https://rag.student-twin-engine.ai/v1"
+    });
+    setAiConfig({
+      assistantVoice: "",
+      speechSpeed: "1.0",
+      modelSelection: "gpt-4o-mini",
+      rigorLevel: "advanced"
+    });
+
     // Dispatch events to notify other tabs
     window.dispatchEvent(new Event('profile_updated'));
+    window.dispatchEvent(new Event('student_settings_updated'));
     triggerToast("Sandbox identity variables reset to default values!");
   };
 
-  const handleSaveSettings = () => {
+  const handleSaveSettings = async () => {
+    const payload = { apiKeys, aiConfig };
     if (user) {
-      const payload = { apiKeys, aiConfig };
       localStorage.setItem(`student_settings_${user.uid}`, JSON.stringify(payload));
       localStorage.setItem("student_settings", JSON.stringify(payload));
+      
+      // Save settings to backend MongoDB DB
+      try {
+        await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ settings: payload })
+        });
+      } catch (err) {
+        console.error("Failed to save settings to DB:", err);
+      }
+      
       window.dispatchEvent(new Event("student_settings_updated"));
     } else {
-      const payload = { apiKeys, aiConfig };
       localStorage.setItem("student_settings", JSON.stringify(payload));
       window.dispatchEvent(new Event("student_settings_updated"));
     }

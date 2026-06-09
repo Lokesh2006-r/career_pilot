@@ -138,22 +138,39 @@ export default function StudentDashboardOverview() {
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const loadProfileName = () => {
+  const loadProfileName = async () => {
     if (!user) return;
+    
+    // First try localStorage
+    let nameLoaded = false;
     const saved = localStorage.getItem(`student_profile_${user.uid}`);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (parsed.fullName) {
           setFirstName(parsed.fullName.split(" ")[0]);
-          return;
+          nameLoaded = true;
         }
       } catch (e) {
         console.error(e);
       }
     }
-    if (user?.name) {
+    
+    if (!nameLoaded && user?.name) {
       setFirstName(user.name.split(" ")[0]);
+    }
+
+    // Then attempt database fetch
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data && json.data.fullName) {
+          setFirstName(json.data.fullName.split(" ")[0]);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load profile name from DB on dashboard:", err);
     }
   };
 
@@ -172,44 +189,89 @@ export default function StudentDashboardOverview() {
     const checklistKey = `daily_checklist_${user.uid}`;
     const logsKey = `practice_logs_${user.uid}`;
 
-    const savedTasks = localStorage.getItem(checklistKey);
-    if (savedTasks) {
-      try {
-        setDailyTasks(JSON.parse(savedTasks));
-      } catch (e) {
-        console.error("Failed to load daily tasks:", e);
-      }
-    } else {
-      const defaultTasks: DailyTask[] = [
-        { id: "1", label: "Solve 1 Medium LeetCode problem", category: "coding", completed: false },
-        { id: "2", label: "Conduct a 15-minute mock interview", category: "interview", completed: false },
-        { id: "3", label: "Address 1 resume suggestion tip", category: "resume", completed: false },
-        { id: "4", label: "Revise TCP/IP three-way handshake", category: "academics", completed: false }
-      ];
-      setDailyTasks(defaultTasks);
-      localStorage.setItem(checklistKey, JSON.stringify(defaultTasks));
-    }
+    const defaultTasks: DailyTask[] = [
+      { id: "1", label: "Solve 1 Medium LeetCode problem", category: "coding", completed: false },
+      { id: "2", label: "Conduct a 15-minute mock interview", category: "interview", completed: false },
+      { id: "3", label: "Address 1 resume suggestion tip", category: "resume", completed: false },
+      { id: "4", label: "Revise TCP/IP three-way handshake", category: "academics", completed: false }
+    ];
 
-    const savedLogs = localStorage.getItem(logsKey);
-    if (savedLogs) {
+    const loadChecklistAndLogs = async () => {
+      let checklist = defaultTasks;
+      let logs = SEED_LOGS;
+      
       try {
-        setPracticeLogs(JSON.parse(savedLogs));
-      } catch (e) {
-        console.error("Failed to load practice logs:", e);
+        const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            if (json.data.dailyChecklist && json.data.dailyChecklist.length > 0) {
+              checklist = json.data.dailyChecklist;
+            }
+            if (json.data.practiceLogs && json.data.practiceLogs.length > 0) {
+              logs = json.data.practiceLogs;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch checklist/logs from DB:", err);
       }
-    } else {
-      setPracticeLogs(SEED_LOGS);
-      localStorage.setItem(logsKey, JSON.stringify(SEED_LOGS));
-    }
+
+      // If DB was empty or failed, use local storage
+      if (checklist === defaultTasks) {
+        const savedTasks = localStorage.getItem(checklistKey);
+        if (savedTasks) {
+          try { checklist = JSON.parse(savedTasks); } catch {}
+        }
+      }
+      if (logs === SEED_LOGS) {
+        const savedLogs = localStorage.getItem(logsKey);
+        if (savedLogs) {
+          try { logs = JSON.parse(savedLogs); } catch {}
+        }
+      }
+
+      setDailyTasks(checklist);
+      setPracticeLogs(logs);
+      localStorage.setItem(checklistKey, JSON.stringify(checklist));
+      localStorage.setItem(logsKey, JSON.stringify(logs));
+    };
+
+    loadChecklistAndLogs();
 
     // Set quiz based on current day of month
     setQuizDayIndex(new Date().getDate() % QUIZ_QUESTIONS.length);
   }, [user]);
 
-  const saveTasks = (tasks: DailyTask[]) => {
+  const saveTasks = async (tasks: DailyTask[]) => {
     setDailyTasks(tasks);
     if (user) {
       localStorage.setItem(`daily_checklist_${user.uid}`, JSON.stringify(tasks));
+      try {
+        await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dailyChecklist: tasks })
+        });
+      } catch (err) {
+        console.error("Failed to save daily checklist to DB:", err);
+      }
+    }
+  };
+
+  const saveLogs = async (logs: PracticeLog[]) => {
+    setPracticeLogs(logs);
+    if (user) {
+      localStorage.setItem(`practice_logs_${user.uid}`, JSON.stringify(logs));
+      try {
+        await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ practiceLogs: logs })
+        });
+      } catch (err) {
+        console.error("Failed to save practice logs to DB:", err);
+      }
     }
   };
 
@@ -284,8 +346,7 @@ export default function StudentDashboardOverview() {
     };
 
     const updatedLogs = [newLog, ...practiceLogs];
-    setPracticeLogs(updatedLogs);
-    localStorage.setItem(`practice_logs_${user.uid}`, JSON.stringify(updatedLogs));
+    saveLogs(updatedLogs);
 
     setLogNotes("");
     setLogSuccessMessage("Practice logged successfully!");
@@ -296,8 +357,7 @@ export default function StudentDashboardOverview() {
   const deleteLog = (id: string) => {
     if (!user) return;
     const updated = practiceLogs.filter(l => l.id !== id);
-    setPracticeLogs(updated);
-    localStorage.setItem(`practice_logs_${user.uid}`, JSON.stringify(updated));
+    saveLogs(updated);
   };
 
   // Fetch backend data
@@ -319,37 +379,62 @@ export default function StudentDashboardOverview() {
           if (Array.isArray(intJson)) setInterviews(intJson);
         }
 
-        let savedHandlesRaw = localStorage.getItem(`coding_handles_${user.uid}`);
-        const defaultHandles = {
+        // Fetch handles from DB
+        const defaultHandles = user.email === "kit27cse25@gmail.com" ? {
           leetcode: "Lokesh-123_",
           codeforces: "Lokeshr_2006",
           codechef: "kit27cse25"
+        } : {
+          leetcode: "",
+          codeforces: "",
+          codechef: ""
         };
 
-        if (!savedHandlesRaw) {
-          localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(defaultHandles));
-          savedHandlesRaw = JSON.stringify(defaultHandles);
-        }
-        if (savedHandlesRaw) {
-          let handles = JSON.parse(savedHandlesRaw);
-          
-          // Auto-migrate if wrong/placeholder handle lokesh_r is currently saved
-          if (handles.codeforces === "lokesh_r" || handles.codechef === "lokesh_r") {
-            handles = defaultHandles;
-            localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(defaultHandles));
-          }
-
-          const params = new URLSearchParams();
-          if (handles.leetcode) params.set("leetcode", handles.leetcode);
-          if (handles.codeforces) params.set("codeforces", handles.codeforces);
-          if (handles.codechef) params.set("codechef", handles.codechef);
-
-          if (handles.leetcode || handles.codeforces || handles.codechef) {
-            const codingRes = await fetch(`${API_BASE_URL}/api/coding/profile?${params}`);
-            if (codingRes.ok) {
-              const codingJson = await codingRes.json();
-              if (codingJson.success && codingJson.data) setCodingProfile(codingJson.data);
+        let handles = defaultHandles;
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
+          if (res.ok) {
+            const json = await res.json();
+            if (json.success && json.data && json.data.codingHandles) {
+              const h = json.data.codingHandles;
+              if (h.leetcode || h.codeforces || h.codechef) {
+                handles = h;
+              }
             }
+          }
+        } catch (err) {
+          console.error("Failed to fetch handles from DB on dashboard:", err);
+        }
+
+        // Fallback to local storage if handles are still empty
+        if (!handles.leetcode && !handles.codeforces && !handles.codechef) {
+          const savedHandlesRaw = localStorage.getItem(`coding_handles_${user.uid}`);
+          if (savedHandlesRaw) {
+            try {
+              const h = JSON.parse(savedHandlesRaw);
+              if (h.leetcode || h.codeforces || h.codechef) {
+                handles = h;
+              }
+            } catch {}
+          }
+        }
+
+        if (handles.codeforces === "lokesh_r" || handles.codechef === "lokesh_r") {
+          handles = defaultHandles;
+        }
+
+        localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(handles));
+
+        const params = new URLSearchParams();
+        if (handles.leetcode) params.set("leetcode", handles.leetcode);
+        if (handles.codeforces) params.set("codeforces", handles.codeforces);
+        if (handles.codechef) params.set("codechef", handles.codechef);
+
+        if (handles.leetcode || handles.codeforces || handles.codechef) {
+          const codingRes = await fetch(`${API_BASE_URL}/api/coding/profile?${params}`);
+          if (codingRes.ok) {
+            const codingJson = await codingRes.json();
+            if (codingJson.success && codingJson.data) setCodingProfile(codingJson.data);
           }
         }
       } catch (err) {

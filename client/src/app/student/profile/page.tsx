@@ -3,11 +3,13 @@
 import { User, Mail, Phone, MapPin, Briefcase, GraduationCap, Github, Linkedin, Link as LinkIcon, Camera, Save, CheckCircle, Sparkles, Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [loading, setLoading] = useState(false);
   
   const [profile, setProfile] = useState({
     fullName: "Alex Johnson",
@@ -25,19 +27,66 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!user) return;
-    const saved = localStorage.getItem(`student_profile_${user.uid}`);
-    if (saved) {
+    
+    const fetchProfile = async () => {
+      setLoading(true);
       try {
-        setProfile(JSON.parse(saved));
-      } catch (e) {
-        console.error(e);
+        const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            const merged = {
+              ...profile,
+              ...json.data,
+              fullName: json.data.fullName || user.name || profile.fullName,
+              email: json.data.email || user.email || profile.email
+            };
+            setProfile(merged);
+            localStorage.setItem(`student_profile_${user.uid}`, JSON.stringify(merged));
+            setLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Error loading profile from DB:", err);
       }
-    }
+
+      // Local storage fallback
+      const saved = localStorage.getItem(`student_profile_${user.uid}`);
+      if (saved) {
+        try {
+          setProfile(JSON.parse(saved));
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        // Initialize dynamic Google data
+        setProfile(prev => ({
+          ...prev,
+          fullName: user.name || "Alex Johnson",
+          email: user.email || "alex.johnson@example.com"
+        }));
+      }
+      setLoading(false);
+    };
+
+    fetchProfile();
   }, [user]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (user) {
       localStorage.setItem(`student_profile_${user.uid}`, JSON.stringify(profile));
+      try {
+        await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(profile)
+        });
+      } catch (err) {
+        console.error("Failed to sync profile to server:", err);
+      }
     }
     setIsEditing(false);
     setShowToast(true);
