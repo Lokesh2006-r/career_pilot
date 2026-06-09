@@ -66,15 +66,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // 2. Otherwise, check localStorage sandbox keys
     const roleSaved = localStorage.getItem("user_role") as any;
-    const emailSaved = localStorage.getItem("sandbox_user_email") || `${roleSaved || "guest"}@careerpilot.com`;
+    const emailSaved = localStorage.getItem("sandbox_user_email") || `${roleSaved || "user"}@careerpilot.com`;
     const profileSaved = localStorage.getItem(`student_profile_${emailSaved}`);
     
     if (roleSaved) {
       try {
-        let name = "Sandbox User";
+        let name = "Student";
         if (profileSaved) {
           const parsed = JSON.parse(profileSaved);
-          name = parsed.fullName || name;
+          // Strip legacy 'Sandbox User' name — use real name only
+          const savedName = parsed.fullName || "";
+          if (savedName && !savedName.toLowerCase().includes("sandbox")) {
+            name = savedName;
+          }
         }
         setUser({
           uid: emailSaved,
@@ -86,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser({
           uid: emailSaved,
           email: emailSaved,
-          name: "Sandbox User",
+          name: "Student",
         });
         setRole(roleSaved);
       }

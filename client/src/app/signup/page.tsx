@@ -6,13 +6,17 @@ import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BrainCircuit, AlertTriangle, ArrowRight, Mail, Lock, ShieldAlert, UserCheck } from "lucide-react";
+import { BrainCircuit, AlertTriangle, ArrowRight, Mail, Lock, ShieldAlert, UserCheck, User, Code, Languages } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { CareerPilotIcon } from "@/components/CareerPilotLogo";
 
 export default function SignupPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [languages, setLanguages] = useState("");
+  const [skills, setSkills] = useState("");
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,15 +24,25 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      setError("Passwords do not match. Please try again.");
+      return;
+    }
+
     if (!isFirebaseConfigured) {
       setLoading(true);
       setError("");
       setTimeout(() => {
-        const namePart = email.split("@")[0] || "Student";
-        const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
         const cleanEmail = email.trim().toLowerCase();
+        const finalName = name.trim() || (cleanEmail.split("@")[0].charAt(0).toUpperCase() + cleanEmail.split("@")[0].slice(1));
+        
         localStorage.setItem("sandbox_user_email", cleanEmail);
-        localStorage.setItem(`student_profile_${cleanEmail}`, JSON.stringify({ fullName: capitalizedName }));
+        localStorage.setItem(`student_profile_${cleanEmail}`, JSON.stringify({ 
+          fullName: finalName,
+          languages: languages,
+          skills: skills
+        }));
         localStorage.setItem("user_role", role);
         window.dispatchEvent(new Event("profile_updated"));
         router.push("/dashboard");
@@ -42,6 +56,9 @@ export default function SignupPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await setDoc(doc(db, "users", userCredential.user.uid), {
         email: userCredential.user.email,
+        name: name,
+        languages: languages,
+        skills: skills,
         role: role,
         createdAt: new Date(),
       });
@@ -148,6 +165,21 @@ export default function SignupPage() {
 
           <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-1.5">
+              <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Doe"
+                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
               <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
@@ -162,35 +194,66 @@ export default function SignupPage() {
               </div>
             </div>
 
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Confirm Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                  <input
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Password</label>
+              <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Programming Languages</label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <Languages className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                 <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  type="text"
+                  value={languages}
+                  onChange={(e) => setLanguages(e.target.value)}
+                  placeholder="e.g. Python, JavaScript, C++"
                   className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">I am registering as</label>
+              <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Core Skills</label>
               <div className="relative">
-                <UserCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm appearance-none cursor-pointer"
-                >
-                  <option value="student">Student Client</option>
-                  <option value="recruiter">Recruiter Hub</option>
-                </select>
+                <Code className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <input
+                  type="text"
+                  value={skills}
+                  onChange={(e) => setSkills(e.target.value)}
+                  placeholder="e.g. React, Node.js, Next.js"
+                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                />
               </div>
             </div>
+
 
             <button
               type="submit"

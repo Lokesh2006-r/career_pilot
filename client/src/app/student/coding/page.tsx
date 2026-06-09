@@ -517,32 +517,32 @@ export default function CodingTracker() {
       )}
 
       {/* ── Header ───────────────────────────────────────────────────────────── */}
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Coding Tracker</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-0.5">
+      <header className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight">Coding Tracker</h1>
+          <p className="text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm mt-0.5 truncate">
             {hasHandles
               ? `Live data · LeetCode${savedHandles.codeforces ? " · Codeforces" : ""}${savedHandles.codechef ? " · CodeChef" : ""}`
               : "Connect your profiles to see real-time stats"}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0">
           {hasHandles && (
             <button
               onClick={() => fetchProfile(savedHandles.leetcode, savedHandles.codeforces, savedHandles.codechef, selectedYear)}
               disabled={loading}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-indigo-500/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white font-bold text-sm transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-indigo-500/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white font-bold text-[11px] transition-all disabled:opacity-50"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              Refresh
+              <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+              <span className="hidden xs:inline sm:inline">Refresh</span>
             </button>
           )}
           <button
             onClick={() => setModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all active:scale-95 shadow-lg shadow-indigo-500/20"
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] transition-all active:scale-95 shadow-md shadow-indigo-500/20"
           >
-            <RefreshCw className="w-4 h-4" />
-            {hasHandles ? "Update Handles" : "Connect Profiles"}
+            <RefreshCw className="w-3 h-3" />
+            <span>{hasHandles ? "Update" : "Connect"}</span>
           </button>
         </div>
       </header>

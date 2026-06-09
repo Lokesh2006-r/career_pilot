@@ -367,78 +367,97 @@ export default function StudentDashboardOverview() {
     const fetchAllData = async () => {
       setStatsLoading(true);
       try {
-        const resumeRes = await fetch(`${API_BASE_URL}/api/resume/latest/${user.uid}`);
-        if (resumeRes.ok) {
-          const resJson = await resumeRes.json();
-          if (resJson.data) setResumeData(resJson.data);
-        }
-
-        const interviewRes = await fetch(`${API_BASE_URL}/api/interview/history/${user.uid}`);
-        if (interviewRes.ok) {
-          const intJson = await interviewRes.json();
-          if (Array.isArray(intJson)) setInterviews(intJson);
-        }
-
-        // Fetch handles from DB
-        const defaultHandles = user.email === "kit27cse25@gmail.com" ? {
-          leetcode: "Lokesh-123_",
-          codeforces: "Lokeshr_2006",
-          codechef: "kit27cse25"
-        } : {
-          leetcode: "",
-          codeforces: "",
-          codechef: ""
+        const fetchResume = async () => {
+          try {
+            const resumeRes = await fetch(`${API_BASE_URL}/api/resume/latest/${user.uid}`);
+            if (resumeRes.ok) {
+              const resJson = await resumeRes.json();
+              if (resJson.data) setResumeData(resJson.data);
+            }
+          } catch (e) { console.error("Error fetching resume:", e); }
         };
 
-        let handles = defaultHandles;
-        try {
-          const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
-          if (res.ok) {
-            const json = await res.json();
-            if (json.success && json.data && json.data.codingHandles) {
-              const h = json.data.codingHandles;
-              if (h.leetcode || h.codeforces || h.codechef) {
-                handles = h;
+        const fetchInterviews = async () => {
+          try {
+            const interviewRes = await fetch(`${API_BASE_URL}/api/interview/history/${user.uid}`);
+            if (interviewRes.ok) {
+              const intJson = await interviewRes.json();
+              if (Array.isArray(intJson)) setInterviews(intJson);
+            }
+          } catch (e) { console.error("Error fetching interviews:", e); }
+        };
+
+        const fetchProfileAndCoding = async () => {
+          try {
+            const defaultHandles = user.email === "kit27cse25@gmail.com" ? {
+              leetcode: "Lokesh-123_",
+              codeforces: "Lokeshr_2006",
+              codechef: "kit27cse25"
+            } : {
+              leetcode: "",
+              codeforces: "",
+              codechef: ""
+            };
+
+            let handles = defaultHandles;
+            try {
+              const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
+              if (res.ok) {
+                const json = await res.json();
+                if (json.success && json.data && json.data.codingHandles) {
+                  const h = json.data.codingHandles;
+                  if (h.leetcode || h.codeforces || h.codechef) {
+                    handles = h;
+                  }
+                }
+              }
+            } catch (err) {
+              console.error("Failed to fetch handles from DB on dashboard:", err);
+            }
+
+            // Fallback to local storage if handles are still empty
+            if (!handles.leetcode && !handles.codeforces && !handles.codechef) {
+              const savedHandlesRaw = localStorage.getItem(`coding_handles_${user.uid}`);
+              if (savedHandlesRaw) {
+                try {
+                  const h = JSON.parse(savedHandlesRaw);
+                  if (h.leetcode || h.codeforces || h.codechef) {
+                    handles = h;
+                  }
+                } catch {}
               }
             }
-          }
-        } catch (err) {
-          console.error("Failed to fetch handles from DB on dashboard:", err);
-        }
 
-        // Fallback to local storage if handles are still empty
-        if (!handles.leetcode && !handles.codeforces && !handles.codechef) {
-          const savedHandlesRaw = localStorage.getItem(`coding_handles_${user.uid}`);
-          if (savedHandlesRaw) {
-            try {
-              const h = JSON.parse(savedHandlesRaw);
-              if (h.leetcode || h.codeforces || h.codechef) {
-                handles = h;
+            if (handles.codeforces === "lokesh_r" || handles.codechef === "lokesh_r") {
+              handles = defaultHandles;
+            }
+
+            localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(handles));
+
+            const params = new URLSearchParams();
+            if (handles.leetcode) params.set("leetcode", handles.leetcode);
+            if (handles.codeforces) params.set("codeforces", handles.codeforces);
+            if (handles.codechef) params.set("codechef", handles.codechef);
+
+            if (handles.leetcode || handles.codeforces || handles.codechef) {
+              const codingRes = await fetch(`${API_BASE_URL}/api/coding/profile?${params}`);
+              if (codingRes.ok) {
+                const codingJson = await codingRes.json();
+                if (codingJson.success && codingJson.data) setCodingProfile(codingJson.data);
               }
-            } catch {}
-          }
-        }
+            }
+          } catch (e) { console.error("Error fetching coding profile:", e); }
+        };
 
-        if (handles.codeforces === "lokesh_r" || handles.codechef === "lokesh_r") {
-          handles = defaultHandles;
-        }
+        // Run all independent requests in parallel
+        await Promise.all([
+          fetchResume(),
+          fetchInterviews(),
+          fetchProfileAndCoding()
+        ]);
 
-        localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(handles));
-
-        const params = new URLSearchParams();
-        if (handles.leetcode) params.set("leetcode", handles.leetcode);
-        if (handles.codeforces) params.set("codeforces", handles.codeforces);
-        if (handles.codechef) params.set("codechef", handles.codechef);
-
-        if (handles.leetcode || handles.codeforces || handles.codechef) {
-          const codingRes = await fetch(`${API_BASE_URL}/api/coding/profile?${params}`);
-          if (codingRes.ok) {
-            const codingJson = await codingRes.json();
-            if (codingJson.success && codingJson.data) setCodingProfile(codingJson.data);
-          }
-        }
       } catch (err) {
-        console.error("Error fetching dashboard statistics:", err);
+        console.error("Error in fetchAllData wrapper:", err);
       } finally {
         setStatsLoading(false);
       }

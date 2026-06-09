@@ -29,19 +29,16 @@ export default function LoginPage() {
     e.preventDefault();
     const cleanEmail = email.trim().toLowerCase();
 
-    // Students must use Google, form login is restricted to Admin/Recruiter emails.
-    if (cleanEmail !== "admin@gmail.com" && cleanEmail !== "recruiter@gmail.com") {
-      setError("Students must sign in using the 'Sign in with Google' option below.");
-      return;
-    }
-
     if (!isFirebaseConfigured) {
       setLoading(true);
       setError("");
       setTimeout(() => {
         const namePart = cleanEmail.split("@")[0] || "User";
         const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-        const determinedRole = cleanEmail === "admin@gmail.com" ? "admin" : "recruiter";
+        
+        let determinedRole = "student";
+        if (cleanEmail === "admin@gmail.com") determinedRole = "admin";
+        else if (cleanEmail === "recruiter@gmail.com") determinedRole = "recruiter";
         
         localStorage.setItem("sandbox_user_email", cleanEmail);
         localStorage.setItem(`student_profile_${cleanEmail}`, JSON.stringify({ fullName: capitalizedName }));
@@ -186,7 +183,7 @@ export default function LoginPage() {
           <p className="mt-8 text-center text-xs text-zinc-500 font-semibold">
             Don&apos;t have an identity account?{" "}
             <Link href="/signup" className="text-indigo-500 hover:underline">
-              Create Agent
+              Register Now
             </Link>
           </p>
         </div>

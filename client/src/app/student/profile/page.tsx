@@ -22,7 +22,8 @@ export default function ProfilePage() {
     gradYear: "2026",
     github: "github.com/alexj",
     linkedin: "linkedin.com/in/alexj",
-    portfolio: "alexj.dev"
+    portfolio: "alexj.dev",
+    avatarUrl: ""
   });
 
   useEffect(() => {
@@ -162,16 +163,35 @@ export default function ProfilePage() {
         <div className="px-8 pb-8">
           {/* Avatar Area */}
           <div className="relative flex justify-between items-end -mt-16 mb-8">
-            <div className="relative">
+            <div className="relative group/avatar">
               <div className="w-32 h-32 bg-white dark:bg-zinc-950 rounded-3xl p-1.5 border-4 border-white dark:border-zinc-900 shadow-xl overflow-hidden">
-                <div className="w-full h-full rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-650 flex items-center justify-center text-4xl font-black text-white uppercase shadow-inner border border-white/10">
-                  {profile.fullName ? profile.fullName.charAt(0) : "A"}
-                </div>
+                {profile.avatarUrl ? (
+                  <img src={profile.avatarUrl} alt="Profile" className="w-full h-full rounded-2xl object-cover shadow-inner" />
+                ) : (
+                  <div className="w-full h-full rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-650 flex items-center justify-center text-4xl font-black text-white uppercase shadow-inner border border-white/10">
+                    {profile.fullName ? profile.fullName.charAt(0) : "A"}
+                  </div>
+                )}
               </div>
               {isEditing && (
-                <button className="absolute bottom-1 right-1 p-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl shadow-lg border border-white/20 active:scale-95 transition-all cursor-pointer">
+                <label className="absolute bottom-1 right-1 p-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl shadow-lg border border-white/20 active:scale-95 transition-all cursor-pointer">
                   <Camera className="w-4 h-4" />
-                </button>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setProfile({ ...profile, avatarUrl: reader.result as string });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }} 
+                  />
+                </label>
               )}
             </div>
           </div>

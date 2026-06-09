@@ -359,10 +359,232 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
     setTimeout(() => setCopiedSpec(false), 2000);
   };
 
+  // Mobile full-screen detail drawer
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+
+  const handleSelectProject = (proj: Project) => {
+    setSelectedProject(proj);
+    setMobileDetailOpen(true);
+  };
+
   return (
     <div className="space-y-8 animate-fade-in text-zinc-900 dark:text-zinc-100">
       
-      {/* Page Header */}
+      {/* ── MOBILE FULL-SCREEN DETAIL DRAWER ───────────────────────────── */}
+      {mobileDetailOpen && selectedProject && (
+        <div className="lg:hidden fixed inset-x-0 bottom-0 top-20 z-[999] bg-white dark:bg-zinc-950 flex flex-col animate-in slide-in-from-bottom duration-300">
+          {/* Drawer Header */}
+          <div className="flex items-center justify-between px-3 py-2.5 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shrink-0 shadow-sm">
+            <div className="flex items-center gap-2 min-w-0">
+              <button
+                onClick={() => setMobileDetailOpen(false)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition-colors shrink-0 cursor-pointer font-bold text-xs"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                Back
+              </button>
+              <div className="min-w-0 pl-1">
+                <p className="text-[9px] font-black uppercase tracking-widest text-indigo-500 leading-none">Project Detail</p>
+                <h2 className="text-xs font-extrabold text-zinc-900 dark:text-white truncate">{selectedProject.title}</h2>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                onClick={() => handleToggleSaveProject(selectedProject._id)}
+                className={`p-2 rounded-xl border cursor-pointer transition-all ${
+                  selectedProject.isSaved
+                    ? "bg-amber-500/10 text-amber-500 border-amber-500/30"
+                    : "bg-zinc-100 dark:bg-zinc-900 text-zinc-400 border-zinc-200 dark:border-zinc-800"
+                }`}
+              >
+                <Star className={`w-4 h-4 ${selectedProject.isSaved ? "fill-amber-500" : ""}`} />
+              </button>
+              <button
+                onClick={() => setShowSpecModal(true)}
+                className="flex items-center gap-1 px-2.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-[11px] uppercase tracking-wide transition-all cursor-pointer"
+              >
+                <Terminal className="w-3.5 h-3.5" />
+                Export
+              </button>
+            </div>
+          </div>
+
+          {/* Drawer Scrollable Body */}
+          <div className="flex-1 overflow-y-auto pb-28">
+            <div className="p-4 space-y-5">
+              
+              {/* Badges & Description */}
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-md border ${
+                    selectedProject.difficulty === "Advanced"
+                      ? "text-rose-500 bg-rose-500/10 border-rose-500/20"
+                      : selectedProject.difficulty === "Intermediate"
+                      ? "text-indigo-500 bg-indigo-500/10 border-indigo-500/20"
+                      : "text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
+                  }`}>
+                    {selectedProject.difficulty}
+                  </span>
+                  <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-md border border-zinc-200/60 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500">
+                    {selectedProject.estimatedTime}
+                  </span>
+                  <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-md border border-indigo-500/20 bg-indigo-500/10 text-indigo-500">
+                    {selectedProject.roleTarget}
+                  </span>
+                </div>
+
+                {/* Progress bar */}
+                {(() => {
+                  const { percent, completed, total } = getProjectProgress(selectedProject);
+                  return (
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[9px] font-extrabold text-zinc-400 uppercase">
+                        <span>Progress</span>
+                        <span className="text-indigo-500">{percent}% — {completed}/{total} tasks</span>
+                      </div>
+                      <div className="w-full h-2 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500" style={{ width: `${percent}%` }} />
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{selectedProject.description}</p>
+              </div>
+
+              {/* Why Fits */}
+              {selectedProject.whyFits && (
+                <div className="p-3.5 bg-indigo-500/5 border border-indigo-500/20 rounded-2xl flex gap-3">
+                  <Lightbulb className="w-4 h-4 shrink-0 text-indigo-500 animate-pulse mt-0.5" />
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wide text-indigo-500">Why this fits your profile</span>
+                    <p className="mt-1 text-xs leading-relaxed text-indigo-700 dark:text-indigo-300 font-medium">{selectedProject.whyFits}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Problem Statement */}
+              {selectedProject.problemStatement && (
+                <div className="space-y-1.5">
+                  <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Problem Statement</h3>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium">{selectedProject.problemStatement}</p>
+                </div>
+              )}
+
+              {/* Tech Tags */}
+              <div className="space-y-1.5">
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Tech Stack</h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedProject.tags.map((t, i) => (
+                    <span key={i} className="text-[9px] font-extrabold px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Detailed Tech Stack */}
+              {selectedProject.detailedTechStack && selectedProject.detailedTechStack.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Technology Justification</h3>
+                  <div className="space-y-2">
+                    {selectedProject.detailedTechStack.map((tech, i) => (
+                      <div key={i} className="p-3 bg-zinc-50/50 dark:bg-zinc-900/40 border border-zinc-200/60 dark:border-zinc-800/60 rounded-xl">
+                        <span className="text-xs font-black text-indigo-500">{tech.name}</span>
+                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed">{tech.justification}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Architecture */}
+              <div className="space-y-2">
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                  <Cpu className="w-3.5 h-3.5 text-indigo-500" /> System Architecture
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedProject.architecture.map((node, i) => (
+                    <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-xl">
+                      <div className="w-4 h-4 rounded bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-[9px] font-black text-indigo-500">{i + 1}</div>
+                      <span className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300">{node}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Learning Deliverables */}
+              {selectedProject.learningDeliverables && selectedProject.learningDeliverables.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Learning Deliverables</h3>
+                  <ul className="space-y-1.5">
+                    {selectedProject.learningDeliverables.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+                        <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* ── WEEKLY ROADMAP ── */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                    <GitBranch className="w-3.5 h-3.5 text-indigo-500" /> Weekly Roadmap
+                  </h3>
+                  <span className="text-[10px] font-bold text-emerald-500">
+                    {getProjectProgress(selectedProject).percent}% done
+                  </span>
+                </div>
+
+                <div className="space-y-4 pl-3 border-l-2 border-indigo-500/30">
+                  {selectedProject.phases.map((phase, pIdx) => (
+                    <div key={pIdx} className="relative space-y-2">
+                      {/* Timeline dot */}
+                      <div className="absolute -left-[19px] top-1 w-3 h-3 rounded-full bg-indigo-500 border-2 border-white dark:border-zinc-950 shadow-[0_0_8px_rgba(99,102,241,0.7)]" />
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-indigo-500/10 text-indigo-500 border border-indigo-500/25 rounded-md">
+                          Week {pIdx + 1}
+                        </span>
+                        <h4 className="text-xs font-extrabold uppercase tracking-wide text-zinc-800 dark:text-white">
+                          {phase.title.replace(/^(Phase|Week)\s*\d+:\s*/i, "")}
+                        </h4>
+                      </div>
+
+                      <ul className="space-y-1.5">
+                        {phase.tasks.map((task, tIdx) => {
+                          const isTaskLoading = togglingTask === `${selectedProject._id}-${pIdx}-${tIdx}`;
+                          return (
+                            <li
+                              key={tIdx}
+                              onClick={() => handleToggleTask(selectedProject._id, pIdx, tIdx)}
+                              className={`flex items-start gap-2.5 p-2.5 rounded-xl border border-transparent hover:border-zinc-200/50 dark:hover:border-zinc-800/40 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 transition-all cursor-pointer ${task.completed ? "opacity-70" : ""}`}
+                            >
+                              {isTaskLoading ? (
+                                <Loader2 className="w-4 h-4 text-indigo-500 animate-spin shrink-0 mt-0.5" />
+                              ) : task.completed ? (
+                                <CheckSquare className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
+                              ) : (
+                                <Square className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
+                              )}
+                              <span className={`text-xs leading-relaxed font-semibold ${task.completed ? "line-through text-zinc-400" : "text-zinc-700 dark:text-zinc-300"}`}>
+                                {task.text}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 glass-panel rounded-3xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="z-10">
@@ -559,7 +781,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                   return (
                     <div
                       key={proj._id}
-                      onClick={() => setSelectedProject(proj)}
+                      onClick={() => handleSelectProject(proj)}
                       className={`glass-panel p-5 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden group border ${
                         isSelected
                           ? "border-indigo-550/40 bg-indigo-500/5 shadow-[0_4px_25px_rgba(99,102,241,0.1)]"
@@ -638,6 +860,12 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                         {proj.tags.length > 3 && (
                           <span className="text-[9px] font-extrabold px-1.5 py-0.5 text-zinc-400">+{proj.tags.length - 3}</span>
                         )}
+                      </div>
+
+                      {/* Mobile tap hint */}
+                      <div className="lg:hidden flex items-center justify-end gap-1 mt-2.5 text-[9px] font-black uppercase tracking-wider text-indigo-500/70">
+                        Tap for full details
+                        <ArrowRight className="w-3 h-3" />
                       </div>
                     </div>
                   );

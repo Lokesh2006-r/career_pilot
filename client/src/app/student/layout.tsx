@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BrainCircuit, Home, User, FileText, Video, Code, Briefcase, Settings, Bell, Sparkles, TrendingUp, Cpu, Lightbulb, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 import RoleGuard from "@/components/RoleGuard";
@@ -15,6 +15,7 @@ export default function StudentLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
@@ -145,6 +146,16 @@ export default function StudentLayout({
 
               <Link 
                 href="/student/profile" 
+                onClick={(e) => {
+                  if (pathname === "/student/profile") {
+                    e.preventDefault();
+                    if (window.history.length > 2) {
+                      router.back();
+                    } else {
+                      router.push("/student/dashboard");
+                    }
+                  }
+                }}
                 className="flex items-center gap-3 pl-2 border-l border-zinc-200/50 dark:border-zinc-800/40 hover:opacity-90 transition-all cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-650 flex items-center justify-center font-bold text-white text-sm shadow-[0_0_15px_rgba(99,102,241,0.2)] border border-white/10 group-hover:scale-105 transition-transform duration-300">
@@ -159,18 +170,25 @@ export default function StudentLayout({
           </header>
 
           {/* Content Area */}
-          <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pb-24 md:pb-8 relative z-10">
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pb-28 md:pb-8 relative z-10">
             <div className="max-w-7xl mx-auto space-y-8">
               {children}
             </div>
           </main>
 
-          {/* Mobile Bottom Navigation Bar */}
-          <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/85 dark:bg-zinc-950/85 backdrop-blur-lg border-t border-zinc-200/50 dark:border-zinc-800/40 flex items-center justify-around px-2 z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
-            <BottomTabItem href="/student/dashboard" icon={<Home className="w-5 h-5" />} label="Overview" active={pathname === "/student/dashboard"} />
-            <BottomTabItem href="/student/resume" icon={<FileText className="w-5 h-5" />} label="Resume" active={pathname === "/student/resume"} />
-            <BottomTabItem href="/student/mock-interviews" icon={<Video className="w-5 h-5" />} label="Interview" active={pathname === "/student/mock-interviews"} />
-            <BottomTabItem href="/student/coding" icon={<Code className="w-5 h-5" />} label="Coding" active={pathname === "/student/coding"} />
+          {/* Mobile Bottom Navigation Bar - Scrollable with all items */}
+          <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-200/50 dark:border-zinc-800/40 z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+            <div className="flex items-center overflow-x-auto scrollbar-none px-1 py-1 gap-0.5" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <BottomTabItem href="/student/dashboard" icon={<Home className="w-[18px] h-[18px]" />} label="Overview" active={pathname === "/student/dashboard"} />
+              <BottomTabItem href="/student/resume" icon={<FileText className="w-[18px] h-[18px]" />} label="Resume" active={pathname === "/student/resume"} />
+              <BottomTabItem href="/student/resume-builder" icon={<Sparkles className="w-[18px] h-[18px]" />} label="Builder" active={pathname === "/student/resume-builder"} />
+              <BottomTabItem href="/student/mock-interviews" icon={<Video className="w-[18px] h-[18px]" />} label="Interview" active={pathname === "/student/mock-interviews"} />
+              <BottomTabItem href="/student/coding" icon={<Code className="w-[18px] h-[18px]" />} label="Coding" active={pathname === "/student/coding"} />
+              <BottomTabItem href="/student/projects" icon={<Lightbulb className="w-[18px] h-[18px]" />} label="Projects" active={pathname === "/student/projects"} />
+              <BottomTabItem href="/student/jobs" icon={<Briefcase className="w-[18px] h-[18px]" />} label="Jobs" active={pathname === "/student/jobs"} />
+              <BottomTabItem href="/student/analytics" icon={<TrendingUp className="w-[18px] h-[18px]" />} label="Analytics" active={pathname === "/student/analytics"} />
+              <BottomTabItem href="/student/settings" icon={<Settings className="w-[18px] h-[18px]" />} label="Settings" active={pathname === "/student/settings"} />
+            </div>
           </nav>
         </div>
       </div>
@@ -229,18 +247,19 @@ function BottomTabItem({ href, icon, label, active }: { href: string; icon: Reac
   return (
     <Link
       href={href}
-      className={`flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-all duration-300 ${
+      className={`flex flex-col items-center justify-center gap-0.5 shrink-0 w-16 py-2 px-1 rounded-xl transition-all duration-200 ${
         active
-          ? "text-indigo-500 dark:text-indigo-400 scale-105"
-          : "text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200"
+          ? "text-indigo-500 dark:text-indigo-400 bg-indigo-500/10"
+          : "text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
       }`}
     >
-      <div className="shrink-0 transition-transform duration-300">
+      <div className={`transition-transform duration-200 ${active ? "scale-110" : ""}`}>
         {icon}
       </div>
-      <span className="text-[10px] font-black uppercase tracking-wider">
+      <span className={`text-[9px] font-black uppercase tracking-wider leading-tight text-center truncate w-full text-center ${active ? "text-indigo-500 dark:text-indigo-400" : ""}`}>
         {label}
       </span>
+      {active && <span className="w-1 h-1 rounded-full bg-indigo-500 mt-0.5" />}
     </Link>
   );
 }

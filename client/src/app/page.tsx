@@ -144,7 +144,7 @@ export default function LandingPage() {
       )}
 
       {/* Hero Section */}
-      <section className="relative pt-32 md:pt-44 pb-20 max-w-7xl mx-auto px-6">
+      <section className="relative pt-28 md:pt-44 pb-12 md:pb-20 max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Hero Context */}
@@ -163,7 +163,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.05]"
+              className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.08]"
             >
               Your ultimate <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-tr from-indigo-500 via-purple-600 to-cyan-500">
@@ -185,13 +185,13 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-wrap items-center gap-4 pt-2"
+              className="flex flex-wrap items-center gap-3 pt-2"
             >
-              <Link href="/signup" className="group flex items-center gap-2 px-8 py-4 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wider shadow-[0_10px_20px_-5px_rgba(99,102,241,0.3)] hover:-translate-y-0.5 active:scale-95 transition-all">
+              <Link href="/signup" className="group flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wider shadow-[0_10px_20px_-5px_rgba(99,102,241,0.3)] hover:-translate-y-0.5 active:scale-95 transition-all">
                 Build My Agent Twin
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link href="/login" className="flex items-center gap-2 px-8 py-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/30 text-zinc-900 dark:text-white rounded-2xl font-bold text-xs uppercase tracking-wider shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all">
+              <Link href="/login" className="flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/30 text-zinc-900 dark:text-white rounded-2xl font-bold text-xs uppercase tracking-wider shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all">
                 Access Dashboard
               </Link>
             </motion.div>
@@ -284,16 +284,16 @@ export default function LandingPage() {
       </section>
 
       {/* Stats Section */}
-      <section id="stats" className="py-16 border-y border-zinc-200/40 dark:border-zinc-800/40 bg-zinc-50/20 dark:bg-zinc-950/20 relative">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section id="stats" className="py-10 md:py-16 border-y border-zinc-200/40 dark:border-zinc-800/40 bg-zinc-50/20 dark:bg-zinc-950/20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {[
               { label: "Successful Placements", value: "10K+", icon: <Briefcase className="w-5 h-5 text-indigo-500" /> },
               { label: "Mock Trials Run", value: "50K+", icon: <Target className="w-5 h-5 text-cyan-500" /> },
               { label: "Average ATS Boost", value: "85%", icon: <Zap className="w-5 h-5 text-yellow-500" /> },
               { label: "Recruiting Corporate Hubs", value: "500+", icon: <Layers className="w-5 h-5 text-purple-500" /> }
             ].map((stat, i) => (
-              <div key={i} className="glass-panel border-zinc-200/40 dark:border-zinc-800/40 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm relative group hover:scale-[1.02] hover:border-indigo-500/20 transition-all duration-300">
+              <div key={i} className="glass-panel border-zinc-200/40 dark:border-zinc-800/40 p-4 md:p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm relative group hover:scale-[1.02] hover:border-indigo-500/20 transition-all duration-300">
                 <div className="w-10 h-10 rounded-xl bg-zinc-150/40 dark:bg-zinc-900/40 border border-zinc-200/50 dark:border-zinc-800/40 flex items-center justify-center mb-4">
                   {stat.icon}
                 </div>
@@ -306,9 +306,9 @@ export default function LandingPage() {
       </section>
 
       {/* Features Bento Grid Section */}
-      <section id="features" className="py-32 relative">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20 space-y-4">
+      <section id="features" className="py-16 md:py-32 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10 md:mb-20 space-y-4">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-300 text-[10px] font-extrabold uppercase tracking-widest">
               Core Capabilities
             </span>
@@ -323,7 +323,7 @@ export default function LandingPage() {
           {/* Bento Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Box 1 - RAG Clone */}
-            <div className="glass-panel rounded-3xl p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-indigo-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all md:col-span-2 relative overflow-hidden group">
+            <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-indigo-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all md:col-span-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-indigo-500/10 transition-colors"></div>
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6">
                 <BrainCircuit className="w-6 h-6 text-indigo-500" />
@@ -338,7 +338,7 @@ export default function LandingPage() {
             </div>
 
             {/* Box 2 - ATS Score */}
-            <div className="glass-panel rounded-3xl p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-cyan-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all relative overflow-hidden group">
+            <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-cyan-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-6">
                 <Target className="w-6 h-6 text-cyan-500" />
@@ -350,7 +350,7 @@ export default function LandingPage() {
             </div>
 
             {/* Box 3 - Coding metrics */}
-            <div className="glass-panel rounded-3xl p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-yellow-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all relative overflow-hidden group">
+            <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-yellow-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all relative overflow-hidden group">
               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6">
                 <Code className="w-6 h-6 text-amber-500" />
               </div>
@@ -361,7 +361,7 @@ export default function LandingPage() {
             </div>
 
             {/* Box 4 - Mock interviews */}
-            <div className="glass-panel rounded-3xl p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-purple-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all md:col-span-2 relative overflow-hidden group">
+            <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-purple-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all md:col-span-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
               <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-6">
                 <Zap className="w-6 h-6 text-purple-500" />
@@ -376,15 +376,15 @@ export default function LandingPage() {
       </section>
 
       {/* Interactive premium CTA Area */}
-      <section className="py-24 max-w-7xl mx-auto px-6 relative">
+      <section className="py-12 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 relative">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 h-4/5 bg-indigo-500/5 dark:bg-indigo-500/5 rounded-[3rem] blur-3xl pointer-events-none -z-10"></div>
         
-        <div className="glass-panel border-zinc-200/50 dark:border-zinc-800/40 rounded-[2.5rem] p-12 text-center max-w-4xl mx-auto space-y-8 relative overflow-hidden shadow-xl">
+        <div className="glass-panel border-zinc-200/50 dark:border-zinc-800/40 rounded-[2rem] md:rounded-[2.5rem] p-6 sm:p-10 md:p-12 text-center max-w-4xl mx-auto space-y-6 md:space-y-8 relative overflow-hidden shadow-xl">
           <div className="absolute top-0 right-0 w-40 h-40 bg-[radial-gradient(circle_at_top_right,var(--card-hover-border),transparent_50%)] pointer-events-none"></div>
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-wider">
             Now Recruiting Beta Testers
           </span>
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-none max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight leading-tight max-w-2xl mx-auto">
             Build your professional identity twin today.
           </h2>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto leading-relaxed font-medium">
@@ -400,8 +400,8 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-200/40 dark:border-zinc-800/40 bg-zinc-50/40 dark:bg-zinc-950/40 backdrop-blur-xl py-12">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 items-center text-center md:text-left">
+      <footer className="border-t border-zinc-200/40 dark:border-zinc-800/40 bg-zinc-50/40 dark:bg-zinc-950/40 backdrop-blur-xl py-8 md:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-3 gap-6 md:gap-8 items-center text-center md:text-left">
           <div className="space-y-3">
             <div className="flex justify-center md:justify-start">
               <CareerPilotLogo size={38} colored={true} showText={true} />
