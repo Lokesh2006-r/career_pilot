@@ -150,11 +150,19 @@ export default function AdminLayout({
           </header>
 
           {/* Content Area */}
-          <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 relative z-10">
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pb-24 md:pb-8 relative z-10">
             <div className="max-w-7xl mx-auto space-y-8">
               {children}
             </div>
           </main>
+
+          {/* Mobile Bottom Navigation Bar */}
+          <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/85 dark:bg-zinc-950/85 backdrop-blur-lg border-t border-zinc-200/50 dark:border-zinc-800/40 flex items-center justify-around px-2 z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+            <BottomTabItem href="/admin/dashboard" icon={<Home className="w-5 h-5" />} label="Overview" active={pathname === "/admin/dashboard"} />
+            <BottomTabItem href="/admin/students" icon={<GraduationCap className="w-5 h-5" />} label="Students" active={pathname === "/admin/students"} />
+            <BottomTabItem href="/admin/recruiters" icon={<Users className="w-5 h-5" />} label="Recruiters" active={pathname === "/admin/recruiters"} />
+            <BottomTabItem href="/admin/reports" icon={<FileText className="w-5 h-5" />} label="Reports" active={pathname === "/admin/reports"} />
+          </nav>
         </div>
       </div>
     </RoleGuard>
@@ -204,6 +212,26 @@ function MobileNavItem({ href, icon, label, active, onClick }: { href: string; i
       {active && (
         <span className="absolute left-0 w-1 h-5 bg-rose-500 dark:bg-rose-450 rounded-r-full shadow-[0_0_10px_rgba(244,63,94,0.8)]"></span>
       )}
+    </Link>
+  );
+}
+
+function BottomTabItem({ href, icon, label, active }: { href: string; icon: React.ReactNode; label: string; active?: boolean }) {
+  return (
+    <Link
+      href={href}
+      className={`flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-all duration-300 ${
+        active
+          ? "text-rose-500 dark:text-rose-455 scale-105"
+          : "text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200"
+      }`}
+    >
+      <div className="shrink-0 transition-transform duration-300">
+        {icon}
+      </div>
+      <span className="text-[10px] font-black uppercase tracking-wider">
+        {label}
+      </span>
     </Link>
   );
 }

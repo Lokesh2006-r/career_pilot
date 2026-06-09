@@ -183,31 +183,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [session, sessionStatus]);
 
   const logout = async () => {
-    setLoading(true);
     if (!isFirebaseConfigured) {
       localStorage.removeItem("user_role");
       localStorage.removeItem("sandbox_user_email");
-      try {
-        await nextAuthSignOut({ redirect: false });
-      } catch (err) {
-        console.error("NextAuth logout failed:", err);
-      }
       setUser(null);
       setRole(null);
-      setLoading(false);
       window.dispatchEvent(new Event("profile_updated"));
+      try {
+        await nextAuthSignOut({ callbackUrl: "/login" });
+      } catch (err) {
+        console.error("NextAuth logout failed:", err);
+        window.location.href = "/login";
+      }
       return;
     }
 
     try {
       await firebaseSignOut(auth);
-      await nextAuthSignOut({ redirect: false });
       setUser(null);
       setRole(null);
+      await nextAuthSignOut({ callbackUrl: "/login" });
     } catch (err) {
       console.error("Logout failed:", err);
-    } finally {
-      setLoading(false);
+      window.location.href = "/login";
     }
   };
 
