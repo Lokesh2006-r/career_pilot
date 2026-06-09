@@ -6,7 +6,6 @@ import {
   Sparkles, Save, Download, Plus, Trash2, User, Briefcase, 
   BookOpen, Code, Award, FileText, Check, AlertCircle, RefreshCw, Upload 
 } from "lucide-react";
-import { API_BASE_URL } from "@/lib/api";
 
 interface Experience {
   company: string;
@@ -105,7 +104,7 @@ export default function ResumeBuilder() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/resume/build/load/${userId}`);
+        const response = await fetch(`http://localhost:5000/api/resume/build/load/${userId}`);
         const result = await response.json();
         if (result.data) {
           const dbData = result.data;
@@ -150,7 +149,7 @@ export default function ResumeBuilder() {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/resume/build/save`, {
+      const response = await fetch("http://localhost:5000/api/resume/build/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formattedData),
@@ -175,7 +174,7 @@ export default function ResumeBuilder() {
     setEnhancingIndex({ type, index });
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/resume/enhance`, {
+      const response = await fetch("http://localhost:5000/api/resume/enhance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
@@ -210,7 +209,7 @@ export default function ResumeBuilder() {
     formData.append("resume", file);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/resume/parse-enhancer`, {
+      const response = await fetch("http://localhost:5000/api/resume/parse-enhancer", {
         method: "POST",
         body: formData,
       });
@@ -248,7 +247,7 @@ export default function ResumeBuilder() {
     setEnhancingSummary(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/resume/enhance`, {
+      const response = await fetch("http://localhost:5000/api/resume/enhance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
@@ -279,7 +278,7 @@ export default function ResumeBuilder() {
       let updatedSummary = resumeData.personalInfo.summary;
       if (updatedSummary.trim()) {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/resume/enhance`, {
+          const res = await fetch("http://localhost:5000/api/resume/enhance", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text: updatedSummary }),
@@ -296,7 +295,7 @@ export default function ResumeBuilder() {
         resumeData.experience.map(async (exp) => {
           if (!exp.description.trim()) return exp;
           try {
-            const res = await fetch(`${API_BASE_URL}/api/resume/enhance`, {
+            const res = await fetch("http://localhost:5000/api/resume/enhance", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ text: exp.description }),
@@ -315,7 +314,7 @@ export default function ResumeBuilder() {
         resumeData.projects.map(async (proj) => {
           if (!proj.description.trim()) return proj;
           try {
-            const res = await fetch(`${API_BASE_URL}/api/resume/enhance`, {
+            const res = await fetch("http://localhost:5000/api/resume/enhance", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ text: proj.description }),

@@ -15,9 +15,6 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Initialize DB connection eagerly for serverless environments
-connectDB();
-
 app.use('/api/resume', resumeRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/interview', interviewRoutes);
@@ -28,11 +25,11 @@ app.get('/', (req, res) => {
   res.send('CareerPilot API is running');
 });
 
-// Start listening only if NOT running as a serverless function on Vercel
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+// Connect to MongoDB Atlas, then start server
+connectDB().then(() => {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
-}
+});
 
 export default app;

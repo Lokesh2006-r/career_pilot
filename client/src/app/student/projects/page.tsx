@@ -7,7 +7,6 @@ import {
   Lightbulb, GitBranch, Check, Settings, Trash2, Copy, Star, 
   X, Loader2, Bookmark, Square, CheckSquare, AlertCircle, ChevronDown, ChevronUp 
 } from "lucide-react";
-import { API_BASE_URL } from "@/lib/api";
 
 interface Task {
   text: string;
@@ -70,7 +69,7 @@ export default function ProjectRecs() {
     if (!user) return;
     if (showLoading) setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/projects/recommendations/${user.uid}`);
+      const res = await fetch(`http://localhost:5000/api/projects/recommendations/${user.uid}`);
       if (res.ok) {
         const json = await res.json();
         const list = json.projects || [];
@@ -100,7 +99,7 @@ export default function ProjectRecs() {
       fetchRecommendations();
       
       // Fetch latest resume gaps
-      fetch(`${API_BASE_URL}/api/resume/latest/${user.uid}`)
+      fetch(`http://localhost:5000/api/resume/latest/${user.uid}`)
         .then(res => res.json())
         .then(json => {
           if (json.data) setResumeData(json.data);
@@ -114,7 +113,7 @@ export default function ProjectRecs() {
     if (!user) return;
     setGeneratingIdea(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/projects/recommendations/generate`, {
+      const res = await fetch("http://localhost:5000/api/projects/recommendations/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -161,7 +160,7 @@ export default function ProjectRecs() {
     if (targetProj) setSelectedProject(targetProj);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/projects/recommendations/${projId}/task`, {
+      const res = await fetch(`http://localhost:5000/api/projects/recommendations/${projId}/task`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phaseIndex, taskIndex })
@@ -189,7 +188,7 @@ export default function ProjectRecs() {
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/projects/recommendations/${projId}/save`, {
+      const res = await fetch(`http://localhost:5000/api/projects/recommendations/${projId}/save`, {
         method: "PUT"
       });
       if (!res.ok) fetchRecommendations(false);
@@ -211,7 +210,7 @@ export default function ProjectRecs() {
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/projects/recommendations/${projId}`, {
+      const res = await fetch(`http://localhost:5000/api/projects/recommendations/${projId}`, {
         method: "DELETE"
       });
       if (res.ok) {

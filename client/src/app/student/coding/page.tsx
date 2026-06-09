@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { API_BASE_URL } from "@/lib/api";
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 interface LeetCodeData {
@@ -288,7 +287,7 @@ export default function CodingTracker() {
       if (cc) params.set("codechef",    cc);
       params.set("year", year);
 
-      const res  = await fetch(`${API_BASE_URL}/api/coding/profile?${params}`);
+      const res  = await fetch(`http://localhost:5000/api/coding/profile?${params}`);
       const json = await res.json();
 
       if (!json.success) throw new Error(json.error || "Failed to fetch profile data");
