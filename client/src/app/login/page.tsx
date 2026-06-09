@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, isFirebaseConfigured } from "@/lib/firebase";
@@ -9,13 +9,21 @@ import Link from "next/link";
 import { BrainCircuit, AlertTriangle, ArrowRight, Mail, Lock, ShieldAlert } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { CareerPilotIcon } from "@/components/CareerPilotLogo";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
+  const { user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace("/dashboard");
+    }
+  }, [user, authLoading, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

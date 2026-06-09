@@ -36,6 +36,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Sync sandbox state
   const syncSandboxAuth = () => {
+    if (sessionStatus === "loading") {
+      setLoading(true);
+      return;
+    }
     // 1. If NextAuth session is active, prioritize Google session
     if (session) {
       const nextAuthUser = session.user as any;
