@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Upload, FileText, Target, AlertCircle, CheckCircle2, BrainCircuit, ShieldCheck, Sparkles, RefreshCw } from "lucide-react";
 import { auth } from "@/lib/firebase";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function ResumeLab() {
   const [file, setFile] = useState<File | null>(null);
@@ -15,13 +16,13 @@ export default function ResumeLab() {
     if (!file) return;
 
     setLoading(true);
-    
+
     const formData = new FormData();
     formData.append("resume", file);
     formData.append("userId", auth.currentUser?.uid || "test-user");
 
     try {
-      const response = await fetch("http://localhost:5000/api/resume/upload", {
+      const response = await fetch(`${API_BASE_URL}/api/resume/upload`, {
         method: "POST",
         body: formData,
       });

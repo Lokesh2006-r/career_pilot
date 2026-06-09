@@ -8,6 +8,7 @@ import {
   ChevronRight, Calendar, Layers, Activity, AlertCircle, AwardIcon, Cpu, Code
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
 
 interface PastSession {
   role: string;
@@ -175,7 +176,7 @@ export default function MockInterviews() {
     if (!user?.uid) return;
     setLoadingHistory(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/interview/history/${user.uid}`);
+      const response = await fetch(`${API_BASE_URL}/api/interview/history/${user.uid}`);
       const data = await response.json();
       if (Array.isArray(data)) {
         setHistorySessions(data);
@@ -328,7 +329,7 @@ export default function MockInterviews() {
     setTimeLeft(initialTime);
 
     try {
-      const response = await fetch("http://localhost:5000/api/interview/start", {
+      const response = await fetch(`${API_BASE_URL}/api/interview/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -417,7 +418,7 @@ export default function MockInterviews() {
     setConsoleError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/interview/execute", {
+      const response = await fetch(`${API_BASE_URL}/api/interview/execute`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ language: selectedLanguage, code: codeText })
@@ -459,7 +460,7 @@ export default function MockInterviews() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/interview/answer", {
+      const response = await fetch(`${API_BASE_URL}/api/interview/answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
