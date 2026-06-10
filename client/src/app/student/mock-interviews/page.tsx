@@ -5,7 +5,7 @@ import {
   Video, Target, Clock, MessageSquare, Play, Mic, MicOff, Send, Loader2, 
   Award, RotateCcw, Sparkles, CheckCircle2, Volume2, VolumeX, Eye, 
   ShieldAlert, ArrowLeft, Download, RefreshCw, UserCheck, ShieldCheck, 
-  ChevronRight, Calendar, Layers, Activity, AlertCircle, AwardIcon, Cpu, Code
+  ChevronRight, Calendar, Layers, Activity, AlertCircle, AwardIcon, Cpu, Code, FileText
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
@@ -54,7 +54,8 @@ export default function MockInterviews() {
   
   const [selectedRole, setSelectedRole] = useState("Frontend Engineer");
   const [selectedDifficulty, setSelectedDifficulty] = useState<"Beginner" | "Moderate" | "Hard">("Moderate");
-  const [interviewType, setInterviewType] = useState<"technical" | "hr">("technical");
+  const [interviewType, setInterviewType] = useState<"technical" | "hr" | "resume">("technical");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [viewState, setViewState] = useState<"config" | "active" | "completed">("config");
   
   const [currentStep, setCurrentStep] = useState(1);
@@ -312,6 +313,11 @@ export default function MockInterviews() {
   };
 
   const handleStartInterview = async () => {
+    if (interviewType === "resume" && !resumeFile) {
+      alert("Please upload your resume to start a resume-based interview.");
+      return;
+    }
+
     setIsLoading(true);
     setViewState("active");
     setCurrentStep(1);
@@ -329,12 +335,30 @@ export default function MockInterviews() {
     setTimeLeft(initialTime);
 
     try {
+      let extractedResumeText = undefined;
+      
+      if (interviewType === "resume" && resumeFile) {
+        const formData = new FormData();
+        formData.append("resume", resumeFile);
+        const uploadRes = await fetch(`${API_BASE_URL}/api/interview/upload-resume`, {
+          method: "POST",
+          body: formData
+        });
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json();
+          extractedResumeText = uploadData.text;
+        } else {
+          throw new Error("Failed to parse resume.");
+        }
+      }
+
       const response = await fetch(`${API_BASE_URL}/api/interview/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           role: selectedRole, 
           type: interviewType,
+          resumeText: extractedResumeText,
           userId: user?.uid || 'anonymous',
           difficulty: selectedDifficulty
         }),
@@ -749,16 +773,16 @@ export default function MockInterviews() {
                   <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-3.5">
                     Assessment Focus Category
                   </label>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <button
                       onClick={() => setInterviewType("technical")}
-                      className={`p-4 rounded-2xl border text-left transition-all flex items-center gap-4 cursor-pointer relative overflow-hidden group/item ${
+                      className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-center gap-3 cursor-pointer relative overflow-hidden group/item ${
                         interviewType === "technical" 
                           ? "border-indigo-500 bg-indigo-500/5 shadow-[0_4px_15px_rgba(99,102,241,0.05)]" 
                           : "border-zinc-200 dark:border-zinc-800 bg-white/5 dark:bg-zinc-900/10 hover:border-indigo-500/30"
                       }`}
                     >
-                      <div className={`p-3 rounded-xl shrink-0 transition-transform group-hover/item:scale-105 duration-300 ${
+                      <div className={`p-3 rounded-xl shrink-0 self-start transition-transform group-hover/item:scale-105 duration-300 ${
                         interviewType === "technical" 
                           ? "bg-indigo-500/15 text-indigo-500 border border-indigo-500/20" 
                           : "bg-zinc-100 dark:bg-zinc-800/50 text-zinc-400 border border-transparent"
@@ -766,20 +790,20 @@ export default function MockInterviews() {
                         <Cpu className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Technical Architecture</h3>
+                        <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Technical</h3>
                         <p className="text-[10px] text-zinc-450 mt-0.5">Systems, syntax & tradeoffs.</p>
                       </div>
                     </button>
 
                     <button
                       onClick={() => setInterviewType("hr")}
-                      className={`p-4 rounded-2xl border text-left transition-all flex items-center gap-4 cursor-pointer relative overflow-hidden group/item ${
+                      className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-center gap-3 cursor-pointer relative overflow-hidden group/item ${
                         interviewType === "hr" 
                           ? "border-indigo-500 bg-indigo-500/5 shadow-[0_4px_15px_rgba(99,102,241,0.05)]" 
                           : "border-zinc-200 dark:border-zinc-800 bg-white/5 dark:bg-zinc-900/10 hover:border-indigo-500/30"
                       }`}
                     >
-                      <div className={`p-3 rounded-xl shrink-0 transition-transform group-hover/item:scale-105 duration-300 ${
+                      <div className={`p-3 rounded-xl shrink-0 self-start transition-transform group-hover/item:scale-105 duration-300 ${
                         interviewType === "hr" 
                           ? "bg-indigo-500/15 text-indigo-500 border border-indigo-500/20" 
                           : "bg-zinc-100 dark:bg-zinc-800/50 text-zinc-400 border border-transparent"
@@ -787,11 +811,51 @@ export default function MockInterviews() {
                         <MessageSquare className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Behavioral / HR Loop</h3>
+                        <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Behavioral</h3>
                         <p className="text-[10px] text-zinc-455 mt-0.5">STAR method, leadership & logs.</p>
                       </div>
                     </button>
+
+                    <button
+                      onClick={() => setInterviewType("resume")}
+                      className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-center gap-3 cursor-pointer relative overflow-hidden group/item ${
+                        interviewType === "resume" 
+                          ? "border-indigo-500 bg-indigo-500/5 shadow-[0_4px_15px_rgba(99,102,241,0.05)]" 
+                          : "border-zinc-200 dark:border-zinc-800 bg-white/5 dark:bg-zinc-900/10 hover:border-indigo-500/30"
+                      }`}
+                    >
+                      <div className={`p-3 rounded-xl shrink-0 self-start transition-transform group-hover/item:scale-105 duration-300 ${
+                        interviewType === "resume" 
+                          ? "bg-indigo-500/15 text-indigo-500 border border-indigo-500/20" 
+                          : "bg-zinc-100 dark:bg-zinc-800/50 text-zinc-400 border border-transparent"
+                      }`}>
+                        <FileText className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Resume Based</h3>
+                        <p className="text-[10px] text-zinc-455 mt-0.5">Deep-dive on your projects.</p>
+                      </div>
+                    </button>
                   </div>
+                  
+                  {interviewType === "resume" && (
+                    <div className="mt-4 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 flex flex-col items-center justify-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <label className="text-[11px] font-extrabold text-zinc-900 dark:text-white text-center uppercase tracking-widest">
+                        Upload Your Resume (PDF)
+                      </label>
+                      <input 
+                        type="file" 
+                        accept="application/pdf"
+                        onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+                        className="text-xs text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 dark:file:bg-indigo-500/10 dark:file:text-indigo-400 dark:hover:file:bg-indigo-500/20 cursor-pointer"
+                      />
+                      {resumeFile && (
+                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1 mt-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> {resumeFile.name} ready
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Vocal Synthesis Dropdown & Test Settings */}
@@ -851,7 +915,7 @@ export default function MockInterviews() {
 
                   <button
                     onClick={handleStartInterview}
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-655 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-lg active:scale-98 transition-all cursor-pointer border border-indigo-500/20"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-lg active:scale-98 transition-all cursor-pointer border border-indigo-500/20"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
                     Launch Session
@@ -954,7 +1018,7 @@ export default function MockInterviews() {
                 <div className="space-y-6">
                   {/* Overall Rank badge */}
                   <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/40 border border-zinc-200 dark:border-zinc-800 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-650 flex items-center justify-center font-black text-white text-lg shadow-md shrink-0">
+                    <div className="px-4 h-12 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-black text-white text-sm shadow-md shrink-0">
                       {stats.rating}
                     </div>
                     <div>
@@ -964,9 +1028,9 @@ export default function MockInterviews() {
                   </div>
 
                   <div className="space-y-5">
-                    <ProgressIndicator label="Technical Mastery" score={stats.avgTechnical} gradient="from-blue-500 to-indigo-500" />
-                    <ProgressIndicator label="Communication Efficiency" score={stats.avgCommunication} gradient="from-emerald-500 to-teal-500" />
-                    <ProgressIndicator label="Confidence Vector Index" score={stats.avgConfidence} gradient="from-orange-500 to-amber-500" />
+                    <ProgressIndicator label="Technical Mastery" score={stats.avgTechnical} colorClass="bg-blue-500" />
+                    <ProgressIndicator label="Communication Efficiency" score={stats.avgCommunication} colorClass="bg-emerald-500" />
+                    <ProgressIndicator label="Confidence Vector Index" score={stats.avgConfidence} colorClass="bg-orange-500" />
                   </div>
                 </div>
               )}
@@ -1654,15 +1718,15 @@ export default function MockInterviews() {
 
 /* SUB COMPONENTS */
 
-function ProgressIndicator({ label, score, gradient }: { label: string; score: number; gradient: string }) {
+function ProgressIndicator({ label, score, colorClass }: { label: string; score: number; colorClass: string }) {
   return (
     <div>
       <div className="flex justify-between text-xs mb-1.5">
         <span className="text-zinc-550 dark:text-zinc-400 font-bold uppercase tracking-wider text-[10px]">{label}</span>
         <span className="font-extrabold text-indigo-500 dark:text-indigo-400 text-xs">{score}%</span>
       </div>
-      <div className="h-2 w-full bg-zinc-200/50 dark:bg-zinc-800/40 border border-zinc-200/20 dark:border-zinc-800/20 rounded-full overflow-hidden">
-        <div className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-1000`} style={{ width: `${score}%` }}></div>
+      <div className="h-2 w-full bg-zinc-200/50 dark:bg-zinc-800/40 border border-zinc-200/20 dark:border-zinc-800/20 rounded-full overflow-hidden relative">
+        <div className={`absolute top-0 left-0 h-full ${colorClass} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${score}%` }}></div>
       </div>
     </div>
   );

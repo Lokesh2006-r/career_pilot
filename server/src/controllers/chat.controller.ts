@@ -37,7 +37,14 @@ export const handleChat = async (req: Request, res: Response): Promise<void> => 
     }
 
     // Format messages for the Google Gen AI SDK
-    const contents = messages.map(msg => ({
+    let formattedMessages = messages;
+    
+    // Gemini API requires the first message in contents to be from the 'user'
+    while (formattedMessages.length > 0 && formattedMessages[0].role !== 'user') {
+      formattedMessages.shift();
+    }
+
+    const contents = formattedMessages.map(msg => ({
       role: msg.role === 'user' ? 'user' : 'model',
       parts: [{ text: msg.content }]
     }));

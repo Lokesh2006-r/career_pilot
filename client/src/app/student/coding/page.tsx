@@ -81,14 +81,10 @@ function StatusPill({ status }: { status: string }) {
   );
 }
 
-function DonutChart({ easy, medium, hard, total }: { easy: number; medium: number; hard: number; total: number }) {
+function DonutChart({ segments, total }: { segments: { label: string; count: number; color: string }[]; total: number }) {
   const r = 52, cx = 64, cy = 64;
   const circ = 2 * Math.PI * r;
-  const segs = [
-    { pct: total > 0 ? easy / total : 0,   color: "var(--easy-color)", label: "Easy",   count: easy },
-    { pct: total > 0 ? medium / total : 0, color: "var(--medium-color)", label: "Medium", count: medium },
-    { pct: total > 0 ? hard / total : 0,   color: "var(--hard-color)", label: "Hard",   count: hard },
-  ];
+  const segs = segments.map(s => ({ ...s, pct: total > 0 ? s.count / total : 0 }));
   let offset = 0;
   return (
     <div className="flex items-center gap-6">
@@ -118,7 +114,7 @@ function DonutChart({ easy, medium, hard, total }: { easy: number; medium: numbe
         {segs.map((seg) => (
           <div key={seg.label} className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: seg.color }} />
-            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium w-16">{seg.label}</span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium w-16 truncate">{seg.label}</span>
             <span className="text-xs font-extrabold text-zinc-900 dark:text-white">{seg.count}</span>
           </div>
         ))}
@@ -127,7 +123,7 @@ function DonutChart({ easy, medium, hard, total }: { easy: number; medium: numbe
   );
 }
 
-function RatingSparkline({ data }: { data: ContestEntry[] }) {
+function RatingSparkline({ data, color }: { data: ContestEntry[]; color?: string }) {
   if (data.length < 2) return <div className="text-zinc-500 text-xs py-4 text-center">No contest history yet</div>;
   const ratings = data.map((d) => d.rating);
   const min = Math.min(...ratings);
@@ -138,20 +134,22 @@ function RatingSparkline({ data }: { data: ContestEntry[] }) {
     .map((v, i) => `${(i / (ratings.length - 1)) * W},${H - ((v - min) / range) * (H - 4) - 2}`)
     .join(" ");
   const area = `0,${H} ${pts} ${W},${H}`;
+  const strokeColor = color || "var(--brand-color)";
+  const gradId = `sg-${color?.replace('#', '') || 'default'}`;
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-12">
       <defs>
-        <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--brand-color)" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="var(--brand-color)" stopOpacity="0" />
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={strokeColor} stopOpacity="0.2" />
+          <stop offset="100%" stopColor={strokeColor} stopOpacity="0" />
         </linearGradient>
       </defs>
-      <polygon points={area} fill="url(#sg)" />
-      <polyline points={pts} fill="none" stroke="var(--brand-color)" strokeWidth="2" strokeLinejoin="round" />
+      <polygon points={area} fill={`url(#${gradId})`} />
+      <polyline points={pts} fill="none" stroke={strokeColor} strokeWidth="2" strokeLinejoin="round" />
       {ratings.map((v, i) => {
         const x = (i / (ratings.length - 1)) * W;
         const y = H - ((v - min) / range) * (H - 4) - 2;
-        return <circle key={i} cx={x} cy={y} r="2" fill="var(--brand-color)" />;
+        return <circle key={i} cx={x} cy={y} r="2" fill={strokeColor} />;
       })}
     </svg>
   );
@@ -425,7 +423,7 @@ export default function CodingTracker() {
   const contestHistory = [
     ...(savedHandles.leetcode ? (lc?.contestHistory || []) : []),
     ...(savedHandles.codeforces ? (cf?.ratingHistory  || []) : []),
-  ].sort((a, b) => (b.delta || 0) - (a.delta || 0)).slice(0, 7);
+  ].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)).slice(0, 7);
 
   const hasHandles = savedHandles.leetcode || savedHandles.codeforces || savedHandles.codechef;
 
@@ -434,22 +432,22 @@ export default function CodingTracker() {
 
       {/* ── Sync Modal ───────────────────────────────────────────────────────── */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-950 border border-zinc-800/70 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/70 rounded-2xl w-full max-w-md p-6 shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-[0_0_40px_rgba(0,0,0,0.5)] relative animate-fade-in">
             <button
               onClick={() => !syncing && setModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 hover:bg-zinc-800 rounded-lg text-zinc-500 hover:text-white transition-colors"
+              className="absolute top-4 right-4 p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-white transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
-                <RefreshCw className="w-5 h-5 text-indigo-400" />
+                <RefreshCw className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">Connect Coding Profiles</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">Real-time data pulled from platform APIs</p>
+                <h3 className="text-base font-bold text-zinc-900 dark:text-white">Connect Coding Profiles</h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Real-time data pulled from platform APIs</p>
               </div>
             </div>
 
@@ -459,49 +457,49 @@ export default function CodingTracker() {
                   <div className="absolute inset-0 rounded-full border-2 border-indigo-500/20" />
                   <div className="absolute inset-0 rounded-full border-2 border-t-indigo-500 animate-spin" />
                 </div>
-                <p className="text-xs text-indigo-400 font-semibold text-center animate-pulse">{syncStep}</p>
+                <p className="text-xs text-indigo-500 dark:text-indigo-400 font-semibold text-center animate-pulse">{syncStep}</p>
               </div>
             ) : (
               <form onSubmit={handleSync} className="space-y-4">
                 {/* LeetCode */}
                 <div>
-                  <label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1.5">
-                    <span className="text-sm">🟡</span> LeetCode Username <span className="text-red-400">*</span>
+                  <label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-1.5">
+                    <span className="text-sm">🟡</span> LeetCode Username <span className="text-red-500 dark:text-red-400">*</span>
                   </label>
                   <input
                     value={leetHandle} required
                     onChange={(e) => setLeetHandle(e.target.value)}
                     placeholder="e.g. john_doe"
-                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 text-white rounded-xl focus:outline-none focus:border-indigo-500 text-sm placeholder:text-zinc-600 transition-colors"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl focus:outline-none focus:border-indigo-500 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-600 transition-colors"
                   />
                 </div>
                 {/* Codeforces */}
                 <div>
-                  <label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1.5">
+                  <label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-1.5">
                     <span className="text-sm">🔵</span> Codeforces Handle
                   </label>
                   <input
                     value={cfHandle}
                     onChange={(e) => setCfHandle(e.target.value)}
                     placeholder="e.g. tourist"
-                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 text-white rounded-xl focus:outline-none focus:border-indigo-500 text-sm placeholder:text-zinc-600 transition-colors"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl focus:outline-none focus:border-indigo-500 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-600 transition-colors"
                   />
                 </div>
                 {/* CodeChef */}
                 <div>
-                  <label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1.5">
+                  <label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-1.5">
                     <span className="text-sm">⭐</span> CodeChef Username
                   </label>
                   <input
                     value={ccHandle}
                     onChange={(e) => setCcHandle(e.target.value)}
                     placeholder="e.g. code_chef_user"
-                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 text-white rounded-xl focus:outline-none focus:border-indigo-500 text-sm placeholder:text-zinc-600 transition-colors"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl focus:outline-none focus:border-indigo-500 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-600 transition-colors"
                   />
                 </div>
 
-                <div className="pt-1 p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/15 text-[10px] text-zinc-500 leading-relaxed">
-                  ℹ️ Data is fetched live from <strong className="text-zinc-400">LeetCode GraphQL</strong>, <strong className="text-zinc-400">Codeforces REST API</strong>, and <strong className="text-zinc-400">CodeChef public API</strong>. No API keys required.
+                <div className="pt-1 p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/15 text-[10px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                  ℹ️ Data is fetched live from <strong className="text-zinc-800 dark:text-zinc-300">LeetCode GraphQL</strong>, <strong className="text-zinc-800 dark:text-zinc-300">Codeforces REST API</strong>, and <strong className="text-zinc-800 dark:text-zinc-300">CodeChef public API</strong>. No API keys required.
                 </div>
 
                 <button
@@ -724,16 +722,23 @@ export default function CodingTracker() {
             {/* Breakdown + Rating sparkline */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="glass-panel rounded-2xl p-5">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">LeetCode Breakdown</h3>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">Platform Breakdown</h3>
                 {loading ? (
                   <div className="flex items-center gap-6">
                     <Skeleton className="w-32 h-32 rounded-full" />
                     <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-4 w-24" /><Skeleton className="h-4 w-24" /></div>
                   </div>
-                ) : lc ? (
-                  <DonutChart easy={lc.easy} medium={lc.medium} hard={lc.hard} total={lc.solved} />
+                ) : (lc || cf || cc) ? (
+                  <DonutChart 
+                    total={(lc?.solved || 0) + (cf?.solved || 0) + (cc?.solved || 0)}
+                    segments={[
+                      ...(savedHandles.leetcode && lc?.solved ? [{ label: "LeetCode", count: lc.solved, color: "#f59e0b" }] : []),
+                      ...(savedHandles.codeforces && cf?.solved ? [{ label: "Codeforces", count: cf.solved, color: "#3b82f6" }] : []),
+                      ...(savedHandles.codechef && cc?.solved ? [{ label: "CodeChef", count: cc.solved, color: "#ef4444" }] : []),
+                    ]}
+                  />
                 ) : (
-                  <p className="text-zinc-600 text-xs">No LeetCode data</p>
+                  <p className="text-zinc-600 text-xs">No platform data</p>
                 )}
               </div>
 
@@ -741,23 +746,31 @@ export default function CodingTracker() {
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500">Contest Rating</h3>
                   {loading ? <Skeleton className="h-6 w-16" /> : (
-                    <span className="text-lg font-extrabold text-indigo-400">{lc?.rating || cf?.rating || "—"}</span>
+                    <div className="flex gap-3">
+                      {savedHandles.leetcode && lc?.rating ? <span className="text-sm font-extrabold text-amber-500" title="LeetCode">{lc.rating}</span> : null}
+                      {savedHandles.codeforces && cf?.rating ? <span className="text-sm font-extrabold text-blue-500" title="Codeforces">{cf.rating}</span> : null}
+                      {savedHandles.codechef && cc?.rating ? <span className="text-sm font-extrabold text-red-500" title="CodeChef">{cc.rating}</span> : null}
+                    </div>
                   )}
                 </div>
                 <p className="text-[10px] text-zinc-600 mb-3">Rating trend across contests</p>
                 {loading ? <Skeleton className="h-12 w-full" /> : (
-                  <RatingSparkline data={lc?.contestHistory || cf?.ratingHistory || []} />
-                )}
-                {!loading && contestHistory.length > 0 && (
-                  <div className="flex justify-between mt-2 overflow-hidden">
-                    {contestHistory.slice(0, 6).map((c, i) => (
-                      <div key={i} className="flex flex-col items-center gap-0.5">
-                        <span className={`text-[9px] font-bold ${c.delta > 0 ? "text-emerald-400" : c.delta < 0 ? "text-red-400" : "text-zinc-500"}`}>
-                          {c.delta > 0 ? "+" : ""}{c.delta || "—"}
-                        </span>
-                        <span className="text-[8px] text-zinc-600">{c.date?.slice(0, 6)}</span>
+                  <div className="space-y-4">
+                    {savedHandles.leetcode && lc?.contestHistory?.length > 1 && (
+                      <div className="relative">
+                        <span className="absolute -left-2 -top-2 text-[8px] font-bold text-amber-500 bg-amber-500/10 px-1 py-0.5 rounded">LC</span>
+                        <RatingSparkline data={lc.contestHistory} color="#f59e0b" />
                       </div>
-                    ))}
+                    )}
+                    {savedHandles.codeforces && cf?.ratingHistory?.length > 1 && (
+                      <div className="relative">
+                        <span className="absolute -left-2 -top-2 text-[8px] font-bold text-blue-500 bg-blue-500/10 px-1 py-0.5 rounded">CF</span>
+                        <RatingSparkline data={cf.ratingHistory} color="#3b82f6" />
+                      </div>
+                    )}
+                    {(!savedHandles.leetcode || !lc?.contestHistory || lc.contestHistory.length < 2) && (!savedHandles.codeforces || !cf?.ratingHistory || cf.ratingHistory.length < 2) && (
+                      <div className="text-zinc-500 text-xs py-4 text-center">No contest history yet</div>
+                    )}
                   </div>
                 )}
               </div>
@@ -767,7 +780,7 @@ export default function CodingTracker() {
             <div className="glass-panel rounded-2xl p-5">
               {loading ? (
                 <Skeleton className="h-40 w-full" />
-              ) : heatmap && lc ? (
+              ) : heatmap ? (
                 (() => {
                   // Group flatDays by month key
                   const monthsMap: Record<string, HeatmapCell[]> = {};
@@ -825,21 +838,21 @@ export default function CodingTracker() {
 
                   return (
                     <div className="space-y-4">
-                      {/* LeetCode Heatmap Header */}
+                      {/* Heatmap Header */}
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800/40 pb-3">
                         <div className="flex items-center gap-1.5">
                           <span className="text-lg font-extrabold text-zinc-900 dark:text-white">{totalSubmissionsPastYear}</span>
                           <span className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">submissions in the past one year</span>
-                          <span title="LeetCode submissions over the last 12 months" className="cursor-help">
+                          <span title="Submissions across all platforms over the last 12 months" className="cursor-help">
                             <Info className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
                           </span>
                         </div>
                         <div className="flex items-center gap-4 flex-wrap">
                           <span className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">
-                            Total active days: <strong className="text-zinc-900 dark:text-white font-bold">{data?.overallActiveDays ?? lc.totalActiveDays}</strong>
+                            Total active days: <strong className="text-zinc-900 dark:text-white font-bold">{data?.overallActiveDays ?? lc?.totalActiveDays ?? 0}</strong>
                           </span>
                           <span className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">
-                            Max streak: <strong className="text-zinc-900 dark:text-white font-bold">{data?.overallMaxStreak ?? lc.streak}</strong>
+                            Max streak: <strong className="text-zinc-900 dark:text-white font-bold">{data?.overallMaxStreak ?? lc?.streak ?? 0}</strong>
                           </span>
                           <select
                             value={selectedYear}
@@ -1011,53 +1024,54 @@ export default function CodingTracker() {
 
               {/* Topics tab */}
               {activeTab === "topics" && (
-                <div className="p-5 space-y-4">
-                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Estimated topic coverage based on solved counts</p>
-
+                <div className="p-5">
                   {loading ? (
-                    Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-8" />)
-                  ) : lc ? (
-                    <>
-                      {[
-                        { name: "Easy Problems", solved: lc.easy, total: Math.max(lc.easy, 150), color: "from-emerald-500 to-green-400" },
-                        { name: "Medium Problems", solved: lc.medium, total: Math.max(lc.medium, 300), color: "from-yellow-500 to-amber-400" },
-                        { name: "Hard Problems", solved: lc.hard, total: Math.max(lc.hard, 100), color: "from-red-500 to-rose-400" },
-                        { name: "Active Days (LeetCode)", solved: lc.totalActiveDays, total: 365, color: "from-indigo-500 to-purple-400" },
-                        ...(cf ? [{ name: "Codeforces Problems", solved: cf.solved, total: Math.max(cf.solved, 200), color: "from-blue-500 to-cyan-400" }] : []),
-                      ].map(({ name, solved, total, color }) => {
-                        const pct = Math.round((solved / total) * 100);
-                        return (
-                          <div key={name}>
-                            <div className="flex justify-between items-center mb-1.5">
-                              <span className="text-xs font-bold text-zinc-300">{name}</span>
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] text-zinc-500 font-medium">{solved.toLocaleString()}</span>
-                                <span className="text-xs font-extrabold text-indigo-400">{pct}%</span>
+                    <div className="space-y-4">{Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-8" />)}</div>
+                  ) : lc?.topics ? (
+                    <div className="space-y-6">
+                      {lc.topics.advanced?.length > 0 && (
+                        <div>
+                          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-3">Advanced Topics</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {lc.topics.advanced.map((t: any, i: number) => (
+                              <div key={i} className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                <span>{t.tagName}</span>
+                                <span className="opacity-60 text-[10px]">{t.problemsSolved}</span>
                               </div>
-                            </div>
-                            <div className="h-2 w-full bg-zinc-800/60 rounded-full overflow-hidden">
-                              <div className={`h-full bg-gradient-to-r ${color} rounded-full transition-all duration-700`} style={{ width: `${pct}%` }} />
-                            </div>
-                          </div>
-                        );
-                      })}
-
-                      <div className="mt-4 p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/20">
-                        <div className="flex items-start gap-2.5">
-                          <Activity className="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <p className="text-xs font-bold text-indigo-300 mb-1">AI Insight</p>
-                            <p className="text-[11px] text-zinc-400 leading-relaxed">
-                              {lc.hard < 30
-                                ? `You've solved ${lc.hard} Hard problems. Push past 30+ to demonstrate FAANG-level readiness. Try Merge K Sorted Lists or Trapping Rain Water next.`
-                                : lc.medium < 100
-                                ? `Solid start! With ${lc.medium} Medium problems, aim for 150+ to unlock mid-level placement opportunities.`
-                                : `Great progress with ${lc.solved} total problems solved. Focus on contest participation to improve your rating from ${lc.rating}.`}
-                            </p>
+                            ))}
                           </div>
                         </div>
-                      </div>
-                    </>
+                      )}
+                      {lc.topics.intermediate?.length > 0 && (
+                        <div>
+                          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-3">Intermediate Topics</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {lc.topics.intermediate.map((t: any, i: number) => (
+                              <div key={i} className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                                <span>{t.tagName}</span>
+                                <span className="opacity-60 text-[10px]">{t.problemsSolved}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {lc.topics.fundamental?.length > 0 && (
+                        <div>
+                          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-3">Fundamental Topics</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {lc.topics.fundamental.map((t: any, i: number) => (
+                              <div key={i} className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                <span>{t.tagName}</span>
+                                <span className="opacity-60 text-[10px]">{t.problemsSolved}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {lc.topics.advanced?.length === 0 && lc.topics.intermediate?.length === 0 && lc.topics.fundamental?.length === 0 && (
+                        <p className="text-zinc-600 text-xs">No topic data available yet.</p>
+                      )}
+                    </div>
                   ) : (
                     <p className="text-zinc-600 text-xs">Connect LeetCode to see topic analysis</p>
                   )}

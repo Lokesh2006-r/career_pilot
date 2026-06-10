@@ -160,7 +160,7 @@ const getFallbackQuestion = (role: string, type: string, index: number): string 
 
 export const startInterview = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { role, type } = req.body as { role: string; type: 'technical' | 'hr' };
+    const { role, type, resumeText } = req.body as { role: string; type: 'technical' | 'hr' | 'resume'; resumeText?: string };
 
     if (!role || !type) {
       res.status(400).json({ error: 'Role and Type are required' });
@@ -173,10 +173,21 @@ export const startInterview = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const prompt = `You are a principal technical recruiter and hiring manager at a top-tier tech firm (like Google, Stripe, or Netflix).
+    let prompt = `You are a principal technical recruiter and hiring manager at a top-tier tech firm (like Google, Stripe, or Netflix).
 Generate the first interview question for a candidate applying for the role of ${role} (Interview type: ${type}).
 The question must be professional, demanding, and highly representative of actual top-tier industry loops. For technical roles, focus on practical scenarios, architectural tradeoffs, system design concepts, or data structures. For HR roles, focus on leadership, problem-solving, and collaboration.
 Keep the question brief and focused (1-2 sentences). Return ONLY the question text.`;
+
+    if (type === 'resume' && resumeText) {
+      prompt = `You are a principal technical recruiter and hiring manager at a top-tier tech firm (like Google, Stripe, or Netflix).
+The candidate is applying for the role of ${role} and has provided the following resume:
+"""
+${resumeText}
+"""
+Generate a highly personalized, targeted first interview question based *specifically* on the projects, skills, or experience listed in their resume.
+The question should ask them to dive deep into a specific technical decision, architectural tradeoff, or challenge they faced in one of their listed projects.
+Keep the question brief and focused (1-2 sentences). Return ONLY the question text.`;
+    }
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',

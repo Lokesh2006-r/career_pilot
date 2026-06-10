@@ -79,7 +79,6 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-wider">
             <Link href="#features" className="text-zinc-500 dark:text-zinc-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">Features</Link>
             <Link href="#preview" className="text-zinc-500 dark:text-zinc-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">Platform</Link>
-            <Link href="#stats" className="text-zinc-500 dark:text-zinc-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">Stats</Link>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
@@ -117,13 +116,6 @@ export default function LandingPage() {
               className="py-2.5 text-zinc-555 dark:text-zinc-400 hover:text-indigo-500 transition-colors border-b border-zinc-100 dark:border-zinc-900"
             >
               Platform
-            </Link>
-            <Link 
-              href="#stats" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="py-2.5 text-zinc-555 dark:text-zinc-400 hover:text-indigo-500 transition-colors border-b border-zinc-100 dark:border-zinc-900"
-            >
-              Stats
             </Link>
             <Link 
               href="/login" 
@@ -279,28 +271,6 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section id="stats" className="py-10 md:py-16 border-y border-zinc-200/40 dark:border-zinc-800/40 bg-zinc-50/20 dark:bg-zinc-950/20 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {[
-              { label: "Successful Placements", value: "10K+", icon: <Briefcase className="w-5 h-5 text-indigo-500" /> },
-              { label: "Mock Trials Run", value: "50K+", icon: <Target className="w-5 h-5 text-cyan-500" /> },
-              { label: "Average ATS Boost", value: "85%", icon: <Zap className="w-5 h-5 text-yellow-500" /> },
-              { label: "Recruiting Corporate Hubs", value: "500+", icon: <Layers className="w-5 h-5 text-purple-500" /> }
-            ].map((stat, i) => (
-              <div key={i} className="glass-panel border-zinc-200/40 dark:border-zinc-800/40 p-4 md:p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm relative group hover:scale-[1.02] hover:border-indigo-500/20 transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-zinc-150/40 dark:bg-zinc-900/40 border border-zinc-200/50 dark:border-zinc-800/40 flex items-center justify-center mb-4">
-                  {stat.icon}
-                </div>
-                <span className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-zinc-900 via-indigo-500 to-zinc-900 dark:from-white dark:via-indigo-400 dark:to-white bg-clip-text text-transparent mb-1.5">{stat.value}</span>
-                <span className="text-[10px] font-black uppercase text-zinc-400 tracking-wider">{stat.label}</span>
-              </div>
-            ))}
           </div>
         </div>
       </section>

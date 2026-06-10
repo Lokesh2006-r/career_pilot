@@ -22,6 +22,20 @@ const LC_PROFILE_QUERY = `
           submissions
         }
       }
+      tagProblemCounts {
+        advanced {
+          tagName
+          problemsSolved
+        }
+        intermediate {
+          tagName
+          problemsSolved
+        }
+        fundamental {
+          tagName
+          problemsSolved
+        }
+      }
       userCalendar(year: $year) {
         streak
         totalActiveDays
@@ -104,6 +118,7 @@ async function fetchLeetCode(username: string, yearParam?: string | number) {
       date:   h.contest?.startTime
         ? new Date(h.contest.startTime * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         : '',
+      timestamp: h.contest?.startTime ? h.contest.startTime * 1000 : 0,
       rank:   h.ranking,
       rating: Math.round(h.rating),
       delta:  0, // will compute below
@@ -155,6 +170,7 @@ async function fetchLeetCode(username: string, yearParam?: string | number) {
     dailySubmissions,
     contestHistory: history,
     recentSubmissions: recentAc,
+    topics: user.tagProblemCounts || { advanced: [], intermediate: [], fundamental: [] },
   };
 }
 
@@ -180,6 +196,7 @@ async function fetchCodeforces(handle: string) {
     name:   r.contestName,
     date:   new Date(r.ratingUpdateTimeSeconds * 1000)
       .toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    timestamp: r.ratingUpdateTimeSeconds * 1000,
     rank:   r.rank,
     rating: r.newRating,
     delta:  r.newRating - r.oldRating,

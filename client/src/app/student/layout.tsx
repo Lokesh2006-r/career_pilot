@@ -55,7 +55,6 @@ export default function StudentLayout({
             <MobileNavItem href="/student/coding" icon={<Code className="w-5 h-5" />} label="Coding Tracker" active={pathname === "/student/coding"} onClick={() => setIsSidebarOpen(false)} />
             <MobileNavItem href="/student/projects" icon={<Lightbulb className="w-5 h-5" />} label="Project Recs" active={pathname === "/student/projects"} onClick={() => setIsSidebarOpen(false)} />
             <MobileNavItem href="/student/jobs" icon={<Briefcase className="w-5 h-5" />} label="Internship/Job Offers Feed" active={pathname === "/student/jobs"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/student/analytics" icon={<TrendingUp className="w-5 h-5" />} label="Analytics" active={pathname === "/student/analytics"} onClick={() => setIsSidebarOpen(false)} />
           </nav>
 
           <div className="p-3 border-t border-zinc-200/50 dark:border-zinc-800/40 space-y-1">
@@ -99,7 +98,6 @@ export default function StudentLayout({
             <NavItem href="/student/coding" icon={<Code className="w-5 h-5" />} label="Coding Tracker" active={pathname === "/student/coding"} />
             <NavItem href="/student/projects" icon={<Lightbulb className="w-5 h-5" />} label="Project Recs" active={pathname === "/student/projects"} />
             <NavItem href="/student/jobs" icon={<Briefcase className="w-5 h-5" />} label="Internship/Job Offers Feed" active={pathname === "/student/jobs"} />
-            <NavItem href="/student/analytics" icon={<TrendingUp className="w-5 h-5" />} label="Analytics" active={pathname === "/student/analytics"} />
           </nav>
 
           <div className="p-3 border-t border-zinc-200/50 dark:border-zinc-800/40 space-y-1">
@@ -186,7 +184,6 @@ export default function StudentLayout({
               <BottomTabItem href="/student/coding" icon={<Code className="w-[18px] h-[18px]" />} label="Coding" active={pathname === "/student/coding"} />
               <BottomTabItem href="/student/projects" icon={<Lightbulb className="w-[18px] h-[18px]" />} label="Projects" active={pathname === "/student/projects"} />
               <BottomTabItem href="/student/jobs" icon={<Briefcase className="w-[18px] h-[18px]" />} label="Jobs" active={pathname === "/student/jobs"} />
-              <BottomTabItem href="/student/analytics" icon={<TrendingUp className="w-[18px] h-[18px]" />} label="Analytics" active={pathname === "/student/analytics"} />
               <BottomTabItem href="/student/settings" icon={<Settings className="w-[18px] h-[18px]" />} label="Settings" active={pathname === "/student/settings"} />
             </div>
           </nav>

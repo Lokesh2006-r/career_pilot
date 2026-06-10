@@ -842,18 +842,24 @@ export default function StudentDashboardOverview() {
             Your placement preparedness indices are computed live. Log your daily coding, mock interviews, and revise core CS fundamentals.
           </p>
         </div>
+      </header>
+
+      {/* Floating AI Twin Button */}
+      {!isChatOpen && (
         <button 
           onClick={() => setIsChatOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all active:scale-95 shadow-lg shadow-indigo-550/20 z-10 shrink-0"
+          className="fixed bottom-24 md:bottom-8 right-6 z-50 p-4 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-2xl shadow-indigo-600/40 transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer group"
         >
-          <BrainCircuit className="w-4.5 h-4.5" />
-          Consult AI Twin
+          <BrainCircuit className="w-6 h-6 animate-pulse" />
+          <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2 transition-all duration-300 ease-in-out font-bold text-sm">
+            Consult AI Twin
+          </span>
         </button>
-      </header>
+      )}
 
       {/* Toast Alert message */}
       {logSuccessMessage && (
-        <div className="fixed bottom-6 right-6 px-5 py-4 bg-emerald-500 text-white rounded-2xl shadow-xl flex items-center gap-3 z-50 animate-bounce">
+        <div className="fixed top-24 md:top-6 right-6 px-5 py-4 bg-emerald-500 text-white rounded-2xl shadow-xl flex items-center gap-3 z-50 animate-bounce">
           <CheckCircle className="w-5 h-5" />
           <span className="text-xs font-extrabold uppercase tracking-wide">{logSuccessMessage}</span>
         </div>
