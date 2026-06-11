@@ -355,10 +355,7 @@ export default function CodingTracker() {
         }
       }
 
-      // Auto-migrate if placeholder handle is set
-      if (handles.codeforces === "lokesh_r" || handles.codechef === "lokesh_r") {
-        handles = defaultHandles;
-      }
+      // Auto-migrate if placeholder handle is set (Removed to prevent wiping actual lokesh_r handles)
 
       localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(handles));
       setSavedHandles(handles);
