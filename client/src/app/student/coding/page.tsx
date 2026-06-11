@@ -17,6 +17,7 @@ interface LeetCodeData {
   rating: number; globalRank: number; topPct: number;
   streak: number; totalActiveDays: number;
   contestHistory: ContestEntry[];
+  topics?: any;
 }
 interface CodeforcesData {
   handle: string; rating: number; maxRating: number;
@@ -30,7 +31,7 @@ interface CodeChefData {
   note?: string;
 }
 interface ContestEntry {
-  name: string; date: string; rank: number; rating: number; delta: number;
+  name: string; date: string; rank: number; rating: number; delta: number; timestamp?: number;
 }
 interface Submission {
   problem: string; platform: string; difficulty: string;
@@ -756,19 +757,19 @@ export default function CodingTracker() {
                 <p className="text-[10px] text-zinc-600 mb-3">Rating trend across contests</p>
                 {loading ? <Skeleton className="h-12 w-full" /> : (
                   <div className="space-y-4">
-                    {savedHandles.leetcode && lc?.contestHistory?.length > 1 && (
+                    {savedHandles.leetcode && (lc?.contestHistory?.length ?? 0) > 1 && (
                       <div className="relative">
                         <span className="absolute -left-2 -top-2 text-[8px] font-bold text-amber-500 bg-amber-500/10 px-1 py-0.5 rounded">LC</span>
-                        <RatingSparkline data={lc.contestHistory} color="#f59e0b" />
+                        <RatingSparkline data={lc?.contestHistory || []} color="#f59e0b" />
                       </div>
                     )}
-                    {savedHandles.codeforces && cf?.ratingHistory?.length > 1 && (
+                    {savedHandles.codeforces && (cf?.ratingHistory?.length ?? 0) > 1 && (
                       <div className="relative">
                         <span className="absolute -left-2 -top-2 text-[8px] font-bold text-blue-500 bg-blue-500/10 px-1 py-0.5 rounded">CF</span>
-                        <RatingSparkline data={cf.ratingHistory} color="#3b82f6" />
+                        <RatingSparkline data={cf?.ratingHistory || []} color="#3b82f6" />
                       </div>
                     )}
-                    {(!savedHandles.leetcode || !lc?.contestHistory || lc.contestHistory.length < 2) && (!savedHandles.codeforces || !cf?.ratingHistory || cf.ratingHistory.length < 2) && (
+                    {(!savedHandles.leetcode || (lc?.contestHistory?.length ?? 0) < 2) && (!savedHandles.codeforces || (cf?.ratingHistory?.length ?? 0) < 2) && (
                       <div className="text-zinc-500 text-xs py-4 text-center">No contest history yet</div>
                     )}
                   </div>
