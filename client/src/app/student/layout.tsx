@@ -8,6 +8,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 import RoleGuard from "@/components/RoleGuard";
 import CareerPilotLogo, { CareerPilotIcon } from "@/components/CareerPilotLogo";
+import { API_BASE_URL } from "@/lib/api";
+import { useEffect } from "react";
 
 export default function StudentLayout({
   children,
@@ -18,8 +20,47 @@ export default function StudentLayout({
   const router = useRouter();
   const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [profileData, setProfileData] = useState<{name: string, avatar: string}>({ name: "", avatar: "" });
+
+  useEffect(() => {
+    if (!user) return;
+    const loadProfile = () => {
+      const saved = localStorage.getItem(`student_profile_${user.uid}`);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed.fullName || parsed.avatarUrl) {
+            setProfileData({ name: parsed.fullName || "", avatar: parsed.avatarUrl || "" });
+          }
+        } catch (e) {}
+      }
+      
+      // Always fetch to ensure we have the latest
+      fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`)
+        .then(res => res.json())
+        .then(json => {
+          if (json.success && json.data) {
+            setProfileData({ name: json.data.fullName || "", avatar: json.data.avatarUrl || "" });
+            // Merge with local storage
+            const currentSaved = localStorage.getItem(`student_profile_${user.uid}`);
+            let merged = json.data;
+            if (currentSaved) {
+              try { merged = { ...JSON.parse(currentSaved), ...json.data }; } catch (e) {}
+            }
+            localStorage.setItem(`student_profile_${user.uid}`, JSON.stringify(merged));
+          }
+        })
+        .catch(e => console.error("Error loading profile header:", e));
+    };
+    
+    loadProfile();
+    const handleProfileUpdate = () => loadProfile();
+    window.addEventListener('profile_updated', handleProfileUpdate);
+    return () => window.removeEventListener('profile_updated', handleProfileUpdate);
+  }, [user]);
   
-  const studentName = user?.name || "Student";
+  const studentName = profileData.name || user?.name || "Student";
+  const avatarUrl = profileData.avatar || "";
 
   return (
     <RoleGuard allowedRoles={["student"]}>
@@ -156,8 +197,12 @@ export default function StudentLayout({
                 }}
                 className="flex items-center gap-3 pl-2 border-l border-zinc-200/50 dark:border-zinc-800/40 hover:opacity-90 transition-all cursor-pointer group"
               >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-650 flex items-center justify-center font-bold text-white text-sm shadow-[0_0_15px_rgba(99,102,241,0.2)] border border-white/10 group-hover:scale-105 transition-transform duration-300">
-                  {studentName[0]?.toUpperCase()}
+                <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-650 flex items-center justify-center font-bold text-white text-sm shadow-[0_0_15px_rgba(99,102,241,0.2)] border border-white/10 group-hover:scale-105 transition-transform duration-300">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={studentName} className="w-full h-full object-cover" />
+                  ) : (
+                    studentName[0]?.toUpperCase()
+                  )}
                 </div>
                 <div className="hidden md:block">
                   <p className="text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300">{studentName}</p>

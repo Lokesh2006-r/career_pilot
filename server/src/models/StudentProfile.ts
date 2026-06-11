@@ -13,6 +13,7 @@ export interface IStudentProfile extends Document {
   github: string;
   linkedin: string;
   portfolio: string;
+  avatarUrl: string;
   codingHandles: {
     leetcode: string;
     codeforces: string;
@@ -39,6 +40,7 @@ const StudentProfileSchema = new Schema<IStudentProfile>(
     github: { type: String, default: '' },
     linkedin: { type: String, default: '' },
     portfolio: { type: String, default: '' },
+    avatarUrl: { type: String, default: '' },
     codingHandles: {
       leetcode: { type: String, default: '' },
       codeforces: { type: String, default: '' },
