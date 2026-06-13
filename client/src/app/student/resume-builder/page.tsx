@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { 
-  Sparkles, Save, Download, Plus, Trash2, User, Briefcase, 
-  BookOpen, Code, Award, FileText, Check, AlertCircle, RefreshCw, Upload 
-} from "lucide-react";
+
 import { API_BASE_URL } from "@/lib/api";
 
 interface Experience {
@@ -477,7 +474,7 @@ export default function ResumeBuilder() {
         <div>
           <div className="flex items-center gap-2.5">
             <span className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-655 flex items-center justify-center text-white shadow-md">
-              <Sparkles className="w-4 h-4 animate-pulse" />
+              <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 animate-pulse" ></i>
             </span>
             <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-tr from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500 bg-clip-text text-transparent">Resume Enhancer</h1>
           </div>
@@ -498,12 +495,12 @@ export default function ResumeBuilder() {
           >
             {parsing ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
+                <i className="fa-solid fa-arrows-rotate w-4 h-4 animate-spin" ></i>
                 Parsing & Enhancing...
               </>
             ) : (
               <>
-                <Upload className="w-4 h-4" />
+                <i className="fa-solid fa-cloud-arrow-up w-4 h-4" ></i>
                 Upload Resume
               </>
             )}
@@ -516,12 +513,12 @@ export default function ResumeBuilder() {
           >
             {autoEnhancing ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
+                <i className="fa-solid fa-arrows-rotate w-4 h-4 animate-spin" ></i>
                 Auto-Enhancing...
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 animate-pulse" />
+                <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 animate-pulse" ></i>
                 AI Auto-Enhance All
               </>
             )}
@@ -532,7 +529,7 @@ export default function ResumeBuilder() {
             disabled={saving}
             className="flex items-center gap-2 px-5 py-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer transition-all active:scale-95"
           >
-            {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {saving ? <i className="fa-solid fa-arrows-rotate w-4 h-4 animate-spin" ></i> : <i className="fa-solid fa-floppy-disk w-4 h-4" ></i>}
             Save
           </button>
           
@@ -540,7 +537,7 @@ export default function ResumeBuilder() {
             onClick={handlePrint}
             className="flex items-center gap-2 px-5 py-3 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer shadow-[0_4px_15px_rgba(99,102,241,0.25)] hover:shadow-[0_4px_20px_rgba(99,102,241,0.35)] transition-all active:scale-95"
           >
-            <Download className="w-4 h-4" />
+            <i className="fa-solid fa-download w-4 h-4" ></i>
             Download PDF
           </button>
         </div>
@@ -553,7 +550,7 @@ export default function ResumeBuilder() {
             ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400" 
             : "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400"
         }`}>
-          {saveStatus === "success" ? <Check className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+          {saveStatus === "success" ? <i className="fa-solid fa-check w-5 h-5" ></i> : <i className="fa-solid fa-circle-exclamation w-5 h-5" ></i>}
           <span className="text-xs font-bold uppercase tracking-wider">
             {saveStatus === "success" ? "Resume saved successfully!" : "Failed to save resume. Please try again."}
           </span>
@@ -569,7 +566,7 @@ export default function ResumeBuilder() {
           {/* 1. Personal Details */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <User className="w-4.5 h-4.5 text-indigo-500" />
+              <i className="fa-solid fa-user w-4.5 h-4.5 text-indigo-500" ></i>
               Personal Information
             </h3>
             
@@ -670,7 +667,7 @@ export default function ResumeBuilder() {
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
               <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                <FileText className="w-4.5 h-4.5 text-indigo-500" />
+                <i className="fa-solid fa-file-lines w-4.5 h-4.5 text-indigo-500" ></i>
                 Professional Summary
               </h3>
               <button
@@ -681,12 +678,12 @@ export default function ResumeBuilder() {
               >
                 {enhancingSummary ? (
                   <>
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <i className="fa-solid fa-arrows-rotate w-3.5 h-3.5 animate-spin" ></i>
                     Enhancing...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+                    <i className="fa-solid fa-wand-magic-sparkles w-3.5 h-3.5 animate-pulse" ></i>
                     AI Enhance
                   </>
                 )}
@@ -707,7 +704,7 @@ export default function ResumeBuilder() {
           {/* 3. Professional Experience */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
-              <Briefcase className="w-4.5 h-4.5 text-indigo-500" />
+              <i className="fa-solid fa-briefcase w-4.5 h-4.5 text-indigo-500" ></i>
               Work Experience
             </h3>
             
@@ -718,7 +715,7 @@ export default function ResumeBuilder() {
                     onClick={() => removeExperience(idx)}
                     className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <i className="fa-solid fa-trash-can w-4 h-4" ></i>
                   </button>
                   
                   <h4 className="text-xs font-black uppercase text-indigo-500">Position #{idx + 1}</h4>
@@ -790,12 +787,12 @@ export default function ResumeBuilder() {
                       >
                         {enhancingIndex?.type === "experience" && enhancingIndex.index === idx ? (
                           <>
-                            <RefreshCw className="w-3 h-3 animate-spin" />
+                            <i className="fa-solid fa-arrows-rotate w-3 h-3 animate-spin" ></i>
                             Optimizing...
                           </>
                         ) : (
                           <>
-                            <Sparkles className="w-3 h-3" />
+                            <i className="fa-solid fa-wand-magic-sparkles w-3 h-3" ></i>
                             AI Optimize
                           </>
                         )}
@@ -816,7 +813,7 @@ export default function ResumeBuilder() {
                 onClick={addExperience}
                 className="w-full py-3.5 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/40 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
               >
-                <Plus className="w-4 h-4" />
+                <i className="fa-solid fa-plus w-4 h-4" ></i>
                 Add Experience
               </button>
             </div>
@@ -825,7 +822,7 @@ export default function ResumeBuilder() {
           {/* 4. Projects */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
-              <Sparkles className="w-4.5 h-4.5 text-indigo-500" />
+              <i className="fa-solid fa-wand-magic-sparkles w-4.5 h-4.5 text-indigo-500" ></i>
               Projects
             </h3>
             
@@ -836,7 +833,7 @@ export default function ResumeBuilder() {
                     onClick={() => removeProject(idx)}
                     className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <i className="fa-solid fa-trash-can w-4 h-4" ></i>
                   </button>
                   
                   <h4 className="text-xs font-black uppercase text-indigo-500">Project #{idx + 1}</h4>
@@ -886,12 +883,12 @@ export default function ResumeBuilder() {
                       >
                         {enhancingIndex?.type === "projects" && enhancingIndex.index === idx ? (
                           <>
-                            <RefreshCw className="w-3 h-3 animate-spin" />
+                            <i className="fa-solid fa-arrows-rotate w-3 h-3 animate-spin" ></i>
                             Optimizing...
                           </>
                         ) : (
                           <>
-                            <Sparkles className="w-3 h-3" />
+                            <i className="fa-solid fa-wand-magic-sparkles w-3 h-3" ></i>
                             AI Optimize
                           </>
                         )}
@@ -912,7 +909,7 @@ export default function ResumeBuilder() {
                 onClick={addProject}
                 className="w-full py-3.5 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/40 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
               >
-                <Plus className="w-4 h-4" />
+                <i className="fa-solid fa-plus w-4 h-4" ></i>
                 Add Project
               </button>
             </div>
@@ -921,7 +918,7 @@ export default function ResumeBuilder() {
           {/* 5. Education */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
-              <BookOpen className="w-4.5 h-4.5 text-indigo-500" />
+              <i className="fa-solid fa-book-open w-4.5 h-4.5 text-indigo-500" ></i>
               Education
             </h3>
             
@@ -932,7 +929,7 @@ export default function ResumeBuilder() {
                     onClick={() => removeEducation(idx)}
                     className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <i className="fa-solid fa-trash-can w-4 h-4" ></i>
                   </button>
                   
                   <h4 className="text-xs font-black uppercase text-indigo-500">Education #{idx + 1}</h4>
@@ -999,7 +996,7 @@ export default function ResumeBuilder() {
                 onClick={addEducation}
                 className="w-full py-3.5 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/40 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
               >
-                <Plus className="w-4 h-4" />
+                <i className="fa-solid fa-plus w-4 h-4" ></i>
                 Add Education Entry
               </button>
             </div>
@@ -1008,7 +1005,7 @@ export default function ResumeBuilder() {
           {/* 6. Core Skills */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
-              <Code className="w-4.5 h-4.5 text-indigo-500" />
+              <i className="fa-solid fa-code w-4.5 h-4.5 text-indigo-500" ></i>
               Core Skills
             </h3>
             
@@ -1106,7 +1103,7 @@ export default function ResumeBuilder() {
           >
             {loading ? (
               <div className="flex-1 flex flex-col items-center justify-center text-zinc-400 gap-2">
-                <RefreshCw className="w-8 h-8 animate-spin text-indigo-500" />
+                <i className="fa-solid fa-arrows-rotate w-8 h-8 animate-spin text-indigo-500" ></i>
                 <span className="text-xs font-semibold uppercase tracking-wider">Syncing Resume Layout...</span>
               </div>
             ) : (

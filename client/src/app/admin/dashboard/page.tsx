@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Cpu, Activity, HardDrive, Terminal as TermIcon, ShieldAlert, Sparkles, RefreshCw } from "lucide-react";
+
 
 interface LogEntry {
   timestamp: string;
@@ -59,7 +59,7 @@ export default function AdminDashboardOverview() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20">
-              <Sparkles className="w-3 h-3" />
+              <i className="fa-solid fa-wand-magic-sparkles w-3 h-3" ></i>
               Master Control System Active
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-700 dark:from-white dark:via-zinc-200 dark:to-zinc-400 bg-clip-text text-transparent">
@@ -115,7 +115,7 @@ export default function AdminDashboardOverview() {
         {/* Signups over time SVG Graph */}
         <div className="lg:col-span-6 glass-panel p-8 rounded-3xl space-y-6">
           <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-            <Activity className="w-5 h-5 text-rose-500" />
+            <i className="fa-solid fa-chart-line w-5 h-5 text-rose-500" ></i>
             User Signups & Registration Flow (6 Weeks)
           </h3>
 
@@ -153,7 +153,7 @@ export default function AdminDashboardOverview() {
         <div className="lg:col-span-6 glass-panel p-8 rounded-3xl space-y-4 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <TermIcon className="w-5 h-5 text-rose-500" />
+              <i className="fa-solid fa-terminal w-5 h-5 text-rose-500" ></i>
               Interactive Console Monitor
             </h3>
             <span className="text-[9px] font-black uppercase bg-rose-500/10 text-rose-550 border border-rose-500/20 px-2 py-0.5 rounded">Live Stream</span>

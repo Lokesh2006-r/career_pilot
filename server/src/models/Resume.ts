@@ -10,7 +10,7 @@ export interface IResume extends Document {
   atsScore: number;
   confidenceScore: number;
   missingKeywords: string[];
-  suggestions: string[];
+  suggestions: { title: string; explanation: string; example: string }[];
   rawText: string;
   createdAt: Date;
   updatedAt: Date;
@@ -27,7 +27,11 @@ const ResumeSchema = new Schema<IResume>(
     atsScore: { type: Number, default: 0 },
     confidenceScore: { type: Number, default: 0 },
     missingKeywords: [{ type: String }],
-    suggestions: [{ type: String }],
+    suggestions: [{
+      title: { type: String },
+      explanation: { type: String },
+      example: { type: String }
+    }],
     rawText: { type: String, default: '' },
   },
   { timestamps: true }

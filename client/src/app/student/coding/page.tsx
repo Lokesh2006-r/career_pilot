@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Code, TrendingUp, Award, RefreshCw, X, Loader2,
-  Flame, Target, Star, Trophy, Zap, Activity,
-  AlertCircle, ExternalLink, CheckCircle2,
-  ChevronDown, Info,
-} from "lucide-react";
+
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
@@ -436,12 +431,12 @@ export default function CodingTracker() {
               onClick={() => !syncing && setModalOpen(false)}
               className="absolute top-4 right-4 p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-white transition-colors"
             >
-              <X className="w-4 h-4" />
+              <i className="fa-solid fa-xmark w-4 h-4" ></i>
             </button>
 
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
-                <RefreshCw className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+                <i className="fa-solid fa-arrows-rotate w-5 h-5 text-indigo-500 dark:text-indigo-400" ></i>
               </div>
               <div>
                 <h3 className="text-base font-bold text-zinc-900 dark:text-white">Connect Coding Profiles</h3>
@@ -529,7 +524,7 @@ export default function CodingTracker() {
               disabled={loading}
               className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-indigo-500/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white font-bold text-[11px] transition-all disabled:opacity-50"
             >
-              <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+              <i className={`fa-solid fa-arrows-rotate ${`w-3 h-3 ${loading ? "animate-spin" : ""}`} `}></i>
               <span className="hidden xs:inline sm:inline">Refresh</span>
             </button>
           )}
@@ -537,7 +532,7 @@ export default function CodingTracker() {
             onClick={() => setModalOpen(true)}
             className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] transition-all active:scale-95 shadow-md shadow-indigo-500/20"
           >
-            <RefreshCw className="w-3 h-3" />
+            <i className="fa-solid fa-arrows-rotate w-3 h-3" ></i>
             <span>{hasHandles ? "Update" : "Connect"}</span>
           </button>
         </div>
@@ -546,7 +541,7 @@ export default function CodingTracker() {
       {/* ── Error banner ─────────────────────────────────────────────────────── */}
       {error && (
         <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <i className="fa-solid fa-circle-exclamation w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" ></i>
           <div>
             <p className="text-sm font-bold text-red-400">Failed to fetch data</p>
             <p className="text-xs text-red-300/70 mt-0.5">{error}</p>
@@ -569,7 +564,7 @@ export default function CodingTracker() {
       {!hasHandles && !loading && (
         <div className="glass-panel rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-            <Code className="w-8 h-8 text-indigo-400" />
+            <i className="fa-solid fa-code w-8 h-8 text-indigo-400" ></i>
           </div>
           <div>
             <h2 className="text-lg font-extrabold text-white mb-2">Connect Your Coding Profiles</h2>
@@ -612,7 +607,7 @@ export default function CodingTracker() {
 
               {/* Streak */}
               <div className="flex items-center gap-3 p-3 rounded-xl bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/20 dark:border-orange-500/30 mb-3">
-                <Flame className="w-5 h-5 text-orange-500 flex-shrink-0" />
+                <i className="fa-solid fa-fire w-5 h-5 text-orange-500 flex-shrink-0" ></i>
                 <div>
                   <p className="text-[10px] text-orange-600 dark:text-orange-300 font-black uppercase tracking-widest">LeetCode Streak</p>
                   {loading ? <Skeleton className="h-5 w-20 mt-1" /> : (
@@ -623,7 +618,7 @@ export default function CodingTracker() {
 
               {/* Total solved */}
               <div className="flex items-center gap-3 p-3 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 dark:border-indigo-500/30">
-                <Target className="w-5 h-5 text-indigo-500 dark:text-indigo-400 flex-shrink-0" />
+                <i className="fa-solid fa-bullseye w-5 h-5 text-indigo-500 dark:text-indigo-400 flex-shrink-0" ></i>
                 <div>
                   <p className="text-[10px] text-indigo-600 dark:text-indigo-300 font-black uppercase tracking-widest">Total Solved</p>
                   {loading ? <Skeleton className="h-5 w-20 mt-1" /> : (
@@ -842,7 +837,7 @@ export default function CodingTracker() {
                           <span className="text-lg font-extrabold text-zinc-900 dark:text-white">{totalSubmissionsPastYear}</span>
                           <span className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">submissions in the past one year</span>
                           <span title="Submissions across all platforms over the last 12 months" className="cursor-help">
-                            <Info className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
+                            <i className="fa-solid fa-circle-info w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" ></i>
                           </span>
                         </div>
                         <div className="flex items-center gap-4 flex-wrap">
@@ -899,7 +894,7 @@ export default function CodingTracker() {
                       {selectedCell && (
                         <div className="flex justify-center pt-2">
                           <div className="text-xs font-bold text-emerald-400 bg-emerald-500/5 border border-emerald-500/10 rounded-xl py-2 px-4 animate-fade-in flex items-center gap-2 shadow-lg shadow-emerald-500/5">
-                            <Activity className="w-4 h-4 text-emerald-400" />
+                            <i className="fa-solid fa-chart-line w-4 h-4 text-emerald-400" ></i>
                             <span>
                               {selectedCell.count} submission{selectedCell.count !== 1 ? "s" : ""} on {(() => {
                                 if (!selectedCell.date) return "";
@@ -943,10 +938,10 @@ export default function CodingTracker() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
                     {loading ? Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-20" />) : (
                       <>
-                        <StatCard label="LeetCode Solved" value={savedHandles.leetcode ? lc?.solved : undefined} icon={<Code className="w-4 h-4 text-amber-500" />} bg="bg-amber-500/10" />
-                        <StatCard label="Codeforces Solved" value={savedHandles.codeforces ? cf?.solved : undefined} icon={<Zap className="w-4 h-4 text-blue-500" />} bg="bg-blue-500/10" />
-                        <StatCard label="CodeChef Solved" value={savedHandles.codechef ? cc?.solved : undefined} icon={<Star className="w-4 h-4 text-red-500" />} bg="bg-red-500/10" />
-                        <StatCard label="Total Problems" value={totalSolved} icon={<Trophy className="w-4 h-4 text-indigo-500" />} bg="bg-indigo-500/10" highlight />
+                        <StatCard label="LeetCode Solved" value={savedHandles.leetcode ? lc?.solved : undefined} icon={<i className="fa-solid fa-code w-4 h-4 text-amber-500" ></i>} bg="bg-amber-500/10" />
+                        <StatCard label="Codeforces Solved" value={savedHandles.codeforces ? cf?.solved : undefined} icon={<i className="fa-solid fa-bolt w-4 h-4 text-blue-500" ></i>} bg="bg-blue-500/10" />
+                        <StatCard label="CodeChef Solved" value={savedHandles.codechef ? cc?.solved : undefined} icon={<i className="fa-solid fa-star w-4 h-4 text-red-500" ></i>} bg="bg-red-500/10" />
+                        <StatCard label="Total Problems" value={totalSolved} icon={<i className="fa-solid fa-trophy w-4 h-4 text-indigo-500" ></i>} bg="bg-indigo-500/10" highlight />
                       </>
                     )}
                   </div>
@@ -1003,7 +998,7 @@ export default function CodingTracker() {
                               <a href={s.url} target="_blank" rel="noopener noreferrer"
                                 className="font-bold text-zinc-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors flex items-center gap-1">
                                 {s.problem}
-                                <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" />
+                                <i className="fa-solid fa-up-right-from-square w-3 h-3 opacity-0 group-hover:opacity-100" ></i>
                               </a>
                             </td>
                             <td className="px-4 py-3.5 text-[10px] text-zinc-500 font-semibold">{s.platform}</td>

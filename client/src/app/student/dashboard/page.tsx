@@ -1,12 +1,6 @@
 "use client";
 
-import { 
-  BrainCircuit, TrendingUp, Target, Code, AlertCircle, FileText, X, Send, 
-  Sparkles, Trophy, ArrowUpRight, GraduationCap, Loader2, CheckSquare, 
-  Square, Calendar, ChevronRight, Activity, Award, ShieldAlert,
-  Clock, Play, Pause, RotateCcw, Plus, Trash2, CheckCircle, HelpCircle, 
-  Flame, History, MessageSquare, ChevronDown
-} from "lucide-react";
+
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
@@ -449,12 +443,14 @@ export default function StudentDashboardOverview() {
           } catch (e) { console.error("Error fetching coding profile:", e); }
         };
 
-        // Run all independent requests in parallel
+        // Run independent fast requests in parallel to unblock the UI quickly
         await Promise.all([
           fetchResume(),
-          fetchInterviews(),
-          fetchProfileAndCoding()
+          fetchInterviews()
         ]);
+        
+        // Run slow external third-party scraping in the background
+        fetchProfileAndCoding();
 
       } catch (err) {
         console.error("Error in fetchAllData wrapper:", err);
@@ -781,52 +777,55 @@ export default function StudentDashboardOverview() {
     <div className="space-y-8 animate-fade-in text-zinc-900 dark:text-zinc-100">
       
       {/* AI Twin Slide-out Chat Panel */}
-      {isChatOpen && (
-        <>
-          <div onClick={() => setIsChatOpen(false)} className="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm z-40" />
-          <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white/90 dark:bg-zinc-950/90 border-l border-zinc-200/50 dark:border-zinc-800/40 backdrop-blur-2xl z-50 flex flex-col shadow-2xl animate-in slide-in-from-right duration-350">
-            <div className="p-5 border-b border-zinc-200/50 dark:border-zinc-800/40 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-500 border border-indigo-500/20">
-                  <BrainCircuit className="w-5 h-5 animate-pulse" />
+      {isChatOpen && typeof document !== 'undefined' && (
+        require('react-dom').createPortal(
+          <>
+            <div onClick={() => setIsChatOpen(false)} className="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm z-[100]" />
+            <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white/90 dark:bg-zinc-950/90 border-l border-zinc-200/50 dark:border-zinc-800/40 backdrop-blur-2xl z-[101] flex flex-col shadow-2xl animate-in slide-in-from-right duration-350">
+              <div className="p-5 border-b border-zinc-200/50 dark:border-zinc-800/40 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-500 border border-indigo-500/20">
+                    <i className="fa-solid fa-microchip w-5 h-5 animate-pulse" ></i>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm text-zinc-900 dark:text-white flex items-center gap-1.5">
+                      AI Twin Chat
+                      <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 text-indigo-500 fill-indigo-500/20" ></i>
+                    </h3>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">Academic & Placement Guide</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-sm text-zinc-900 dark:text-white flex items-center gap-1.5">
-                    AI Twin Chat
-                    <Sparkles className="w-4 h-4 text-indigo-500 fill-indigo-500/20" />
-                  </h3>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Academic & Placement Guide</p>
-                </div>
+                <button onClick={() => setIsChatOpen(false)} className="p-2 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 rounded-xl text-zinc-550">
+                  <i className="fa-solid fa-xmark w-5 h-5" ></i>
+                </button>
               </div>
-              <button onClick={() => setIsChatOpen(false)} className="p-2 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 rounded-xl text-zinc-550">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5 space-y-4">
-              {chatMessages.map((msg, index) => (
-                <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm leading-relaxed ${msg.role === 'user' ? 'bg-gradient-to-tr from-indigo-500 to-purple-600 text-white rounded-tr-none' : 'bg-zinc-100 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 rounded-tl-none border border-zinc-200/50 dark:border-zinc-800/30'}`}>
-                    <p className="whitespace-pre-line">{msg.content}</p>
+              <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                {chatMessages.map((msg, index) => (
+                  <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm leading-relaxed ${msg.role === 'user' ? 'bg-gradient-to-tr from-indigo-500 to-purple-600 text-white rounded-tr-none' : 'bg-zinc-100 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 rounded-tl-none border border-zinc-200/50 dark:border-zinc-800/30'}`}>
+                      <p className="whitespace-pre-line">{msg.content}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-              {isSending && (
-                <div className="flex justify-start">
-                  <div className="bg-zinc-100/80 dark:bg-zinc-900/60 rounded-2xl rounded-tl-none px-4 py-3 border border-zinc-200/50 dark:border-zinc-800/30 flex gap-1.5 items-center">
-                    <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></span>
-                    <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                    <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                ))}
+                {isSending && (
+                  <div className="flex justify-start">
+                    <div className="bg-zinc-100/80 dark:bg-zinc-900/60 rounded-2xl rounded-tl-none px-4 py-3 border border-zinc-200/50 dark:border-zinc-800/30 flex gap-1.5 items-center">
+                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></span>
+                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                    </div>
                   </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+              <form onSubmit={handleSendMessage} className="p-5 border-t border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-950/20 flex gap-2">
+                <input type="text" value={inputVal} onChange={(e) => setInputVal(e.target.value)} placeholder="Ask your twin something..." className="flex-1 px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-200/50 dark:border-zinc-800/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" />
+                <button type="submit" disabled={!inputVal.trim() || isSending} className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl disabled:opacity-50 transition-colors"><i className="fa-solid fa-paper-plane w-4 h-4" ></i></button>
+              </form>
             </div>
-            <form onSubmit={handleSendMessage} className="p-5 border-t border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-950/20 flex gap-2">
-              <input type="text" value={inputVal} onChange={(e) => setInputVal(e.target.value)} placeholder="Ask your twin something..." className="flex-1 px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-200/50 dark:border-zinc-800/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" />
-              <button type="submit" disabled={!inputVal.trim() || isSending} className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl disabled:opacity-50 transition-colors"><Send className="w-4 h-4" /></button>
-            </form>
-          </div>
-        </>
+          </>,
+          document.body
+        )
       )}
 
       {/* Top Banner section */}
@@ -834,7 +833,7 @@ export default function StudentDashboardOverview() {
         <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="z-10">
           <div className="flex items-center gap-2 text-indigo-500 font-extrabold text-xs uppercase tracking-wider mb-1.5">
-            <Sparkles className="w-4.5 h-4.5" />
+            <i className="fa-solid fa-wand-magic-sparkles w-4.5 h-4.5" ></i>
             Performance & practice cockpit
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight">Welcome back, {firstName}</h1>
@@ -850,7 +849,7 @@ export default function StudentDashboardOverview() {
           onClick={() => setIsChatOpen(true)}
           className="fixed bottom-24 md:bottom-8 right-6 z-50 p-4 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-2xl shadow-indigo-600/40 transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer group"
         >
-          <BrainCircuit className="w-6 h-6 animate-pulse" />
+          <i className="fa-solid fa-microchip w-6 h-6 animate-pulse" ></i>
           <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2 transition-all duration-300 ease-in-out font-bold text-sm">
             Consult AI Twin
           </span>
@@ -860,14 +859,14 @@ export default function StudentDashboardOverview() {
       {/* Toast Alert message */}
       {logSuccessMessage && (
         <div className="fixed top-24 md:top-6 right-6 px-5 py-4 bg-emerald-500 text-white rounded-2xl shadow-xl flex items-center gap-3 z-50 animate-bounce">
-          <CheckCircle className="w-5 h-5" />
+          <i className="fa-regular fa-circle-check w-5 h-5" ></i>
           <span className="text-xs font-extrabold uppercase tracking-wide">{logSuccessMessage}</span>
         </div>
       )}
 
       {statsLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+          <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-indigo-500 animate-spin" ></i>
           <p className="text-sm text-zinc-400 font-bold uppercase tracking-wider animate-pulse">Aggregating overall performance metrics...</p>
         </div>
       ) : (
@@ -878,25 +877,25 @@ export default function StudentDashboardOverview() {
               title="Placement Readiness" 
               value={`${placementReadiness}%`} 
               trend={placementReadiness >= 75 ? "Target credentials met" : "Complete key preparation steps"} 
-              icon={<Target className="w-5 h-5 text-indigo-500" />} 
+              icon={<i className="fa-solid fa-bullseye w-5 h-5 text-indigo-500" ></i>} 
             />
             <MetricCard 
               title="Consistency score" 
               value={`${consistencyScore}%`} 
               trend={`${practiceLogs.length} logged sessions in last 30d`} 
-              icon={<Activity className="w-5 h-5 text-cyan-500" />} 
+              icon={<i className="fa-solid fa-chart-line w-5 h-5 text-cyan-500" ></i>} 
             />
             <MetricCard 
               title="Daily practice streak" 
               value={`${practiceStreak} Days`} 
               trend={practiceStreak > 0 ? "🔥 Keep the fire burning!" : "Log a practice session today"} 
-              icon={<Flame className="w-5 h-5 text-amber-500 fill-amber-500/10" />} 
+              icon={<i className="fa-solid fa-fire w-5 h-5 text-amber-500 fill-amber-500/10" ></i>} 
             />
             <MetricCard 
               title="Weekly Practice" 
               value={`${weeklyPracticeMinutes}m`} 
               trend={`Target: ${weeklyMinutesTarget}m | ${Math.round((weeklyPracticeMinutes/weeklyMinutesTarget)*100)}%`} 
-              icon={<Clock className="w-5 h-5 text-emerald-500" />} 
+              icon={<i className="fa-solid fa-clock w-5 h-5 text-emerald-500" ></i>} 
             />
           </div>
 
@@ -909,7 +908,7 @@ export default function StudentDashboardOverview() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-                      <CheckSquare className="w-5 h-5 text-indigo-500" />
+                      <i className="fa-solid fa-square-check w-5 h-5 text-indigo-500" ></i>
                       Daily Practice Checklist
                     </h3>
                     <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Customize and tick off daily practice milestones.</p>
@@ -945,7 +944,7 @@ export default function StudentDashboardOverview() {
                     type="submit" 
                     className="p-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors cursor-pointer"
                   >
-                    <Plus className="w-4 h-4" />
+                    <i className="fa-solid fa-plus w-4 h-4" ></i>
                   </button>
                 </form>
 
@@ -966,9 +965,9 @@ export default function StudentDashboardOverview() {
                           className="flex items-center gap-3 cursor-pointer flex-1 select-none"
                         >
                           {task.completed ? (
-                            <CheckSquare className="w-4.5 h-4.5 text-indigo-500 shrink-0" />
+                            <i className="fa-solid fa-square-check w-4.5 h-4.5 text-indigo-500 shrink-0" ></i>
                           ) : (
-                            <Square className="w-4.5 h-4.5 text-zinc-400 shrink-0" />
+                            <i className="fa-regular fa-square w-4.5 h-4.5 text-zinc-400 shrink-0" ></i>
                           )}
                           <span className={`text-xs font-semibold ${task.completed ? 'line-through' : ''}`}>
                             {task.label}
@@ -987,7 +986,7 @@ export default function StudentDashboardOverview() {
                             onClick={() => deleteTask(task.id)}
                             className="p-1 hover:bg-rose-500/10 text-zinc-400 hover:text-rose-500 rounded-lg transition-colors cursor-pointer"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <i className="fa-solid fa-trash-can w-3.5 h-3.5" ></i>
                           </button>
                         </div>
                       </div>
@@ -1006,7 +1005,7 @@ export default function StudentDashboardOverview() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
               <div>
                 <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-1">
-                  <Clock className="w-5 h-5 text-indigo-500" />
+                  <i className="fa-solid fa-clock w-5 h-5 text-indigo-500" ></i>
                   Focus Practice Block
                 </h3>
                 <p className="text-xs text-zinc-550 dark:text-zinc-400 mb-6">Commit to a 25-minute undistracted revision sprint.</p>
@@ -1028,11 +1027,11 @@ export default function StudentDashboardOverview() {
                   >
                     {timerIsRunning ? (
                       <>
-                        <Pause className="w-3.5 h-3.5" /> Pause
+                        <i className="fa-solid fa-pause w-3.5 h-3.5" ></i> Pause
                       </>
                     ) : (
                       <>
-                        <Play className="w-3.5 h-3.5" /> Start Focus
+                        <i className="fa-solid fa-play w-3.5 h-3.5" ></i> Start Focus
                       </>
                     )}
                   </button>
@@ -1045,7 +1044,7 @@ export default function StudentDashboardOverview() {
                     className="p-2.5 border border-zinc-200/50 dark:border-zinc-800/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/30 rounded-xl text-zinc-500 dark:text-zinc-400 cursor-pointer"
                     title="Reset Timer"
                   >
-                    <RotateCcw className="w-4 h-4" />
+                    <i className="fa-solid fa-rotate-left w-4 h-4" ></i>
                   </button>
                 </div>
               </div>
@@ -1062,7 +1061,7 @@ export default function StudentDashboardOverview() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
               <div>
                 <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-indigo-500" />
+                  <i className="fa-solid fa-calendar w-5 h-5 text-indigo-500" ></i>
                   Practice Activity Grid
                 </h3>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
@@ -1110,7 +1109,7 @@ export default function StudentDashboardOverview() {
             <div className="lg:col-span-2 glass-panel rounded-3xl p-6 flex flex-col justify-between">
               <div>
                 <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-1">
-                  <Activity className="w-5 h-5 text-indigo-500" />
+                  <i className="fa-solid fa-chart-line w-5 h-5 text-indigo-500" ></i>
                   Log Daily Practice Session
                 </h3>
                 <p className="text-xs text-zinc-550 dark:text-zinc-400 mb-4">Record your practice logs to visualize daily consistency metrics.</p>
@@ -1171,7 +1170,7 @@ export default function StudentDashboardOverview() {
                   Daily Revision Node
                 </span>
                 <h3 className="text-base font-extrabold mt-3.5 flex items-center gap-1.5">
-                  <HelpCircle className="w-5 h-5 text-indigo-500" />
+                  <i className="fa-solid fa-circle-question w-5 h-5 text-indigo-500" ></i>
                   CS Brainteaser
                 </h3>
                 <span className="text-[10px] text-zinc-400 font-bold block mb-4 mt-0.5">{activeQuiz.topic}</span>
@@ -1228,7 +1227,7 @@ export default function StudentDashboardOverview() {
             <div className="lg:col-span-2 glass-panel rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
               <div>
                 <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-4">
-                  <BrainCircuit className="w-5 h-5 text-indigo-500 animate-pulse" />
+                  <i className="fa-solid fa-microchip w-5 h-5 text-indigo-500 animate-pulse" ></i>
                   AI Twin Recommendations
                 </h3>
                 <div className="space-y-4">
@@ -1242,7 +1241,7 @@ export default function StudentDashboardOverview() {
             <div className="glass-panel rounded-3xl p-6 flex flex-col justify-between">
               <div>
                 <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-5">
-                  <Trophy className="w-5 h-5 text-amber-500" />
+                  <i className="fa-solid fa-trophy w-5 h-5 text-amber-500" ></i>
                   Diagnostic Mastery
                 </h3>
                 <div className="space-y-4.5">
@@ -1262,7 +1261,7 @@ export default function StudentDashboardOverview() {
             <div className="lg:col-span-2 glass-panel rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
               <div>
                 <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-5">
-                  <History className="w-5 h-5 text-indigo-500" />
+                  <i className="fa-solid fa-clock-rotate-left w-5 h-5 text-indigo-500" ></i>
                   Practice Timeline & Submissions
                 </h3>
 
@@ -1296,7 +1295,7 @@ export default function StudentDashboardOverview() {
                                 className="p-1 hover:bg-rose-500/10 text-zinc-450 hover:text-rose-500 rounded-lg transition-colors cursor-pointer"
                                 title="Delete Log"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
+                                <i className="fa-solid fa-trash-can w-3.5 h-3.5" ></i>
                               </button>
                             )}
                           </div>
@@ -1317,7 +1316,7 @@ export default function StudentDashboardOverview() {
               
               <div className="glass-panel rounded-3xl p-6 group">
                 <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-5">
-                  <GraduationCap className="w-5 h-5 text-indigo-500" />
+                  <i className="fa-solid fa-graduation-cap w-5 h-5 text-indigo-500" ></i>
                   Academic Revision Nodes
                 </h3>
                 <div className="space-y-3.5">
@@ -1343,7 +1342,7 @@ export default function StudentDashboardOverview() {
                 <div className="mt-6 flex justify-between items-center z-10">
                   <span className="text-xs font-semibold text-indigo-500 group-hover:underline">Launch interface</span>
                   <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-zinc-200/50 dark:border-zinc-800/40 text-indigo-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300">
-                    <ArrowUpRight className="w-4 h-4" />
+                    <i className="fa-solid fa-arrow-up-right-from-square w-4 h-4" ></i>
                   </div>
                 </div>
               </Link>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BrainCircuit, Home, User, FileText, Video, Code, Briefcase, Settings, Bell, Sparkles, TrendingUp, Cpu, Lightbulb, LogOut, Menu, X } from "lucide-react";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -84,22 +84,22 @@ export default function StudentLayout({
               onClick={() => setIsSidebarOpen(false)}
               className="p-1.5 rounded-lg border border-zinc-250 dark:border-zinc-850 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <i className="fa-solid fa-xmark w-4 h-4" ></i>
             </button>
           </div>
 
           <nav className="flex-1 py-6 px-3 space-y-1.5 overflow-y-auto">
-            <MobileNavItem href="/student/dashboard" icon={<Home className="w-5 h-5" />} label="Dashboard" active={pathname === "/student/dashboard"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/student/resume" icon={<FileText className="w-5 h-5" />} label="Resume Analyzer" active={pathname === "/student/resume"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/student/resume-builder" icon={<Sparkles className="w-5 h-5" />} label="Resume Builder" active={pathname === "/student/resume-builder"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/student/mock-interviews" icon={<Video className="w-5 h-5" />} label="AI Mock Interview" active={pathname === "/student/mock-interviews"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/student/coding" icon={<Code className="w-5 h-5" />} label="Coding Tracker" active={pathname === "/student/coding"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/student/projects" icon={<Lightbulb className="w-5 h-5" />} label="Project Recs" active={pathname === "/student/projects"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/student/jobs" icon={<Briefcase className="w-5 h-5" />} label="Internship/Job Offers Feed" active={pathname === "/student/jobs"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/student/dashboard" icon={<i className="fa-solid fa-house w-5 h-5" ></i>} label="Dashboard" active={pathname === "/student/dashboard"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/student/resume" icon={<i className="fa-solid fa-file-lines w-5 h-5" ></i>} label="Resume Analyzer" active={pathname === "/student/resume"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/student/resume-builder" icon={<i className="fa-solid fa-wand-magic-sparkles w-5 h-5" ></i>} label="Resume Builder" active={pathname === "/student/resume-builder"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/student/mock-interviews" icon={<i className="fa-solid fa-video w-5 h-5" ></i>} label="AI Mock Interview" active={pathname === "/student/mock-interviews"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/student/coding" icon={<i className="fa-solid fa-code w-5 h-5" ></i>} label="Coding Tracker" active={pathname === "/student/coding"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/student/projects" icon={<i className="fa-solid fa-lightbulb w-5 h-5" ></i>} label="Project Recs" active={pathname === "/student/projects"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/student/jobs" icon={<i className="fa-solid fa-briefcase w-5 h-5" ></i>} label="Internship/Job Offers Feed" active={pathname === "/student/jobs"} onClick={() => setIsSidebarOpen(false)} />
           </nav>
 
           <div className="p-3 border-t border-zinc-200/50 dark:border-zinc-800/40 space-y-1">
-            <MobileNavItem href="/student/settings" icon={<Settings className="w-5 h-5" />} label="Settings" active={pathname === "/student/settings"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/student/settings" icon={<i className="fa-solid fa-gear w-5 h-5" ></i>} label="Settings" active={pathname === "/student/settings"} onClick={() => setIsSidebarOpen(false)} />
             <button
               onClick={() => {
                 setIsSidebarOpen(false);
@@ -108,7 +108,7 @@ export default function StudentLayout({
               className="w-full flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all duration-300 text-rose-500 hover:bg-rose-500/10 border border-transparent cursor-pointer group/logout"
             >
               <div className="shrink-0 group-hover/logout:scale-110 transition-transform">
-                <LogOut className="w-5 h-5" />
+                <i className="fa-solid fa-right-from-bracket w-5 h-5" ></i>
               </div>
               <span className="font-semibold text-sm tracking-wide">
                 Sign Out
@@ -132,23 +132,23 @@ export default function StudentLayout({
           </div>
 
           <nav className="flex-1 py-6 px-3 space-y-1.5 overflow-y-auto">
-            <NavItem href="/student/dashboard" icon={<Home className="w-5 h-5" />} label="Dashboard" active={pathname === "/student/dashboard"} />
-            <NavItem href="/student/resume" icon={<FileText className="w-5 h-5" />} label="Resume Analyzer" active={pathname === "/student/resume"} />
-            <NavItem href="/student/resume-builder" icon={<Sparkles className="w-5 h-5" />} label="Resume Builder" active={pathname === "/student/resume-builder"} />
-            <NavItem href="/student/mock-interviews" icon={<Video className="w-5 h-5" />} label="AI Mock Interview" active={pathname === "/student/mock-interviews"} />
-            <NavItem href="/student/coding" icon={<Code className="w-5 h-5" />} label="Coding Tracker" active={pathname === "/student/coding"} />
-            <NavItem href="/student/projects" icon={<Lightbulb className="w-5 h-5" />} label="Project Recs" active={pathname === "/student/projects"} />
-            <NavItem href="/student/jobs" icon={<Briefcase className="w-5 h-5" />} label="Internship/Job Offers Feed" active={pathname === "/student/jobs"} />
+            <NavItem href="/student/dashboard" icon={<i className="fa-solid fa-house w-5 h-5" ></i>} label="Dashboard" active={pathname === "/student/dashboard"} />
+            <NavItem href="/student/resume" icon={<i className="fa-solid fa-file-lines w-5 h-5" ></i>} label="Resume Analyzer" active={pathname === "/student/resume"} />
+            <NavItem href="/student/resume-builder" icon={<i className="fa-solid fa-wand-magic-sparkles w-5 h-5" ></i>} label="Resume Builder" active={pathname === "/student/resume-builder"} />
+            <NavItem href="/student/mock-interviews" icon={<i className="fa-solid fa-video w-5 h-5" ></i>} label="AI Mock Interview" active={pathname === "/student/mock-interviews"} />
+            <NavItem href="/student/coding" icon={<i className="fa-solid fa-code w-5 h-5" ></i>} label="Coding Tracker" active={pathname === "/student/coding"} />
+            <NavItem href="/student/projects" icon={<i className="fa-solid fa-lightbulb w-5 h-5" ></i>} label="Project Recs" active={pathname === "/student/projects"} />
+            <NavItem href="/student/jobs" icon={<i className="fa-solid fa-briefcase w-5 h-5" ></i>} label="Internship/Job Offers Feed" active={pathname === "/student/jobs"} />
           </nav>
 
           <div className="p-3 border-t border-zinc-200/50 dark:border-zinc-800/40 space-y-1">
-            <NavItem href="/student/settings" icon={<Settings className="w-5 h-5" />} label="Settings" active={pathname === "/student/settings"} />
+            <NavItem href="/student/settings" icon={<i className="fa-solid fa-gear w-5 h-5" ></i>} label="Settings" active={pathname === "/student/settings"} />
             <button
               onClick={() => logout()}
               className="w-full flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all duration-300 text-rose-500 hover:bg-rose-500/10 border border-transparent cursor-pointer group/logout"
             >
               <div className="shrink-0 group-hover/logout:scale-110 transition-transform">
-                <LogOut className="w-5 h-5" />
+                <i className="fa-solid fa-right-from-bracket w-5 h-5" ></i>
               </div>
               <span className="font-semibold text-sm tracking-wide opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                 Sign Out
@@ -167,9 +167,9 @@ export default function StudentLayout({
                 onClick={() => setIsSidebarOpen(true)}
                 className="md:hidden p-2 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-all duration-300 mr-2 shrink-0 cursor-pointer"
               >
-                <Menu className="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
+                <i className="fa-solid fa-bars w-5 h-5 text-zinc-600 dark:text-zinc-400" ></i>
               </button>
-              <Sparkles className="w-4 h-4 text-indigo-500 animate-pulse shrink-0" />
+              <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 text-indigo-500 animate-pulse shrink-0" ></i>
               <h1 className="text-xs sm:text-sm font-semibold tracking-wide text-zinc-500 dark:text-zinc-400 uppercase truncate">
                 Student Portal / <span className="text-zinc-900 dark:text-white capitalize">{pathname.split("/").pop()?.replace(/-/g, " ") || "Overview"}</span>
               </h1>
@@ -177,7 +177,7 @@ export default function StudentLayout({
 
             <div className="flex items-center gap-4">
               <button className="hidden sm:block p-2.5 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 shadow-sm relative group cursor-pointer">
-                <Bell className="w-5 h-5 text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
+                <i className="fa-solid fa-bell w-5 h-5 text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" ></i>
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full ring-2 ring-white dark:ring-zinc-900 animate-pulse"></span>
               </button>
 
@@ -222,14 +222,14 @@ export default function StudentLayout({
           {/* Mobile Bottom Navigation Bar - Scrollable with all items */}
           <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-200/50 dark:border-zinc-800/40 z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
             <div className="flex items-center overflow-x-auto scrollbar-none px-1 py-1 gap-0.5" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              <BottomTabItem href="/student/dashboard" icon={<Home className="w-[18px] h-[18px]" />} label="Overview" active={pathname === "/student/dashboard"} />
-              <BottomTabItem href="/student/resume" icon={<FileText className="w-[18px] h-[18px]" />} label="Resume" active={pathname === "/student/resume"} />
-              <BottomTabItem href="/student/resume-builder" icon={<Sparkles className="w-[18px] h-[18px]" />} label="Builder" active={pathname === "/student/resume-builder"} />
-              <BottomTabItem href="/student/mock-interviews" icon={<Video className="w-[18px] h-[18px]" />} label="Interview" active={pathname === "/student/mock-interviews"} />
-              <BottomTabItem href="/student/coding" icon={<Code className="w-[18px] h-[18px]" />} label="Coding" active={pathname === "/student/coding"} />
-              <BottomTabItem href="/student/projects" icon={<Lightbulb className="w-[18px] h-[18px]" />} label="Projects" active={pathname === "/student/projects"} />
-              <BottomTabItem href="/student/jobs" icon={<Briefcase className="w-[18px] h-[18px]" />} label="Jobs" active={pathname === "/student/jobs"} />
-              <BottomTabItem href="/student/settings" icon={<Settings className="w-[18px] h-[18px]" />} label="Settings" active={pathname === "/student/settings"} />
+              <BottomTabItem href="/student/dashboard" icon={<i className="fa-solid fa-house w-[18px] h-[18px]" ></i>} label="Overview" active={pathname === "/student/dashboard"} />
+              <BottomTabItem href="/student/resume" icon={<i className="fa-solid fa-file-lines w-[18px] h-[18px]" ></i>} label="Resume" active={pathname === "/student/resume"} />
+              <BottomTabItem href="/student/resume-builder" icon={<i className="fa-solid fa-wand-magic-sparkles w-[18px] h-[18px]" ></i>} label="Builder" active={pathname === "/student/resume-builder"} />
+              <BottomTabItem href="/student/mock-interviews" icon={<i className="fa-solid fa-video w-[18px] h-[18px]" ></i>} label="Interview" active={pathname === "/student/mock-interviews"} />
+              <BottomTabItem href="/student/coding" icon={<i className="fa-solid fa-code w-[18px] h-[18px]" ></i>} label="Coding" active={pathname === "/student/coding"} />
+              <BottomTabItem href="/student/projects" icon={<i className="fa-solid fa-lightbulb w-[18px] h-[18px]" ></i>} label="Projects" active={pathname === "/student/projects"} />
+              <BottomTabItem href="/student/jobs" icon={<i className="fa-solid fa-briefcase w-[18px] h-[18px]" ></i>} label="Jobs" active={pathname === "/student/jobs"} />
+              <BottomTabItem href="/student/settings" icon={<i className="fa-solid fa-gear w-[18px] h-[18px]" ></i>} label="Settings" active={pathname === "/student/settings"} />
             </div>
           </nav>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { UserCheck, Star, Trash2, Mail, ExternalLink, Calendar, Code, Target } from "lucide-react";
+
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
@@ -102,7 +102,7 @@ export default function RecruiterShortlist() {
                   </div>
 
                   <span className="text-xs text-emerald-500 font-extrabold uppercase tracking-wide flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-emerald-500" /> Top Selection
+                    <i className="fa-solid fa-star w-4 h-4 fill-emerald-500" ></i> Top Selection
                   </span>
                 </div>
 
@@ -134,14 +134,14 @@ export default function RecruiterShortlist() {
                   className="p-2.5 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 text-rose-500 rounded-xl transition-all cursor-pointer"
                   title="Remove from shortlist"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <i className="fa-solid fa-trash-can w-5 h-5" ></i>
                 </button>
 
                 <a
                   href={`mailto:${cand.email}?subject=Interview Invitation - AI Twin`}
                   className="flex-1 py-2.5 bg-gradient-to-tr from-purple-500 to-indigo-650 hover:from-purple-650 hover:to-indigo-750 text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm hover:shadow-[0_4px_12px_rgba(168,85,247,0.2)] transition-all cursor-pointer border border-white/10"
                 >
-                  <Mail className="w-4 h-4" />
+                  <i className="fa-solid fa-envelope w-4 h-4" ></i>
                   Invite to Interview
                 </a>
               </div>
@@ -151,7 +151,7 @@ export default function RecruiterShortlist() {
         </div>
       ) : (
         <div className="glass-panel p-16 rounded-3xl text-center border-dashed border-zinc-300 dark:border-zinc-800 flex flex-col items-center justify-center">
-          <UserCheck className="w-12 h-12 text-zinc-400 mb-4" />
+          <i className="fa-solid fa-user-check w-12 h-12 text-zinc-400 mb-4" ></i>
           <h3 className="font-extrabold text-zinc-900 dark:text-white mb-2">No Candidates Shortlisted</h3>
           <p className="text-sm text-zinc-550 dark:text-zinc-450">Browse candidates from the Talent Search portal and hit 'Shortlist' to track them here.</p>
         </div>

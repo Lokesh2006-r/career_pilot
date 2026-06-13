@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Upload, FileText, Target, AlertCircle, CheckCircle2, BrainCircuit, ShieldCheck, Sparkles, RefreshCw } from "lucide-react";
+
 import { auth } from "@/lib/firebase";
 import { API_BASE_URL } from "@/lib/api";
 
@@ -89,7 +89,7 @@ export default function ResumeLab() {
 
           <div className="relative z-10 max-w-xl mx-auto flex flex-col items-center">
             <div className="w-20 h-20 bg-gradient-to-tr from-indigo-500 to-purple-650 rounded-2xl flex items-center justify-center text-white shadow-[0_8px_30px_rgba(99,102,241,0.3)] mb-8 group-hover/upload:scale-110 group-hover/upload:rotate-3 transition-transform duration-300">
-              <Upload className="w-10 h-10" />
+              <i className="fa-solid fa-cloud-arrow-up w-10 h-10" ></i>
             </div>
             
             <h3 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3">
@@ -128,12 +128,12 @@ export default function ResumeLab() {
               >
                 {loading ? (
                   <>
-                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    <i className="fa-solid fa-arrows-rotate w-5 h-5 animate-spin" ></i>
                     Analyzing with AI Twin...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-5 h-5" />
+                    <i className="fa-solid fa-wand-magic-sparkles w-5 h-5" ></i>
                     Analyze Resume
                   </>
                 )}
@@ -183,7 +183,7 @@ export default function ResumeLab() {
               </div>
               
               <p className="text-xs text-emerald-500 font-semibold flex items-center gap-1">
-                <Target className="w-3.5 h-3.5" /> High Placement Index
+                <i className="fa-solid fa-bullseye w-3.5 h-3.5" ></i> High Placement Index
               </p>
             </div>
 
@@ -225,7 +225,7 @@ export default function ResumeLab() {
               <p className={`text-xs font-semibold flex items-center gap-1 ${
                 (result.confidenceScore || 85) >= 80 ? 'text-emerald-500' : 'text-amber-500'
               }`}>
-                <ShieldCheck className="w-3.5 h-3.5" /> High Trust Factor
+                <i className="fa-solid fa-shield-halved w-3.5 h-3.5" ></i> High Trust Factor
               </p>
             </div>
 
@@ -233,7 +233,7 @@ export default function ResumeLab() {
             <div className="glass-panel p-6 rounded-3xl lg:col-span-2 space-y-6 flex flex-col justify-between group">
               <div>
                 <h3 className="font-bold text-sm text-zinc-900 dark:text-white flex items-center gap-2 mb-3.5">
-                  <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500" />
+                  <i className="fa-solid fa-circle-check w-4.5 h-4.5 text-emerald-500" ></i>
                   Extracted Skills & Competencies
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -250,7 +250,7 @@ export default function ResumeLab() {
               
               <div className="border-t border-zinc-200/50 dark:border-zinc-800/40 pt-5">
                 <h3 className="font-bold text-sm text-zinc-900 dark:text-white flex items-center gap-2 mb-3.5">
-                  <AlertCircle className="w-4.5 h-4.5 text-rose-500" />
+                  <i className="fa-solid fa-circle-exclamation w-4.5 h-4.5 text-rose-500" ></i>
                   High-Priority Missing Keywords
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -272,17 +272,32 @@ export default function ResumeLab() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
             
             <h3 className="font-extrabold text-lg mb-6 flex items-center gap-2.5">
-              <BrainCircuit className="w-5 h-5 text-indigo-500" />
+              <i className="fa-solid fa-microchip w-5 h-5 text-indigo-500" ></i>
               Strategic Improvement Plan
             </h3>
             
             <ul className="space-y-4">
-              {result.suggestions?.map((sugg: string, i: number) => (
+              {result.suggestions?.map((sugg: any, i: number) => (
                 <li key={i} className="flex gap-4 p-4 rounded-2xl border border-zinc-200/40 dark:border-zinc-800/30 bg-white/10 dark:bg-zinc-900/20 hover:border-indigo-500/20 transition-all duration-300">
-                  <div className="flex-shrink-0 w-7 h-7 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500 text-xs font-bold shadow-sm">
+                  <div className="flex-shrink-0 w-7 h-7 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500 text-xs font-bold shadow-sm mt-0.5">
                     {i + 1}
                   </div>
-                  <p className="text-sm text-zinc-650 dark:text-zinc-300 leading-relaxed">{sugg}</p>
+                  <div className="flex flex-col gap-1.5 w-full">
+                    {typeof sugg === 'string' ? (
+                      <p className="text-sm text-zinc-650 dark:text-zinc-300 leading-relaxed">{sugg}</p>
+                    ) : (
+                      <>
+                        <h4 className="font-bold text-zinc-900 dark:text-white text-sm">{sugg.title}</h4>
+                        <p className="text-sm text-zinc-650 dark:text-zinc-300 leading-relaxed">{sugg.explanation}</p>
+                        {sugg.example && (
+                          <div className="mt-2.5 p-3.5 bg-zinc-50 dark:bg-zinc-950/50 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50 text-xs text-zinc-700 dark:text-zinc-300 flex flex-col gap-1.5">
+                            <span className="font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider text-[10px]">Example</span>
+                            <span className="leading-relaxed">{sugg.example}</span>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>
@@ -294,7 +309,7 @@ export default function ResumeLab() {
               onClick={() => setResult(null)} 
               className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/30 text-zinc-650 dark:text-zinc-300 font-semibold text-sm hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm cursor-pointer"
             >
-              <FileText className="w-4 h-4" />
+              <i className="fa-solid fa-file-lines w-4 h-4" ></i>
               Upload another resume
             </button>
           </div>

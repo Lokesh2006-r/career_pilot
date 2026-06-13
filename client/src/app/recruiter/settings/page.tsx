@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sliders, KeyRound, Shield, Database, CheckCircle, RefreshCw, Eye, EyeOff } from "lucide-react";
+
 import { useAuth } from "@/context/AuthContext";
 
 export default function RecruiterSettings() {
@@ -72,7 +72,7 @@ export default function RecruiterSettings() {
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-6 right-6 z-50 bg-white/80 dark:bg-zinc-950/80 border border-emerald-500/30 text-emerald-500 px-5 py-3.5 rounded-2xl backdrop-blur-xl shadow-[0_10px_30px_-10px_rgba(16,185,129,0.3)] flex items-center gap-3 animate-in slide-in-from-top duration-300">
-          <CheckCircle className="w-5 h-5 animate-pulse" />
+          <i className="fa-regular fa-circle-check w-5 h-5 animate-pulse" ></i>
           <span className="font-extrabold text-xs uppercase tracking-wider">{toastMessage}</span>
         </div>
       )}
@@ -99,7 +99,7 @@ export default function RecruiterSettings() {
           {/* ATS Config panel */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <Sliders className="w-4.5 h-4.5 text-purple-555" />
+              <i className="fa-solid fa-sliders w-4.5 h-4.5 text-purple-555" ></i>
               ATS Screening Benchmarks
             </h2>
             
@@ -148,7 +148,7 @@ export default function RecruiterSettings() {
           {/* API Keys Settings panel */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <KeyRound className="w-4.5 h-4.5 text-purple-555" />
+              <i className="fa-solid fa-key w-4.5 h-4.5 text-purple-555" ></i>
               API Developer Gateways
             </h2>
             
@@ -168,7 +168,7 @@ export default function RecruiterSettings() {
                     onClick={() => setShowOpenAIKey(!showOpenAIKey)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200 transition-colors"
                   >
-                    {showOpenAIKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showOpenAIKey ? <i className="fa-solid fa-eye-slash w-4 h-4" ></i> : <i className="fa-solid fa-eye w-4 h-4" ></i>}
                   </button>
                 </div>
               </div>
@@ -192,7 +192,7 @@ export default function RecruiterSettings() {
           {/* Developer Sandbox Options */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border-purple-500/15">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <Shield className="w-4.5 h-4.5 text-purple-555" />
+              <i className="fa-solid fa-shield w-4.5 h-4.5 text-purple-555" ></i>
               Sandbox Variables
             </h2>
             
@@ -202,7 +202,7 @@ export default function RecruiterSettings() {
                   onClick={handleResetData}
                   className="w-full flex items-center justify-center gap-2 py-3 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 hover:border-rose-500/35 text-rose-500 rounded-xl font-bold uppercase tracking-wider text-[10px] active:scale-95 transition-all cursor-pointer"
                 >
-                  <RefreshCw className="w-4 h-4" />
+                  <i className="fa-solid fa-arrows-rotate w-4 h-4" ></i>
                   Reset Shortlist Data
                 </button>
               </div>
@@ -212,7 +212,7 @@ export default function RecruiterSettings() {
           {/* System Specs */}
           <div className="glass-panel rounded-3xl p-6 space-y-4 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <Database className="w-4.5 h-4.5 text-purple-555" />
+              <i className="fa-solid fa-database w-4.5 h-4.5 text-purple-555" ></i>
               System Specs
             </h2>
             <div className="space-y-2.5 text-[10px] font-bold uppercase tracking-wider text-zinc-555 dark:text-zinc-450">

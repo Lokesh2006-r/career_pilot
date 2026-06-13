@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sun, Moon } from "lucide-react";
+
 
 export default function ThemeToggle() {
   const [dark, setDark] = useState(true);
@@ -46,21 +46,17 @@ export default function ThemeToggle() {
     >
       <div className="relative w-5 h-5 overflow-hidden">
         {/* Sun icon — shown in dark mode (click to go light) */}
-        <Sun
-          className={`w-5 h-5 text-zinc-950 dark:text-white absolute inset-0 transition-all duration-300 ${
+        <i className={`fa-solid fa-sun ${`w-5 h-5 text-zinc-950 dark:text-white absolute inset-0 transition-all duration-300 ${
             dark
               ? "opacity-100 rotate-0 scale-100"
               : "opacity-0 rotate-90 scale-50"
-          }`}
-        />
+          }`} `}></i>
         {/* Moon icon — shown in light mode (click to go dark) */}
-        <Moon
-          className={`w-5 h-5 text-zinc-950 dark:text-white absolute inset-0 transition-all duration-300 ${
+        <i className={`fa-solid fa-moon ${`w-5 h-5 text-zinc-950 dark:text-white absolute inset-0 transition-all duration-300 ${
             dark
               ? "opacity-0 -rotate-90 scale-50"
               : "opacity-100 rotate-0 scale-100"
-          }`}
-        />
+          }`} `}></i>
       </div>
     </button>
   );

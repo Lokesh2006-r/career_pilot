@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertCircle, CheckCircle, ShieldAlert, Star, RefreshCw } from "lucide-react";
+
 
 interface Report {
   id: string;
@@ -87,7 +87,7 @@ export default function AdminReports() {
                   </button>
                 ) : (
                   <span className="text-xs text-emerald-500 font-extrabold flex items-center gap-1">
-                    <CheckCircle className="w-4.5 h-4.5" /> Resolved
+                    <i className="fa-regular fa-circle-check w-4.5 h-4.5" ></i> Resolved
                   </span>
                 )}
               </div>

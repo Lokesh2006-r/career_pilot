@@ -6,7 +6,7 @@ import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BrainCircuit, AlertTriangle, ArrowRight, Mail, Lock, ShieldAlert, UserCheck, User, Code, Languages } from "lucide-react";
+
 import ThemeToggle from "@/components/ThemeToggle";
 import { CareerPilotIcon } from "@/components/CareerPilotLogo";
 
@@ -129,7 +129,7 @@ export default function SignupPage() {
         {/* Firebase Config bypassed warning */}
         {!isFirebaseConfigured && (
           <div className="glass-panel border-amber-500/20 dark:border-amber-500/10 bg-amber-500/5 backdrop-blur-xl rounded-2xl p-4 flex gap-3.5 shadow-sm">
-            <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5 animate-pulse" />
+            <i className="fa-solid fa-triangle-exclamation w-5 h-5 text-amber-500 shrink-0 mt-0.5 animate-pulse" ></i>
             <div className="text-xs font-medium">
               <p className="font-extrabold text-amber-500 uppercase tracking-wider mb-1">Sandbox Active</p>
               <p className="text-zinc-550 dark:text-zinc-400 mb-2 leading-relaxed">
@@ -140,7 +140,7 @@ export default function SignupPage() {
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-550 text-white rounded-lg font-bold uppercase tracking-wider text-[9px] hover:bg-amber-600 transition-all cursor-pointer shadow-sm"
               >
                 Skip Auth to Dashboard
-                <ArrowRight className="w-3 h-3" />
+                <i className="fa-solid fa-arrow-right w-3 h-3" ></i>
               </button>
             </div>
           </div>
@@ -158,7 +158,7 @@ export default function SignupPage() {
 
           {error && (
             <div className="bg-rose-500/10 border border-rose-500/20 text-rose-500 p-4 rounded-xl text-xs font-semibold flex items-center gap-2 mb-6">
-              <ShieldAlert className="w-4 h-4 shrink-0" />
+              <i className="fa-solid fa-shield-halved w-4 h-4 shrink-0" ></i>
               <span>{error}</span>
             </div>
           )}
@@ -167,7 +167,7 @@ export default function SignupPage() {
             <div className="space-y-1.5">
               <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Full Name</label>
               <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <i className="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" ></i>
                 <input
                   type="text"
                   required
@@ -182,7 +182,7 @@ export default function SignupPage() {
             <div className="space-y-1.5">
               <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <i className="fa-solid fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" ></i>
                 <input
                   type="email"
                   required
@@ -198,7 +198,7 @@ export default function SignupPage() {
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                  <i className="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" ></i>
                   <input
                     type="password"
                     required
@@ -213,7 +213,7 @@ export default function SignupPage() {
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Confirm Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                  <i className="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" ></i>
                   <input
                     type="password"
                     required
@@ -229,7 +229,7 @@ export default function SignupPage() {
             <div className="space-y-1.5">
               <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Programming Languages</label>
               <div className="relative">
-                <Languages className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <i className="fa-solid fa-language absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" ></i>
                 <input
                   type="text"
                   value={languages}
@@ -243,7 +243,7 @@ export default function SignupPage() {
             <div className="space-y-1.5">
               <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Core Skills</label>
               <div className="relative">
-                <Code className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <i className="fa-solid fa-code absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" ></i>
                 <input
                   type="text"
                   value={skills}

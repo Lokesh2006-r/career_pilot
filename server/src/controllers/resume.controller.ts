@@ -20,10 +20,26 @@ const FALLBACK_DATA = {
   confidenceScore: 85,
   missingKeywords: ["Docker", "Kubernetes", "GraphQL", "AWS"],
   suggestions: [
-    "Quantify achievements in project descriptions (e.g., 'Reduced load time by 40%').",
-    "Add specific coursework related to Cloud Computing and System Design.",
-    "Include links to your GitHub and live project demos.",
-    "Use strong action verbs: 'Architected', 'Led', 'Optimized'.",
+    {
+      title: "Add numbers to show your impact",
+      explanation: "Instead of just saying what you did, show how much you helped by using numbers. This proves your value to the company.",
+      example: "Instead of 'Made the website faster' -> Use 'Made the website 40% faster by fixing images'."
+    },
+    {
+      title: "Mention what you learned in class",
+      explanation: "If you don't have much work experience, you can list important classes you took that are related to the job.",
+      example: "Add a 'Coursework' section and include: 'Cloud Computing, System Design, Data Structures'."
+    },
+    {
+      title: "Include links to your work",
+      explanation: "Recruiters love to see proof of your skills. Make sure you have clickable links so they can easily see your projects.",
+      example: "Add links to your GitHub profile and live websites next to your project names."
+    },
+    {
+      title: "Start sentences with strong action words",
+      explanation: "Make your work sound more impressive by starting your bullet points with strong verbs.",
+      example: "Instead of 'I was responsible for making...' -> Use 'Architected and built...'"
+    }
   ]
 };
 
@@ -41,11 +57,19 @@ export const uploadResume = async (req: Request, res: Response): Promise<void> =
     let fileBufferString = '';
     if (file.mimetype === 'application/pdf') {
       try {
-        const parser = new pdfParse.PDFParse({ data: file.buffer });
-        const pdfData = await parser.getText();
+        const pdfData = await pdfParse(file.buffer);
         fileBufferString = pdfData.text.substring(0, 3000);
       } catch (e) {
         console.error('PDF parsing failed, falling back to raw text.', e);
+        fileBufferString = file.buffer.toString('utf-8').substring(0, 1000);
+      }
+    } else if (file.originalname.endsWith('.docx') || file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      try {
+        const mammoth = require('mammoth');
+        const docxData = await mammoth.extractRawText({ buffer: file.buffer });
+        fileBufferString = docxData.value.substring(0, 3000);
+      } catch (e) {
+        console.error('DOCX parsing failed, falling back to raw text.', e);
         fileBufferString = file.buffer.toString('utf-8').substring(0, 1000);
       }
     } else {
@@ -66,7 +90,10 @@ Analyze the following resume text carefully and return a JSON object with these 
 - atsScore: number (0-100) — an ATS compatibility score, calculated strictly. Dock points for lack of quantified metrics, passive language, or missing core software engineering fundamentals.
 - confidenceScore: number (0-100) — confidence level of the analysis based on resume clarity, formatting completeness, and text structure
 - missingKeywords: string[] — important technologies, concepts, and frameworks missing from the resume text that are standard for modern Software Engineering roles (e.g., CI/CD, Unit Testing, Docker, Redis, AWS, API Design).
-- suggestions: string[] — 4-6 highly specific, actionable, and technical tips (e.g. use XYZ formula, improve wording on projects, add test coverage metrics).
+- suggestions: object[] — 4-6 actionable tips. Each object MUST have:
+    - "title": string (A short, clear heading)
+    - "explanation": string (A 1-2 sentence explanation written in very simple, easy-to-understand English for a beginner student)
+    - "example": string (A concrete "Instead of X -> Use Y" or practical example)
 
 Resume Text:
 ${fileBufferString}
@@ -317,11 +344,19 @@ export const parseResumeForEnhancer = async (req: Request, res: Response): Promi
     let fileBufferString = '';
     if (file.mimetype === 'application/pdf') {
       try {
-        const parser = new pdfParse.PDFParse({ data: file.buffer });
-        const pdfData = await parser.getText();
+        const pdfData = await pdfParse(file.buffer);
         fileBufferString = pdfData.text.substring(0, 4000);
       } catch (e) {
         console.error('PDF parsing failed, falling back to raw text.', e);
+        fileBufferString = file.buffer.toString('utf-8').substring(0, 1500);
+      }
+    } else if (file.originalname.endsWith('.docx') || file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      try {
+        const mammoth = require('mammoth');
+        const docxData = await mammoth.extractRawText({ buffer: file.buffer });
+        fileBufferString = docxData.value.substring(0, 4000);
+      } catch (e) {
+        console.error('DOCX parsing failed, falling back to raw text.', e);
         fileBufferString = file.buffer.toString('utf-8').substring(0, 1500);
       }
     } else {

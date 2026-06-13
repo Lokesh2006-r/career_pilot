@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Mail, Phone, MapPin, Briefcase, GraduationCap, Github, Linkedin, Link as LinkIcon, Camera, Save, CheckCircle, Sparkles, Pencil } from "lucide-react";
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
@@ -101,7 +101,7 @@ export default function ProfilePage() {
       {/* Premium Glass Toast Notification */}
       {showToast && (
         <div className="fixed top-6 right-6 z-50 bg-white/80 dark:bg-zinc-950/80 border border-emerald-500/30 text-emerald-500 px-5 py-3.5 rounded-2xl backdrop-blur-xl shadow-[0_10px_30px_-10px_rgba(16,185,129,0.3)] flex items-center gap-3 animate-in slide-in-from-top duration-300">
-          <CheckCircle className="w-5 h-5 animate-pulse" />
+          <i className="fa-regular fa-circle-check w-5 h-5 animate-pulse" ></i>
           <span className="font-extrabold text-xs uppercase tracking-wider">Profile synced successfully!</span>
         </div>
       )}
@@ -117,7 +117,7 @@ export default function ProfilePage() {
             onClick={handleSave}
             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-xs uppercase tracking-wide hover:shadow-[0_4px_15px_rgba(99,102,241,0.25)] active:scale-95 transition-all cursor-pointer border border-white/10"
           >
-            <Save className="w-4 h-4" />
+            <i className="fa-solid fa-floppy-disk w-4 h-4" ></i>
             Save Identity
           </button>
         ) : (
@@ -125,7 +125,7 @@ export default function ProfilePage() {
             onClick={() => setIsEditing(true)}
             className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white hover:border-indigo-500/30 rounded-xl font-bold text-xs uppercase tracking-wide transition-all shadow-sm cursor-pointer"
           >
-            <Pencil className="w-4 h-4 text-indigo-500" />
+            <i className="fa-solid fa-pencil w-4 h-4 text-indigo-500" ></i>
             Edit Credentials
           </button>
         )}
@@ -145,7 +145,7 @@ export default function ProfilePage() {
                 onClick={handleSave}
                 className="flex items-center gap-1.5 px-4.5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-650 hover:to-teal-650 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg active:scale-95"
               >
-                <Save className="w-3.5 h-3.5" />
+                <i className="fa-solid fa-floppy-disk w-3.5 h-3.5" ></i>
                 Save Identity
               </button>
             ) : (
@@ -153,7 +153,7 @@ export default function ProfilePage() {
                 onClick={() => setIsEditing(true)}
                 className="flex items-center gap-1.5 px-4.5 py-2.5 bg-black/60 hover:bg-black/80 text-white border border-white/10 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg active:scale-95"
               >
-                <Pencil className="w-3.5 h-3.5 text-indigo-400" />
+                <i className="fa-solid fa-pencil w-3.5 h-3.5 text-indigo-400" ></i>
                 Edit Profile
               </button>
             )}
@@ -175,7 +175,7 @@ export default function ProfilePage() {
               </div>
               {isEditing && (
                 <label className="absolute bottom-1 right-1 p-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl shadow-lg border border-white/20 active:scale-95 transition-all cursor-pointer">
-                  <Camera className="w-4 h-4" />
+                  <i className="fa-solid fa-camera w-4 h-4" ></i>
                   <input 
                     type="file" 
                     accept="image/*" 
@@ -202,7 +202,7 @@ export default function ProfilePage() {
               {/* Basic Info panel */}
               <div className="space-y-5">
                 <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                  <User className="w-4.5 h-4.5 text-indigo-500" />
+                  <i className="fa-solid fa-user w-4.5 h-4.5 text-indigo-500" ></i>
                   Identity Details
                 </h2>
                 <div className="space-y-4">
@@ -222,7 +222,7 @@ export default function ProfilePage() {
                     label="Location coordinates" 
                     value={profile.location} 
                     onChange={(e) => setProfile({ ...profile, location: e.target.value })}
-                    icon={<MapPin className="w-4 h-4" />} 
+                    icon={<i className="fa-solid fa-location-dot w-4 h-4" ></i>} 
                     disabled={!isEditing} 
                   />
                 </div>
@@ -231,7 +231,7 @@ export default function ProfilePage() {
               {/* Contact panel */}
               <div className="space-y-5 border-t border-zinc-200/50 dark:border-zinc-800/40 pt-6">
                 <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                  <Mail className="w-4.5 h-4.5 text-indigo-500" />
+                  <i className="fa-solid fa-envelope w-4.5 h-4.5 text-indigo-500" ></i>
                   Communication Interfaces
                 </h2>
                 <div className="space-y-4">
@@ -247,7 +247,7 @@ export default function ProfilePage() {
                     value={profile.phone} 
                     onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                     type="tel" 
-                    icon={<Phone className="w-4 h-4" />} 
+                    icon={<i className="fa-solid fa-phone w-4 h-4" ></i>} 
                     disabled={!isEditing} 
                   />
                 </div>
@@ -259,7 +259,7 @@ export default function ProfilePage() {
               {/* Education panel */}
               <div className="space-y-5">
                 <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                  <GraduationCap className="w-4.5 h-4.5 text-indigo-500" />
+                  <i className="fa-solid fa-graduation-cap w-4.5 h-4.5 text-indigo-500" ></i>
                   Academic History
                 </h2>
                 <div className="space-y-4">
@@ -289,7 +289,7 @@ export default function ProfilePage() {
               {/* Social Links panel */}
               <div className="space-y-5 border-t border-zinc-200/50 dark:border-zinc-800/40 pt-6">
                 <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                  <LinkIcon className="w-4.5 h-4.5 text-indigo-500" />
+                  <i className="fa-solid fa-link w-4.5 h-4.5 text-indigo-500" ></i>
                   Profile Links indices
                 </h2>
                 <div className="space-y-4">
@@ -297,21 +297,21 @@ export default function ProfilePage() {
                     label="GitHub profile link" 
                     value={profile.github} 
                     onChange={(e) => setProfile({ ...profile, github: e.target.value })}
-                    icon={<Github className="w-4 h-4" />} 
+                    icon={<i className="fa-brands fa-github w-4 h-4" ></i>} 
                     disabled={!isEditing} 
                   />
                   <InputField 
                     label="LinkedIn connection" 
                     value={profile.linkedin} 
                     onChange={(e) => setProfile({ ...profile, linkedin: e.target.value })}
-                    icon={<Linkedin className="w-4 h-4" />} 
+                    icon={<i className="fa-brands fa-linkedin w-4 h-4" ></i>} 
                     disabled={!isEditing} 
                   />
                   <InputField 
                     label="Personal Domain / Portfolio" 
                     value={profile.portfolio} 
                     onChange={(e) => setProfile({ ...profile, portfolio: e.target.value })}
-                    icon={<Briefcase className="w-4 h-4" />} 
+                    icon={<i className="fa-solid fa-briefcase w-4 h-4" ></i>} 
                     disabled={!isEditing} 
                   />
                 </div>

@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { 
-  BarChart3, TrendingUp, Users, Clock, Briefcase, Sparkles, 
-  ArrowUpRight, UserCheck, Code, Loader2, MessageSquare, ExternalLink 
-} from "lucide-react";
+
 import Link from "next/link";
 
 interface Candidate {
@@ -127,7 +124,7 @@ export default function RecruiterAnalytics() {
         {isPlaceholder && (
           <div className="absolute inset-0 flex items-center justify-center bg-zinc-950/5 dark:bg-zinc-950/50 backdrop-blur-[1px] z-20 flex-col gap-2">
             <span className="text-[10px] font-black text-purple-500 uppercase tracking-widest bg-purple-500/10 dark:bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/20 shadow-sm flex items-center gap-1">
-              <Sparkles className="w-3 h-3" /> Baseline Demo Data
+              <i className="fa-solid fa-wand-magic-sparkles w-3 h-3" ></i> Baseline Demo Data
             </span>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold max-w-sm text-center leading-relaxed">
               No candidates shortlisted yet. Showing general comparisons. Head to Candidate Search to add profiles!
@@ -185,7 +182,7 @@ export default function RecruiterAnalytics() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <Loader2 className="w-10 h-10 text-purple-500 animate-spin" />
+        <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-purple-500 animate-spin" ></i>
         <p className="text-sm text-zinc-400 font-bold uppercase tracking-wider animate-pulse">Syncing recruiter pipeline diagnostics...</p>
       </div>
     );
@@ -198,7 +195,7 @@ export default function RecruiterAnalytics() {
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-1.5 text-xs text-purple-500 font-extrabold uppercase tracking-widest mb-1">
-            <Sparkles className="w-4 h-4" /> Recruiter intelligence center
+            <i className="fa-solid fa-wand-magic-sparkles w-4 h-4" ></i> Recruiter intelligence center
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight">Recruiter Analytics</h1>
           <p className="text-zinc-550 dark:text-zinc-400 mt-1">Monitor screening volume statistics, candidate code telemetry, and AI twin interaction rates.</p>
@@ -256,7 +253,7 @@ export default function RecruiterAnalytics() {
         <div className="lg:col-span-8 glass-panel p-8 rounded-3xl space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-purple-500" />
+              <i className="fa-solid fa-arrow-trend-up w-5 h-5 text-purple-500" ></i>
               Talent Pipeline Comparison Metrics
             </h3>
             <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Visual audit</span>
@@ -269,7 +266,7 @@ export default function RecruiterAnalytics() {
         <div className="lg:col-span-4 glass-panel p-8 rounded-3xl space-y-6 flex flex-col justify-between">
           <div>
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <Clock className="w-5 h-5 text-purple-500" />
+              <i className="fa-solid fa-clock w-5 h-5 text-purple-500" ></i>
               Sourcing Efficiency Gain
             </h3>
 
@@ -301,7 +298,7 @@ export default function RecruiterAnalytics() {
       <div className="glass-panel p-8 rounded-3xl space-y-6">
         <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-zinc-800/40 pb-4">
           <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-            <UserCheck className="w-5 h-5 text-purple-500" />
+            <i className="fa-solid fa-user-check w-5 h-5 text-purple-500" ></i>
             Candidate Shortlist Audit Pipeline
           </h3>
           <span className="text-[10px] font-black uppercase text-purple-500 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">
@@ -346,7 +343,7 @@ export default function RecruiterAnalytics() {
                     </td>
                     <td className="py-4 px-4 font-black text-zinc-900 dark:text-white">
                       <div className="flex items-center gap-1.5">
-                        <Code className="w-4 h-4 text-zinc-400" />
+                        <i className="fa-solid fa-code w-4 h-4 text-zinc-400" ></i>
                         <span>{cand.leetcodeSolved} Solved</span>
                       </div>
                     </td>
@@ -369,7 +366,7 @@ export default function RecruiterAnalytics() {
                         href="/recruiter/search" 
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-500 hover:bg-purple-550 text-white font-bold text-[10px] tracking-wide uppercase transition-all shadow-sm shadow-purple-500/10"
                       >
-                        Talk Replica <ExternalLink className="w-3 h-3" />
+                        Talk Replica <i className="fa-solid fa-up-right-from-square w-3 h-3" ></i>
                       </Link>
                     </td>
                   </tr>
@@ -380,7 +377,7 @@ export default function RecruiterAnalytics() {
         ) : (
           <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
             <div className="p-3.5 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 rounded-2xl">
-              <Users className="w-6 h-6 text-zinc-400" />
+              <i className="fa-solid fa-users w-6 h-6 text-zinc-400" ></i>
             </div>
             <p className="text-xs font-bold text-zinc-700 dark:text-zinc-300">No candidates shortlisted</p>
             <p className="text-[10px] text-zinc-400 font-semibold max-w-xs leading-relaxed">
@@ -390,7 +387,7 @@ export default function RecruiterAnalytics() {
               href="/recruiter/search" 
               className="mt-2 text-xs font-bold text-purple-500 hover:text-purple-400 flex items-center gap-1"
             >
-              Search Candidates Pool <ArrowUpRight className="w-4 h-4" />
+              Search Candidates Pool <i className="fa-solid fa-arrow-up-right-from-square w-4 h-4" ></i>
             </Link>
           </div>
         )}

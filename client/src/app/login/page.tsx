@@ -6,7 +6,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, isFirebaseConfigured } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BrainCircuit, AlertTriangle, ArrowRight, Mail, Lock, ShieldAlert } from "lucide-react";
+
 import ThemeToggle from "@/components/ThemeToggle";
 import { CareerPilotIcon } from "@/components/CareerPilotLogo";
 import { useAuth } from "@/context/AuthContext";
@@ -101,7 +101,7 @@ export default function LoginPage() {
 
           {error && (
             <div className="bg-rose-500/10 border border-rose-500/20 text-rose-500 p-4 rounded-xl text-xs font-semibold flex items-center gap-2 mb-6">
-              <ShieldAlert className="w-4 h-4 shrink-0" />
+              <i className="fa-solid fa-shield-halved w-4 h-4 shrink-0" ></i>
               <span>{error}</span>
             </div>
           )}
@@ -110,7 +110,7 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <label className="block text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <i className="fa-solid fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" ></i>
                 <input
                   type="email"
                   required
@@ -129,7 +129,7 @@ export default function LoginPage() {
                 <Link href="#" className="text-[10px] font-extrabold uppercase tracking-wide text-indigo-500 hover:underline">Forgot?</Link>
               </div>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <i className="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" ></i>
                 <input
                   type="password"
                   required

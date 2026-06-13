@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Cpu, HardDrive, Zap, TrendingUp, Sparkles, BarChart3 } from "lucide-react";
+
 
 export default function AdminAiUsage() {
   const [totalTokens] = useState("12.4M");
@@ -56,7 +56,7 @@ export default function AdminAiUsage() {
         <div className="lg:col-span-8 glass-panel p-8 rounded-3xl space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-rose-555" />
+              <i className="fa-solid fa-chart-column w-5 h-5 text-rose-555" ></i>
               Gateway Router Traffic Share (By Core Models)
             </h3>
             <span className="text-xs text-zinc-400 font-bold uppercase">Token based</span>
@@ -98,7 +98,7 @@ export default function AdminAiUsage() {
         {/* System Specs */}
         <div className="lg:col-span-4 glass-panel p-8 rounded-3xl space-y-6">
           <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-            <Cpu className="w-5 h-5 text-rose-550" />
+            <i className="fa-solid fa-microchip w-5 h-5 text-rose-550" ></i>
             Infrastructure Info
           </h3>
 

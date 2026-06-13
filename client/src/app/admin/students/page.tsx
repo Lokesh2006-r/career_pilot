@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GraduationCap, ShieldAlert, Trash2, CheckCircle2, Search, UserCheck } from "lucide-react";
+
 
 interface StudentAccount {
   id: string;
@@ -51,7 +51,7 @@ export default function AdminStudents() {
 
       {/* Search Filter */}
       <div className="relative w-full max-w-md">
-        <Search className="w-5 h-5 text-zinc-450 absolute left-4 top-1/2 transform -translate-y-1/2" />
+        <i className="fa-solid fa-magnifying-glass w-5 h-5 text-zinc-450 absolute left-4 top-1/2 transform -translate-y-1/2" ></i>
         <input
           type="text"
           placeholder="Filter students by name or email..."
@@ -115,7 +115,7 @@ export default function AdminStudents() {
                       className="p-1.5 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 hover:border-rose-550/30 text-rose-500 rounded-lg transition-all cursor-pointer"
                       title="Delete student record"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <i className="fa-solid fa-trash-can w-4 h-4" ></i>
                     </button>
                   </td>
                 </tr>

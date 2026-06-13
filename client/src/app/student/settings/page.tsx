@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings, Shield, Sliders, RefreshCw, KeyRound, Sparkles, CheckCircle, Database, Eye, EyeOff, Volume2 } from "lucide-react";
+
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
 
@@ -214,7 +214,7 @@ export default function SettingsPage() {
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-6 right-6 z-50 bg-white/80 dark:bg-zinc-950/80 border border-emerald-500/30 text-emerald-500 px-5 py-3.5 rounded-2xl backdrop-blur-xl shadow-[0_10px_30px_-10px_rgba(16,185,129,0.3)] flex items-center gap-3 animate-in slide-in-from-top duration-300">
-          <CheckCircle className="w-5 h-5 animate-pulse" />
+          <i className="fa-regular fa-circle-check w-5 h-5 animate-pulse" ></i>
           <span className="font-extrabold text-xs uppercase tracking-wider">{toastMessage}</span>
         </div>
       )}
@@ -241,7 +241,7 @@ export default function SettingsPage() {
           {/* AI Settings panel */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <Sliders className="w-4.5 h-4.5 text-indigo-500" />
+              <i className="fa-solid fa-sliders w-4.5 h-4.5 text-indigo-500" ></i>
               AI Assistant Orchestration
             </h2>
             
@@ -274,7 +274,7 @@ export default function SettingsPage() {
                     onClick={handleTestVoice}
                     className="px-4 py-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border border-zinc-250 dark:border-zinc-800 active:scale-95 cursor-pointer"
                   >
-                    <Volume2 className="w-4 h-4 text-indigo-500" />
+                    <i className="fa-solid fa-volume-high w-4 h-4 text-indigo-500" ></i>
                     Test Voice
                   </button>
                 </div>
@@ -324,7 +324,7 @@ export default function SettingsPage() {
           {/* API Keys Settings panel */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <KeyRound className="w-4.5 h-4.5 text-indigo-500" />
+              <i className="fa-solid fa-key w-4.5 h-4.5 text-indigo-500" ></i>
               API Developer Gateways
             </h2>
             
@@ -344,7 +344,7 @@ export default function SettingsPage() {
                     onClick={() => setShowOpenAIKey(!showOpenAIKey)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200 transition-colors"
                   >
-                    {showOpenAIKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showOpenAIKey ? <i className="fa-solid fa-eye-slash w-4 h-4" ></i> : <i className="fa-solid fa-eye w-4 h-4" ></i>}
                   </button>
                 </div>
               </div>
@@ -364,7 +364,7 @@ export default function SettingsPage() {
                     onClick={() => setShowFirebaseKey(!showFirebaseKey)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200 transition-colors"
                   >
-                    {showFirebaseKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showFirebaseKey ? <i className="fa-solid fa-eye-slash w-4 h-4" ></i> : <i className="fa-solid fa-eye w-4 h-4" ></i>}
                   </button>
                 </div>
               </div>
@@ -388,14 +388,14 @@ export default function SettingsPage() {
           {/* Developer Sandbox Options */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border-indigo-500/15">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <Shield className="w-4.5 h-4.5 text-indigo-500" />
+              <i className="fa-solid fa-shield w-4.5 h-4.5 text-indigo-500" ></i>
               Sandbox Variables
             </h2>
             
             <div className="space-y-4 text-xs">
               <div className="bg-indigo-500/5 p-4 rounded-2xl border border-indigo-500/10 space-y-2.5">
                 <div className="flex items-center gap-2 text-indigo-500 font-extrabold uppercase tracking-wide text-[10px]">
-                  <Sparkles className="w-4.5 h-4.5 animate-pulse" />
+                  <i className="fa-solid fa-wand-magic-sparkles w-4.5 h-4.5 animate-pulse" ></i>
                   Twin Sync Status
                 </div>
                 <p className="text-zinc-550 dark:text-zinc-400 leading-relaxed font-semibold">
@@ -408,7 +408,7 @@ export default function SettingsPage() {
                   onClick={handleResetData}
                   className="w-full flex items-center justify-center gap-2 py-3 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 hover:border-rose-500/35 text-rose-500 rounded-xl font-bold uppercase tracking-wider text-[10px] active:scale-95 transition-all cursor-pointer"
                 >
-                  <RefreshCw className="w-4 h-4" />
+                  <i className="fa-solid fa-arrows-rotate w-4 h-4" ></i>
                   Reset Identity Data
                 </button>
                 <p className="text-[10px] text-center text-zinc-400 font-medium leading-relaxed">
@@ -421,7 +421,7 @@ export default function SettingsPage() {
           {/* System Specs */}
           <div className="glass-panel rounded-3xl p-6 space-y-4 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <Database className="w-4.5 h-4.5 text-indigo-500" />
+              <i className="fa-solid fa-database w-4.5 h-4.5 text-indigo-500" ></i>
               System Specs
             </h2>
             <div className="space-y-2.5 text-[10px] font-bold uppercase tracking-wider text-zinc-550 dark:text-zinc-400">

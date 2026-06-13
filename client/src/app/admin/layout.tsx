@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BrainCircuit, Home, GraduationCap, Users, FileText, Cpu, Settings, Bell, Sparkles, LogOut, Menu, X } from "lucide-react";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -42,20 +42,20 @@ export default function AdminLayout({
               onClick={() => setIsSidebarOpen(false)}
               className="p-1.5 rounded-lg border border-zinc-250 dark:border-zinc-850 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <i className="fa-solid fa-xmark w-4 h-4" ></i>
             </button>
           </div>
 
           <nav className="flex-1 py-6 px-3 space-y-1.5 overflow-y-auto">
-            <MobileNavItem href="/admin/dashboard" icon={<Home className="w-5 h-5" />} label="Console Overview" active={pathname === "/admin/dashboard"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/admin/students" icon={<GraduationCap className="w-5 h-5" />} label="Students" active={pathname === "/admin/students"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/admin/recruiters" icon={<Users className="w-5 h-5" />} label="Recruiters" active={pathname === "/admin/recruiters"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/admin/reports" icon={<FileText className="w-5 h-5" />} label="Reports Desk" active={pathname === "/admin/reports"} onClick={() => setIsSidebarOpen(false)} />
-            <MobileNavItem href="/admin/ai-usage" icon={<Cpu className="w-5 h-5" />} label="AI Hub Usage" active={pathname === "/admin/ai-usage"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/admin/dashboard" icon={<i className="fa-solid fa-house w-5 h-5" ></i>} label="Console Overview" active={pathname === "/admin/dashboard"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/admin/students" icon={<i className="fa-solid fa-graduation-cap w-5 h-5" ></i>} label="Students" active={pathname === "/admin/students"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/admin/recruiters" icon={<i className="fa-solid fa-users w-5 h-5" ></i>} label="Recruiters" active={pathname === "/admin/recruiters"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/admin/reports" icon={<i className="fa-solid fa-file-lines w-5 h-5" ></i>} label="Reports Desk" active={pathname === "/admin/reports"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/admin/ai-usage" icon={<i className="fa-solid fa-microchip w-5 h-5" ></i>} label="AI Hub Usage" active={pathname === "/admin/ai-usage"} onClick={() => setIsSidebarOpen(false)} />
           </nav>
 
           <div className="p-3 border-t border-zinc-200/50 dark:border-zinc-800/40 space-y-1">
-            <MobileNavItem href="/admin/settings" icon={<Settings className="w-5 h-5" />} label="Settings" active={pathname === "/admin/settings"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/admin/settings" icon={<i className="fa-solid fa-gear w-5 h-5" ></i>} label="Settings" active={pathname === "/admin/settings"} onClick={() => setIsSidebarOpen(false)} />
             <button
               onClick={() => {
                 setIsSidebarOpen(false);
@@ -64,7 +64,7 @@ export default function AdminLayout({
               className="w-full flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all duration-300 text-rose-500 hover:bg-rose-550/10 border border-transparent cursor-pointer group/logout"
             >
               <div className="shrink-0 group-hover/logout:scale-110 transition-transform">
-                <LogOut className="w-5 h-5" />
+                <i className="fa-solid fa-right-from-bracket w-5 h-5" ></i>
               </div>
               <span className="font-semibold text-sm tracking-wide">
                 Sign Out
@@ -88,21 +88,21 @@ export default function AdminLayout({
           </div>
 
           <nav className="flex-1 py-6 px-3 space-y-1.5 overflow-y-auto">
-            <NavItem href="/admin/dashboard" icon={<Home className="w-5 h-5" />} label="Console Overview" active={pathname === "/admin/dashboard"} />
-            <NavItem href="/admin/students" icon={<GraduationCap className="w-5 h-5" />} label="Students" active={pathname === "/admin/students"} />
-            <NavItem href="/admin/recruiters" icon={<Users className="w-5 h-5" />} label="Recruiters" active={pathname === "/admin/recruiters"} />
-            <NavItem href="/admin/reports" icon={<FileText className="w-5 h-5" />} label="Reports Desk" active={pathname === "/admin/reports"} />
-            <NavItem href="/admin/ai-usage" icon={<Cpu className="w-5 h-5" />} label="AI Hub Usage" active={pathname === "/admin/ai-usage"} />
+            <NavItem href="/admin/dashboard" icon={<i className="fa-solid fa-house w-5 h-5" ></i>} label="Console Overview" active={pathname === "/admin/dashboard"} />
+            <NavItem href="/admin/students" icon={<i className="fa-solid fa-graduation-cap w-5 h-5" ></i>} label="Students" active={pathname === "/admin/students"} />
+            <NavItem href="/admin/recruiters" icon={<i className="fa-solid fa-users w-5 h-5" ></i>} label="Recruiters" active={pathname === "/admin/recruiters"} />
+            <NavItem href="/admin/reports" icon={<i className="fa-solid fa-file-lines w-5 h-5" ></i>} label="Reports Desk" active={pathname === "/admin/reports"} />
+            <NavItem href="/admin/ai-usage" icon={<i className="fa-solid fa-microchip w-5 h-5" ></i>} label="AI Hub Usage" active={pathname === "/admin/ai-usage"} />
           </nav>
 
           <div className="p-3 border-t border-zinc-200/50 dark:border-zinc-800/40 space-y-1">
-            <NavItem href="/admin/settings" icon={<Settings className="w-5 h-5" />} label="Settings" active={pathname === "/admin/settings"} />
+            <NavItem href="/admin/settings" icon={<i className="fa-solid fa-gear w-5 h-5" ></i>} label="Settings" active={pathname === "/admin/settings"} />
             <button
               onClick={() => logout()}
               className="w-full flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all duration-300 text-rose-550 hover:bg-rose-500/10 border border-transparent cursor-pointer group/logout"
             >
               <div className="shrink-0 group-hover/logout:scale-110 transition-transform">
-                <LogOut className="w-5 h-5" />
+                <i className="fa-solid fa-right-from-bracket w-5 h-5" ></i>
               </div>
               <span className="font-semibold text-sm tracking-wide opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                 Sign Out
@@ -121,9 +121,9 @@ export default function AdminLayout({
                 onClick={() => setIsSidebarOpen(true)}
                 className="md:hidden p-2 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-all duration-300 mr-2 shrink-0 cursor-pointer"
               >
-                <Menu className="w-5 h-5 text-zinc-650 dark:text-zinc-400" />
+                <i className="fa-solid fa-bars w-5 h-5 text-zinc-650 dark:text-zinc-400" ></i>
               </button>
-              <Sparkles className="w-4 h-4 text-rose-500 animate-pulse shrink-0" />
+              <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 text-rose-500 animate-pulse shrink-0" ></i>
               <h1 className="text-xs sm:text-sm font-semibold tracking-wide text-zinc-500 dark:text-zinc-400 uppercase truncate">
                 Admin Control Room / <span className="text-zinc-900 dark:text-white capitalize">{pathname.split("/").pop()?.replace(/-/g, " ") || "Overview"}</span>
               </h1>
@@ -131,7 +131,7 @@ export default function AdminLayout({
 
             <div className="flex items-center gap-4">
               <button className="hidden sm:block p-2.5 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 shadow-sm relative group cursor-pointer">
-                <Bell className="w-5 h-5 text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
+                <i className="fa-solid fa-bell w-5 h-5 text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" ></i>
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-550 rounded-full ring-2 ring-white dark:ring-zinc-900 animate-pulse"></span>
               </button>
 
@@ -158,10 +158,10 @@ export default function AdminLayout({
 
           {/* Mobile Bottom Navigation Bar */}
           <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/85 dark:bg-zinc-950/85 backdrop-blur-lg border-t border-zinc-200/50 dark:border-zinc-800/40 flex items-center justify-around px-2 z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
-            <BottomTabItem href="/admin/dashboard" icon={<Home className="w-5 h-5" />} label="Overview" active={pathname === "/admin/dashboard"} />
-            <BottomTabItem href="/admin/students" icon={<GraduationCap className="w-5 h-5" />} label="Students" active={pathname === "/admin/students"} />
-            <BottomTabItem href="/admin/recruiters" icon={<Users className="w-5 h-5" />} label="Recruiters" active={pathname === "/admin/recruiters"} />
-            <BottomTabItem href="/admin/reports" icon={<FileText className="w-5 h-5" />} label="Reports" active={pathname === "/admin/reports"} />
+            <BottomTabItem href="/admin/dashboard" icon={<i className="fa-solid fa-house w-5 h-5" ></i>} label="Overview" active={pathname === "/admin/dashboard"} />
+            <BottomTabItem href="/admin/students" icon={<i className="fa-solid fa-graduation-cap w-5 h-5" ></i>} label="Students" active={pathname === "/admin/students"} />
+            <BottomTabItem href="/admin/recruiters" icon={<i className="fa-solid fa-users w-5 h-5" ></i>} label="Recruiters" active={pathname === "/admin/recruiters"} />
+            <BottomTabItem href="/admin/reports" icon={<i className="fa-solid fa-file-lines w-5 h-5" ></i>} label="Reports" active={pathname === "/admin/reports"} />
           </nav>
         </div>
       </div>

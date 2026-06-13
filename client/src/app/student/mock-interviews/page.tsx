@@ -1,12 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { 
-  Video, Target, Clock, MessageSquare, Play, Mic, MicOff, Send, Loader2, 
-  Award, RotateCcw, Sparkles, CheckCircle2, Volume2, VolumeX, Eye, 
-  ShieldAlert, ArrowLeft, Download, RefreshCw, UserCheck, ShieldCheck, 
-  ChevronRight, Calendar, Layers, Activity, AlertCircle, AwardIcon, Cpu, Code, FileText
-} from "lucide-react";
+import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
+
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
 
@@ -107,6 +103,12 @@ export default function MockInterviews() {
   const [selectedHistorySession, setSelectedHistorySession] = useState<DBInterviewSession | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Face Tracking State
+  const [headTurnWarning, setHeadTurnWarning] = useState(false);
+  const [eyeContactWarning, setEyeContactWarning] = useState(false);
+  const faceLandmarkerRef = useRef<FaceLandmarker | null>(null);
+  const trackingLoopRef = useRef<number | null>(null);
+
   const roles = [
     { name: "Frontend Engineer", focus: "React, Next.js, Web Vitals, CSS Architecture, State Management" },
     { name: "Backend Engineer", focus: "Node.js, Databases, Event Loop, System Design, REST/GraphQL APIs" },
@@ -127,6 +129,30 @@ export default function MockInterviews() {
     if (user?.uid) {
       fetchHistory();
     }
+
+    // Initialize MediaPipe FaceLandmarker
+    let isMounted = true;
+    const initMediaPipe = async () => {
+      try {
+        const vision = await FilesetResolver.forVisionTasks(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
+        );
+        const landmarker = await FaceLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
+            delegate: "GPU"
+          },
+          outputFaceBlendshapes: true,
+          outputFacialTransformationMatrixes: true,
+          runningMode: "VIDEO",
+          numFaces: 1
+        });
+        if (isMounted) faceLandmarkerRef.current = landmarker;
+      } catch (error) {
+        console.error("Error initializing MediaPipe FaceLandmarker:", error);
+      }
+    };
+    initMediaPipe();
 
     // Load SpeechSynthesis Voices
     if (typeof window !== "undefined" && window.speechSynthesis) {
@@ -171,7 +197,53 @@ export default function MockInterviews() {
         window.speechSynthesis.onvoiceschanged = loadVoices;
       }
     }
+
+    return () => { isMounted = false; };
   }, [user?.uid]);
+
+  const runFaceTracking = () => {
+    if (!videoRef.current || !faceLandmarkerRef.current || !webcamStream) return;
+    
+    if (videoRef.current.readyState >= 2) {
+      const startTimeMs = performance.now();
+      const results = faceLandmarkerRef.current.detectForVideo(videoRef.current, startTimeMs);
+      
+      if (results.faceLandmarks && results.faceLandmarks.length > 0) {
+        
+        // Head Posture Tracking
+        if (results.facialTransformationMatrixes && results.facialTransformationMatrixes.length > 0) {
+          const matrix = results.facialTransformationMatrixes[0].data;
+          
+          const yaw = Math.atan2(matrix[8], matrix[10]) * (180 / Math.PI);
+          const pitch = Math.atan2(-matrix[9], matrix[10]) * (180 / Math.PI);
+          const roll = Math.atan2(matrix[4], matrix[0]) * (180 / Math.PI);
+
+          const isOverTurned = Math.abs(yaw) > 25 || Math.abs(pitch) > 20 || Math.abs(roll) > 20;
+          setHeadTurnWarning(isOverTurned);
+        } else {
+          setHeadTurnWarning(false);
+        }
+
+        // Eye Contact Tracking
+        if (results.faceBlendshapes && results.faceBlendshapes.length > 0) {
+          const blendshapes = results.faceBlendshapes[0].categories;
+          
+          const getScore = (name: string) => blendshapes.find(b => b.categoryName === name)?.score || 0;
+          
+          const isLookingAway = 
+            getScore('eyeLookInLeft') > 0.3 || getScore('eyeLookOutLeft') > 0.3 ||
+            getScore('eyeLookUpLeft') > 0.3 || getScore('eyeLookDownLeft') > 0.3 ||
+            getScore('eyeLookInRight') > 0.3 || getScore('eyeLookOutRight') > 0.3 ||
+            getScore('eyeLookUpRight') > 0.3 || getScore('eyeLookDownRight') > 0.3;
+
+          setEyeContactWarning(isLookingAway);
+        }
+      } else {
+        setEyeContactWarning(true);
+      }
+    }
+    trackingLoopRef.current = requestAnimationFrame(runFaceTracking);
+  };
 
   const fetchHistory = async () => {
     if (!user?.uid) return;
@@ -229,8 +301,13 @@ export default function MockInterviews() {
     }
   };
 
-  // Hardware lifecycle cleanups
+  // Hardware lifecycle cleanups & face tracking loop start
   useEffect(() => {
+    if (webcamStream && viewState === "active") {
+      setTimeout(() => {
+        trackingLoopRef.current = requestAnimationFrame(runFaceTracking);
+      }, 500);
+    }
     return () => {
       stopWebcam();
       if (typeof window !== "undefined" && window.speechSynthesis) {
@@ -239,8 +316,9 @@ export default function MockInterviews() {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
+      if (trackingLoopRef.current) cancelAnimationFrame(trackingLoopRef.current);
     };
-  }, [webcamStream]);
+  }, [webcamStream, viewState]);
 
   // Speak AI question out loud
   const speakQuestion = (text: string) => {
@@ -469,7 +547,14 @@ export default function MockInterviews() {
     triggerSubmitAnswer(combinedOutput);
   };
 
-  const triggerSubmitAnswer = async (combinedPayload: string) => {
+  const handleEndInterviewEarly = () => {
+    if (confirm("End the interview early and generate an evaluation report based on your current progress?")) {
+      const combinedOutput = `[CODE WORKSPACE - LANGUAGE: ${selectedLanguage.toUpperCase()}]\n${codeText}\n\n[STDOUT COMPILER FEEDBACK]\n${consoleOutput || "No compilation run executed"}\n\n[CONCEPTUAL EXPLANATION]\n${answerText.trim() || "[Candidate ended interview early. No explanation provided.]"}`;
+      triggerSubmitAnswer(combinedOutput, true);
+    }
+  };
+
+  const triggerSubmitAnswer = async (combinedPayload: string, isEndEarly: boolean = false) => {
     if (isLoading) return;
     setIsLoading(true);
     
@@ -492,7 +577,7 @@ export default function MockInterviews() {
           type: interviewType,
           question: currentQuestion,
           answer: combinedPayload,
-          step: currentStep,
+          step: isEndEarly ? totalSteps : currentStep,
           history: history.map(h => ({ question: h.question, answer: h.answer })),
           interviewId: currentInterviewId,
           difficulty: selectedDifficulty
@@ -616,7 +701,7 @@ export default function MockInterviews() {
       <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse" />
+            <i className="fa-solid fa-wand-magic-sparkles w-5 h-5 text-indigo-500 animate-pulse" ></i>
             <span className="text-xs font-black uppercase tracking-widest text-indigo-500">Placement Assessment loops</span>
           </div>
           <h1 className="text-3xl font-black tracking-tight mt-1 bg-gradient-to-r from-zinc-900 via-indigo-950 to-purple-900 dark:from-white dark:via-indigo-200 dark:to-purple-300 bg-clip-text text-transparent">
@@ -632,7 +717,7 @@ export default function MockInterviews() {
             onClick={() => setViewState("config")}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-98"
           >
-            <ArrowLeft className="w-4 h-4 text-indigo-500" />
+            <i className="fa-solid fa-arrow-left w-4 h-4 text-indigo-500" ></i>
             Return to Panel
           </button>
         )}
@@ -648,7 +733,7 @@ export default function MockInterviews() {
               <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-3xl group-hover:scale-110 transition-all duration-700"></div>
               
               <h2 className="text-lg font-black mb-6 text-zinc-900 dark:text-white flex items-center gap-2">
-                <Target className="w-5 h-5 text-indigo-500" />
+                <i className="fa-solid fa-bullseye w-5 h-5 text-indigo-500" ></i>
                 Configure Placement Parameters
               </h2>
               
@@ -667,7 +752,7 @@ export default function MockInterviews() {
                   >
                     <div className="flex flex-col">
                       <span className="font-extrabold text-sm text-zinc-900 dark:text-white flex items-center gap-2">
-                        <Activity className="w-4 h-4 text-indigo-500 animate-pulse" />
+                        <i className="fa-solid fa-chart-line w-4 h-4 text-indigo-500 animate-pulse" ></i>
                         {selectedRole}
                       </span>
                       <span className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1 font-semibold leading-normal">
@@ -675,7 +760,7 @@ export default function MockInterviews() {
                       </span>
                     </div>
                     <div className="shrink-0 ml-4 p-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-400 group-hover:text-zinc-650 dark:group-hover:text-zinc-200 transition-colors">
-                      <ChevronRight className={`w-4 h-4 transform transition-transform duration-300 ${isRoleDropdownOpen ? "rotate-90 text-indigo-500" : ""}`} />
+                      <i className={`fa-solid fa-chevron-right ${`w-4 h-4 transform transition-transform duration-300 ${isRoleDropdownOpen ? "rotate-90 text-indigo-500" : ""}`} `}></i>
                     </div>
                   </button>
 
@@ -692,7 +777,7 @@ export default function MockInterviews() {
                           className="w-full p-2.5 pl-8 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 rounded-xl text-xs font-bold outline-none focus:border-indigo-500/50 transition-all placeholder-zinc-400"
                         />
                         <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400">
-                          <Activity className="w-3.5 h-3.5" />
+                          <i className="fa-solid fa-chart-line w-3.5 h-3.5" ></i>
                         </div>
                         {roleSearchQuery && (
                           <button
@@ -732,7 +817,7 @@ export default function MockInterviews() {
                                 <span className={`font-extrabold text-xs flex items-center gap-1.5 ${
                                   selectedRole === role.name ? "text-indigo-500 dark:text-indigo-400" : "text-zinc-900 dark:text-white"
                                 }`}>
-                                  <Activity className={`w-3 h-3 ${selectedRole === role.name ? "text-indigo-500" : "text-zinc-400"}`} />
+                                  <i className={`fa-solid fa-chart-line ${`w-3 h-3 ${selectedRole === role.name ? "text-indigo-500" : "text-zinc-400"}`} `}></i>
                                   {role.name}
                                 </span>
                                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 font-semibold leading-normal">
@@ -787,7 +872,7 @@ export default function MockInterviews() {
                           ? "bg-indigo-500/15 text-indigo-500 border border-indigo-500/20" 
                           : "bg-zinc-100 dark:bg-zinc-800/50 text-zinc-400 border border-transparent"
                       }`}>
-                        <Cpu className="w-5 h-5" />
+                        <i className="fa-solid fa-microchip w-5 h-5" ></i>
                       </div>
                       <div>
                         <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Technical</h3>
@@ -808,7 +893,7 @@ export default function MockInterviews() {
                           ? "bg-indigo-500/15 text-indigo-500 border border-indigo-500/20" 
                           : "bg-zinc-100 dark:bg-zinc-800/50 text-zinc-400 border border-transparent"
                       }`}>
-                        <MessageSquare className="w-5 h-5" />
+                        <i className="fa-solid fa-comment w-5 h-5" ></i>
                       </div>
                       <div>
                         <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Behavioral</h3>
@@ -829,7 +914,7 @@ export default function MockInterviews() {
                           ? "bg-indigo-500/15 text-indigo-500 border border-indigo-500/20" 
                           : "bg-zinc-100 dark:bg-zinc-800/50 text-zinc-400 border border-transparent"
                       }`}>
-                        <FileText className="w-5 h-5" />
+                        <i className="fa-solid fa-file-lines w-5 h-5" ></i>
                       </div>
                       <div>
                         <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Resume Based</h3>
@@ -851,7 +936,7 @@ export default function MockInterviews() {
                       />
                       {resumeFile && (
                         <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1 mt-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> {resumeFile.name} ready
+                          <i className="fa-solid fa-circle-check w-3.5 h-3.5" ></i> {resumeFile.name} ready
                         </p>
                       )}
                     </div>
@@ -874,7 +959,7 @@ export default function MockInterviews() {
                         }`}
                         title={isTtsEnabled ? "Mute Recruiter Voice" : "Enable Recruiter Voice"}
                       >
-                        {isTtsEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+                        {isTtsEnabled ? <i className="fa-solid fa-volume-high w-5 h-5" ></i> : <i className="fa-solid fa-volume-xmark w-5 h-5" ></i>}
                       </button>
                       
                       <select
@@ -917,7 +1002,7 @@ export default function MockInterviews() {
                     onClick={handleStartInterview}
                     className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-lg active:scale-98 transition-all cursor-pointer border border-indigo-500/20"
                   >
-                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <i className="fa-solid fa-play w-3.5 h-3.5 fill-current" ></i>
                     Launch Session
                   </button>
                 </div>
@@ -928,15 +1013,15 @@ export default function MockInterviews() {
             <div className="glass-panel rounded-3xl p-6 md:p-8 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-black text-zinc-900 dark:text-white flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-indigo-500" />
+                  <i className="fa-solid fa-calendar w-5 h-5 text-indigo-500" ></i>
                   Past Sessions History
                 </h2>
-                {loadingHistory && <Loader2 className="w-4 h-4 text-indigo-500 animate-spin" />}
+                {loadingHistory && <i className="fa-solid fa-spinner fa-spin w-4 h-4 text-indigo-500 animate-spin" ></i>}
               </div>
 
               {historySessions.length === 0 ? (
                 <div className="py-12 text-center rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-950/10">
-                  <Activity className="w-10 h-10 text-zinc-400 mx-auto opacity-40 mb-3" />
+                  <i className="fa-solid fa-chart-line w-10 h-10 text-zinc-400 mx-auto opacity-40 mb-3" ></i>
                   <p className="text-xs text-zinc-500 font-bold uppercase tracking-wider">No completed sessions logged yet</p>
                   <p className="text-[11px] text-zinc-400 mt-1">Initialize and finish an interview to see report records.</p>
                 </div>
@@ -986,7 +1071,7 @@ export default function MockInterviews() {
                             onClick={() => handleOpenModal(session)}
                             className="mt-4 flex items-center justify-center gap-1.5 w-full py-2 bg-indigo-500/5 hover:bg-indigo-500/10 border border-indigo-500/15 rounded-xl text-[10px] font-black uppercase tracking-wider text-indigo-500 dark:text-indigo-400 cursor-pointer transition-all"
                           >
-                            <Eye className="w-3.5 h-3.5" />
+                            <i className="fa-solid fa-eye w-3.5 h-3.5" ></i>
                             Detailed Diagnostic
                           </button>
                         )}
@@ -1004,13 +1089,13 @@ export default function MockInterviews() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl"></div>
               
               <h3 className="font-black text-sm text-zinc-900 dark:text-white flex items-center gap-2 mb-6">
-                <Award className="w-4.5 h-4.5 text-indigo-500" />
+                <i className="fa-solid fa-award w-4.5 h-4.5 text-indigo-500" ></i>
                 Competency Aggregates
               </h3>
 
               {stats.total === 0 ? (
                 <div className="py-6 text-center text-zinc-455 text-xs">
-                  <Activity className="w-8 h-8 text-zinc-400 mx-auto opacity-30 mb-2" />
+                  <i className="fa-solid fa-chart-line w-8 h-8 text-zinc-400 mx-auto opacity-30 mb-2" ></i>
                   <p className="font-bold uppercase tracking-wider text-[10px]">No Competency Vectors</p>
                   <p className="text-[10px] mt-0.5">Complete your initial assessment to index scores.</p>
                 </div>
@@ -1038,14 +1123,14 @@ export default function MockInterviews() {
 
             <div className="glass-panel rounded-3xl p-6 border border-zinc-200/50 dark:border-zinc-800/40 relative">
               <h3 className="font-black text-sm text-zinc-900 dark:text-white flex items-center gap-2 mb-4">
-                <ShieldCheck className="w-4.5 h-4.5 text-indigo-500" />
+                <i className="fa-solid fa-shield-halved w-4.5 h-4.5 text-indigo-500" ></i>
                 Candidate Integrity Shield
               </h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-normal font-medium">
                 Our twin engine simulates camera feedback & dictation streams. Grant permissions for both to experience actual loops or use placeholders.
               </p>
               <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 rounded-xl">
-                <UserCheck className="w-3.5 h-3.5" />
+                <i className="fa-solid fa-user-check w-3.5 h-3.5" ></i>
                 Browser Sandbox Verified
               </div>
             </div>
@@ -1055,7 +1140,7 @@ export default function MockInterviews() {
 
       {/* VIEW STATE: ACTIVE ASSESSMENT INTERVIEW WITH DUAL CODE / CONCEPT RESPONSES */}
       {viewState === "active" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* Active Terminal Panel (Left 8 cols for Dual Workspace) */}
           <div className="lg:col-span-8 glass-panel rounded-3xl overflow-hidden shadow-lg border border-zinc-200 dark:border-zinc-800/40 flex flex-col justify-between bg-zinc-950/20">
@@ -1084,7 +1169,7 @@ export default function MockInterviews() {
               
               {isLoading && !currentQuestion ? (
                 <div className="py-32 flex flex-col items-center justify-center space-y-4 flex-1">
-                  <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+                  <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-indigo-500 animate-spin" ></i>
                   <span className="text-[10px] font-black text-zinc-450 uppercase tracking-widest animate-pulse">
                     Synthesizing Question Context...
                   </span>
@@ -1102,7 +1187,7 @@ export default function MockInterviews() {
                           onClick={() => speakQuestion(currentQuestion)}
                           className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-indigo-500 hover:underline cursor-pointer"
                         >
-                          <Volume2 className="w-3.5 h-3.5" />
+                          <i className="fa-solid fa-volume-high w-3.5 h-3.5" ></i>
                           Repeat Question
                         </button>
                       )}
@@ -1122,7 +1207,7 @@ export default function MockInterviews() {
                     <div className="flex flex-col space-y-3">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                          <Code className="w-4 h-4 text-indigo-500" />
+                          <i className="fa-solid fa-code w-4 h-4 text-indigo-500" ></i>
                           <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                             Coding Compiler Workspace
                           </h3>
@@ -1142,8 +1227,9 @@ export default function MockInterviews() {
                       </div>
 
                       {/* Code editor frame with line numbers */}
-                      <div className="flex-1 flex bg-zinc-950 text-zinc-150 font-mono text-xs p-3 rounded-2xl border border-zinc-850 min-h-[220px]">
-                        <div className="select-none text-right pr-3 border-r border-zinc-850 mr-3 text-zinc-600 dark:text-zinc-550 leading-6 text-[10px]">
+                      <div className="flex-1 flex bg-[#0d1117] text-zinc-300 font-mono text-xs p-4 rounded-2xl border border-zinc-800/80 shadow-inner relative overflow-hidden min-h-[250px]">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 opacity-70"></div>
+                        <div className="select-none text-right pr-4 border-r border-zinc-800 mr-4 text-zinc-600 leading-6 text-[11px] pt-1">
                           {lineNumbers.map(n => <div key={n}>{n}</div>)}
                         </div>
                         <textarea
@@ -1161,7 +1247,8 @@ export default function MockInterviews() {
                               }, 0);
                             }
                           }}
-                          className="w-full bg-transparent text-zinc-150 outline-none resize-none leading-6 font-mono text-[11px]"
+                          className="w-full bg-transparent text-[#c9d1d9] outline-none resize-none leading-6 font-mono text-[12px] pt-1 custom-scrollbar"
+                          spellCheck={false}
                         />
                       </div>
 
@@ -1172,17 +1259,18 @@ export default function MockInterviews() {
                           <button
                             onClick={runCodeSandbox}
                             disabled={isRunningCode}
-                            className="flex items-center gap-1.5 px-3 py-1 bg-indigo-500 hover:bg-indigo-650 text-white rounded-lg text-[10px] font-bold transition-all cursor-pointer shadow-sm active:scale-95 disabled:opacity-50"
+                            className="flex items-center gap-1.5 px-3 py-1 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-[10px] font-bold transition-all cursor-pointer shadow-sm active:scale-95 disabled:opacity-50"
                           >
-                            {isRunningCode ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3 fill-current" />}
+                            {isRunningCode ? <i className="fa-solid fa-spinner fa-spin w-3 h-3 animate-spin" ></i> : <i className="fa-solid fa-play w-3 h-3 fill-current" ></i>}
                             Run Code
                           </button>
                         </div>
-                        <div className="bg-black p-3.5 rounded-xl border border-zinc-850 text-[10px] font-mono h-24 overflow-y-auto shadow-inner text-emerald-500">
+                        <div className="bg-[#010409] p-4 rounded-xl border border-zinc-800/80 text-[11px] font-mono h-32 overflow-y-auto shadow-inner text-emerald-400 relative custom-scrollbar">
+                          <div className="absolute top-0 left-0 w-full h-0.5 bg-zinc-800"></div>
                           {consoleError && (
-                            <div className="text-rose-500 font-bold mb-1.5">[COMPILE ERROR] {consoleError}</div>
+                            <div className="text-rose-500 font-bold mb-1.5 flex items-center gap-2"><i className="fa-solid fa-triangle-exclamation"></i> [COMPILE ERROR] {consoleError}</div>
                           )}
-                          <div className="whitespace-pre-line text-zinc-200 leading-normal">{consoleOutput || "Compiler Output Stream Idle..."}</div>
+                          <div className="whitespace-pre-line text-[#8b949e] leading-relaxed">{consoleOutput || "Compiler Output Stream Idle..."}</div>
                         </div>
                       </div>
                     </div>
@@ -1191,7 +1279,7 @@ export default function MockInterviews() {
                     <div className="flex flex-col space-y-3">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                          <MessageSquare className="w-4 h-4 text-indigo-500" />
+                          <i className="fa-solid fa-comment w-4 h-4 text-indigo-500" ></i>
                           <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                             Conceptual Explanation & STAR log
                           </h3>
@@ -1206,7 +1294,7 @@ export default function MockInterviews() {
                               : "bg-white dark:bg-zinc-900/60 text-zinc-650 dark:text-zinc-400 border-zinc-200 dark:border-zinc-855 hover:border-indigo-500/30"
                           }`}
                         >
-                          {isListening ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3 text-indigo-500" />}
+                          {isListening ? <i className="fa-solid fa-microphone-slash w-3 h-3" ></i> : <i className="fa-solid fa-microphone w-3 h-3 text-indigo-500" ></i>}
                           {isListening ? "Listening..." : "Dictate"}
                         </button>
                       </div>
@@ -1223,24 +1311,36 @@ export default function MockInterviews() {
 
                   {/* Bottom Panel Actions */}
                   <div className="flex items-center justify-between pt-5 border-t border-zinc-200/40 dark:border-zinc-800/40">
-                    <button 
-                      onClick={() => {
-                        if (confirm("Terminate placement loop? Discarded progression reports cannot be restored.")) {
-                          stopWebcam();
-                          setViewState("config");
-                        }
-                      }}
-                      className="text-xs font-bold text-zinc-450 hover:text-rose-500 transition-colors cursor-pointer"
-                    >
-                      Cancel Loop
-                    </button>
+                    <div className="flex items-center gap-6">
+                      <button 
+                        onClick={() => {
+                          if (confirm("Terminate placement loop? Discarded progression reports cannot be restored.")) {
+                            stopWebcam();
+                            setViewState("config");
+                          }
+                        }}
+                        className="text-xs font-bold text-zinc-450 hover:text-rose-500 transition-colors cursor-pointer"
+                      >
+                        Cancel Loop
+                      </button>
+
+                      {currentStep < totalSteps && (
+                        <button 
+                          onClick={handleEndInterviewEarly}
+                          disabled={isLoading}
+                          className="text-xs font-bold text-amber-500 hover:text-amber-400 transition-colors cursor-pointer disabled:opacity-50"
+                        >
+                          End Interview & Evaluate
+                        </button>
+                      )}
+                    </div>
 
                     <button
                       onClick={handleSubmitAnswer}
                       disabled={(!answerText.trim() && !codeText.trim()) || isLoading}
-                      className="flex items-center gap-2 px-6 py-3 bg-indigo-650 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs shadow-md hover:shadow-[0_4px_15px_rgba(99,102,241,0.2)] active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+                      className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs shadow-md hover:shadow-[0_4px_15px_rgba(99,102,241,0.2)] active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
                     >
-                      {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                      {isLoading ? <i className="fa-solid fa-spinner fa-spin w-3.5 h-3.5 animate-spin" ></i> : <i className="fa-solid fa-paper-plane w-3.5 h-3.5" ></i>}
                       {currentStep === totalSteps ? "Compile Evaluation" : "Submit Answer"}
                     </button>
                   </div>
@@ -1250,9 +1350,9 @@ export default function MockInterviews() {
           </div>
 
           {/* Right stream check (Right 4 cols) */}
-          <div className="lg:col-span-4 space-y-6 flex flex-col justify-between">
+          <div className="lg:col-span-4 space-y-6 flex flex-col sticky top-6">
             {/* Webcam / Wave container */}
-            <div className="glass-panel rounded-3xl overflow-hidden shadow-sm relative bg-zinc-950 aspect-video lg:aspect-auto lg:flex-1 flex flex-col items-center justify-center border border-zinc-200 dark:border-zinc-800/50 min-h-[200px]">
+            <div className="glass-panel rounded-3xl overflow-hidden shadow-xl relative bg-black aspect-video flex flex-col items-center justify-center border border-zinc-800/60 ring-1 ring-white/5">
               
               {/* Webcam Live Capture element */}
               <video 
@@ -1260,7 +1360,7 @@ export default function MockInterviews() {
                 autoPlay 
                 playsInline 
                 muted
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 rounded-3xl ${
                   webcamStream ? "opacity-100" : "opacity-0"
                 }`}
               />
@@ -1274,13 +1374,28 @@ export default function MockInterviews() {
                 </span>
               </div>
               
+              <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 items-end">
+                {eyeContactWarning && (
+                  <div className="flex items-center gap-2 px-2.5 py-1 bg-rose-500/90 border border-rose-400 rounded-lg backdrop-blur-md shadow-[0_0_15px_rgba(244,63,94,0.5)] animate-pulse">
+                    <i className="fa-solid fa-eye-slash text-white w-3.5 h-3.5"></i>
+                    <span className="text-[9px] font-black uppercase text-white tracking-widest">Eye Contact Lost</span>
+                  </div>
+                )}
+                {headTurnWarning && (
+                  <div className="flex items-center gap-2 px-2.5 py-1 bg-orange-500/90 border border-orange-400 rounded-lg backdrop-blur-md shadow-[0_0_15px_rgba(244,143,34,0.5)] animate-pulse">
+                    <i className="fa-solid fa-triangle-exclamation text-white w-3.5 h-3.5"></i>
+                    <span className="text-[9px] font-black uppercase text-white tracking-widest">Head Over-Turned</span>
+                  </div>
+                )}
+              </div>
+              
               {/* Virtual waveform visualization if webcam disabled */}
               {!webcamStream && (
                 <div className="relative z-10 flex flex-col items-center gap-3">
                   <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
                     isListening ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" : "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
                   }`}>
-                    <Mic className={`w-6 h-6 ${isListening ? "animate-pulse" : ""}`} />
+                    <i className={`fa-solid fa-microphone ${`w-6 h-6 ${isListening ? "animate-pulse" : ""}`} `}></i>
                   </div>
                   <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                     {isListening ? "Active Audio Capture" : "Audio Capture Idle"}
@@ -1304,7 +1419,7 @@ export default function MockInterviews() {
             <div className="glass-panel p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800/40 relative overflow-hidden">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <Clock className={`w-4 h-4 ${timeLeft < 20 ? "text-rose-500 animate-bounce" : "text-indigo-500"}`} />
+                  <i className={`fa-solid fa-clock ${`w-4 h-4 ${timeLeft < 20 ? "text-rose-500 animate-bounce" : "text-indigo-500"}`} `}></i>
                   <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                     Time Allotted
                   </span>
@@ -1330,7 +1445,7 @@ export default function MockInterviews() {
               <div className="glass-panel p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800/40 relative overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/5 rounded-full blur-lg"></div>
                 <h4 className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4" />
+                  <i className="fa-solid fa-circle-check w-4 h-4" ></i>
                   Realtime Feedback
                 </h4>
                 <p className="text-xs text-zinc-650 dark:text-zinc-300 leading-relaxed font-semibold">
@@ -1357,7 +1472,7 @@ export default function MockInterviews() {
             
             <div className="flex flex-col items-center text-center space-y-4 mb-8">
               <div className="p-4.5 bg-gradient-to-tr from-emerald-500 to-teal-500 text-white rounded-2xl shadow-[0_4px_25px_rgba(16,185,129,0.25)]">
-                <Award className="w-10 h-10" />
+                <i className="fa-solid fa-award w-10 h-10" ></i>
               </div>
               <div>
                 <h2 className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Placement Evaluation Completed!</h2>
@@ -1377,7 +1492,7 @@ export default function MockInterviews() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="p-5 rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800/60">
                 <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                  <AwardIcon className="w-4 h-4" />
+                  <i className="fa-solid fa-award w-4 h-4" Icon></i>
                   Twin Assessment Summary
                 </h4>
                 <p className="text-xs text-zinc-650 dark:text-zinc-300 leading-relaxed font-semibold">
@@ -1387,7 +1502,7 @@ export default function MockInterviews() {
 
               <div className="p-5 rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800/60">
                 <h4 className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                  <ShieldAlert className="w-4 h-4" />
+                  <i className="fa-solid fa-shield-halved w-4 h-4" ></i>
                   Identified Skill Gaps
                 </h4>
                 <ul className="text-xs text-zinc-655 dark:text-zinc-300 space-y-1.5 font-semibold list-disc list-inside">
@@ -1456,14 +1571,14 @@ export default function MockInterviews() {
                 onClick={handlePrint}
                 className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-250 dark:border-zinc-750 text-zinc-800 dark:text-white text-xs font-black uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer"
               >
-                <Download className="w-4 h-4 text-indigo-500" />
+                <i className="fa-solid fa-download w-4 h-4 text-indigo-500" ></i>
                 Export PDF Report
               </button>
               <button 
                 onClick={handleStartInterview}
                 className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-500 dark:text-indigo-400 text-xs font-black uppercase tracking-wider border border-indigo-500/20 active:scale-95 transition-all cursor-pointer"
               >
-                <RotateCcw className="w-4 h-4" />
+                <i className="fa-solid fa-rotate-left w-4 h-4" ></i>
                 Re-enter Loop
               </button>
             </div>
@@ -1647,9 +1762,9 @@ export default function MockInterviews() {
                   onClick={() => {
                     handlePrint();
                   }}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-indigo-650 hover:bg-indigo-700 text-white text-xs font-bold cursor-pointer"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold cursor-pointer"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <i className="fa-solid fa-download w-3.5 h-3.5" ></i>
                   Print Evaluation
                 </button>
               )}

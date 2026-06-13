@@ -2,23 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  ArrowRight, 
-  BrainCircuit, 
-  Target, 
-  Code, 
-  Briefcase, 
-  Sparkles, 
-  Terminal, 
-  ShieldCheck, 
-  Zap, 
-  Cpu, 
-  Star,
-  Layers,
-  ArrowUpRight,
-  Menu,
-  X
-} from "lucide-react";
+
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 import CareerPilotLogo from "@/components/CareerPilotLogo";
@@ -93,7 +77,7 @@ export default function LandingPage() {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-all cursor-pointer"
             >
-              {isMobileMenuOpen ? <X className="w-4 h-4 text-zinc-650 dark:text-zinc-400" /> : <Menu className="w-4 h-4 text-zinc-650 dark:text-zinc-400" />}
+              {isMobileMenuOpen ? <i className="fa-solid fa-xmark w-4 h-4 text-zinc-650 dark:text-zinc-400" ></i> : <i className="fa-solid fa-bars w-4 h-4 text-zinc-650 dark:text-zinc-400" ></i>}
             </button>
           </div>
         </div>
@@ -147,7 +131,7 @@ export default function LandingPage() {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider"
             >
-              <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
+              <i className="fa-solid fa-wand-magic-sparkles w-3.5 h-3.5 text-indigo-500 animate-pulse" ></i>
               Meet your professional clone
             </motion.div>
 
@@ -181,7 +165,7 @@ export default function LandingPage() {
             >
               <Link href="/signup" className="group flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wider shadow-[0_10px_20px_-5px_rgba(99,102,241,0.3)] hover:-translate-y-0.5 active:scale-95 transition-all">
                 Build My Agent Twin
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <i className="fa-solid fa-arrow-right w-4 h-4 group-hover:translate-x-1 transition-transform" ></i>
               </Link>
               <Link href="/login" className="flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/30 text-zinc-900 dark:text-white rounded-2xl font-bold text-xs uppercase tracking-wider shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all">
                 Access Dashboard
@@ -296,7 +280,7 @@ export default function LandingPage() {
             <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-indigo-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all md:col-span-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-indigo-500/10 transition-colors"></div>
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6">
-                <BrainCircuit className="w-6 h-6 text-indigo-500" />
+                <i className="fa-solid fa-microchip w-6 h-6 text-indigo-500" ></i>
               </div>
               <h3 className="text-xl font-extrabold tracking-tight mb-2 flex items-center gap-2">
                 Personal AI RAG Twin Agent
@@ -311,7 +295,7 @@ export default function LandingPage() {
             <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-cyan-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-6">
-                <Target className="w-6 h-6 text-cyan-500" />
+                <i className="fa-solid fa-bullseye w-6 h-6 text-cyan-500" ></i>
               </div>
               <h3 className="text-xl font-extrabold tracking-tight mb-2">ATS Resume Lab</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">
@@ -322,7 +306,7 @@ export default function LandingPage() {
             {/* Box 3 - Coding metrics */}
             <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-yellow-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all relative overflow-hidden group">
               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6">
-                <Code className="w-6 h-6 text-amber-500" />
+                <i className="fa-solid fa-code w-6 h-6 text-amber-500" ></i>
               </div>
               <h3 className="text-xl font-extrabold tracking-tight mb-2">Coding Trackers</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">
@@ -334,7 +318,7 @@ export default function LandingPage() {
             <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-purple-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all md:col-span-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
               <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-6">
-                <Zap className="w-6 h-6 text-purple-500" />
+                <i className="fa-solid fa-bolt w-6 h-6 text-purple-500" ></i>
               </div>
               <h3 className="text-xl font-extrabold tracking-tight mb-2">Real-time AI Mock Interviews</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium max-w-xl">
@@ -363,7 +347,7 @@ export default function LandingPage() {
           <div className="pt-4 flex justify-center gap-4">
             <Link href="/signup" className="flex items-center gap-2 px-8 py-4 bg-gradient-to-tr from-indigo-500 to-purple-650 hover:from-indigo-600 hover:to-purple-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all">
               Launch Identity Agent
-              <ArrowUpRight className="w-4 h-4" />
+              <i className="fa-solid fa-arrow-up-right-from-square w-4 h-4" ></i>
             </Link>
           </div>
         </div>

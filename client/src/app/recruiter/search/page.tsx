@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, BrainCircuit, ShieldCheck, Cpu, Code, Target, FileText, Send, X, Sparkles, Filter, CheckCircle2, UserCheck, MessageSquare } from "lucide-react";
+
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
 
@@ -225,7 +225,7 @@ export default function CandidateSearch() {
       {/* Filter and Search Inputs */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
         <div className="md:col-span-8 relative">
-          <Search className="w-5 h-5 text-zinc-450 absolute left-4 top-1/2 transform -translate-y-1/2" />
+          <i className="fa-solid fa-magnifying-glass w-5 h-5 text-zinc-450 absolute left-4 top-1/2 transform -translate-y-1/2" ></i>
           <input
             type="text"
             placeholder="Search candidates by name, target role..."
@@ -236,7 +236,7 @@ export default function CandidateSearch() {
         </div>
 
         <div className="md:col-span-4 relative">
-          <Filter className="w-5 h-5 text-zinc-455 absolute left-4 top-1/2 transform -translate-y-1/2" />
+          <i className="fa-solid fa-filter w-5 h-5 text-zinc-455 absolute left-4 top-1/2 transform -translate-y-1/2" ></i>
           <select
             value={selectedSkill}
             onChange={(e) => setSelectedSkill(e.target.value)}
@@ -283,11 +283,11 @@ export default function CandidateSearch() {
 
               <div className="flex items-center gap-4 mt-4 mb-5 text-xs text-zinc-550 dark:text-zinc-400 font-semibold border-b border-t border-zinc-200/30 dark:border-zinc-800/20 py-2.5">
                 <div className="flex items-center gap-1">
-                  <Code className="w-4 h-4 text-zinc-400" />
+                  <i className="fa-solid fa-code w-4 h-4 text-zinc-400" ></i>
                   <span>{cand.leetcodeSolved} Solved</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Target className="w-4 h-4 text-zinc-400" />
+                  <i className="fa-solid fa-bullseye w-4 h-4 text-zinc-400" ></i>
                   <span>{cand.leetcodeStreak}d Streak</span>
                 </div>
               </div>
@@ -312,7 +312,7 @@ export default function CandidateSearch() {
                     : 'bg-white dark:bg-zinc-900 border-zinc-250 dark:border-zinc-800 text-zinc-650 hover:border-purple-550/20 hover:text-purple-500 dark:text-zinc-350'
                 }`}
               >
-                <UserCheck className="w-4 h-4" />
+                <i className="fa-solid fa-user-check w-4 h-4" ></i>
                 {shortlisted.includes(cand.id) ? 'Shortlisted' : 'Shortlist'}
               </button>
 
@@ -320,7 +320,7 @@ export default function CandidateSearch() {
                 onClick={() => handleOpenDrawer(cand)}
                 className="flex-1 py-2.5 bg-gradient-to-tr from-purple-500 to-indigo-650 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-sm hover:shadow-[0_4px_12px_rgba(168,85,247,0.2)] transition-all cursor-pointer border border-white/10"
               >
-                <BrainCircuit className="w-4 h-4" />
+                <i className="fa-solid fa-microchip w-4 h-4" ></i>
                 Interview Twin
               </button>
             </div>
@@ -353,7 +353,7 @@ export default function CandidateSearch() {
                   onClick={() => setIsDrawerOpen(false)}
                   className="p-2 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/30 rounded-xl text-zinc-550 hover:text-zinc-800 dark:hover:text-zinc-250 transition-all md:hidden"
                 >
-                  <X className="w-5 h-5" />
+                  <i className="fa-solid fa-xmark w-5 h-5" ></i>
                 </button>
               </div>
 
@@ -361,14 +361,14 @@ export default function CandidateSearch() {
                 <div className="p-3 bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/50 dark:border-zinc-850 rounded-2xl space-y-1">
                   <span className="text-[10px] text-zinc-400 font-bold uppercase">ATS Score</span>
                   <p className="font-extrabold text-zinc-850 dark:text-zinc-205 flex items-center gap-1.5">
-                    <FileText className="w-4 h-4 text-purple-500" />
+                    <i className="fa-solid fa-file-lines w-4 h-4 text-purple-500" ></i>
                     {selectedCandidate.atsScore}/100 Match
                   </p>
                 </div>
                 <div className="p-3 bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/50 dark:border-zinc-850 rounded-2xl space-y-1">
                   <span className="text-[10px] text-zinc-400 font-bold uppercase">Leetcode solved</span>
                   <p className="font-extrabold text-zinc-850 dark:text-zinc-205 flex items-center gap-1.5">
-                    <Code className="w-4 h-4 text-purple-500" />
+                    <i className="fa-solid fa-code w-4 h-4 text-purple-500" ></i>
                     {selectedCandidate.leetcodeSolved} Solved
                   </p>
                 </div>
@@ -407,7 +407,7 @@ export default function CandidateSearch() {
                     : 'bg-zinc-150 dark:bg-zinc-900 border-zinc-250 dark:border-zinc-800 text-zinc-650 hover:border-purple-550/20 hover:text-purple-500 dark:text-zinc-350'
                 }`}
               >
-                <UserCheck className="w-4.5 h-4.5" />
+                <i className="fa-solid fa-user-check w-4.5 h-4.5" ></i>
                 {shortlisted.includes(selectedCandidate.id) ? 'Shortlisted' : 'Shortlist Candidate'}
               </button>
             </div>
@@ -418,12 +418,12 @@ export default function CandidateSearch() {
               <div className="p-5 border-b border-zinc-200/50 dark:border-zinc-800/40 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 bg-purple-500/10 rounded-xl text-purple-550 border border-purple-500/20 animate-pulse">
-                    <BrainCircuit className="w-5 h-5" />
+                    <i className="fa-solid fa-microchip w-5 h-5" ></i>
                   </div>
                   <div>
                     <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white flex items-center gap-1">
                       Twin Replica
-                      <Sparkles className="w-3.5 h-3.5 text-purple-500" />
+                      <i className="fa-solid fa-wand-magic-sparkles w-3.5 h-3.5 text-purple-500" ></i>
                     </h3>
                     <p className="text-[10px] text-zinc-400">Autonomous Interview Screening</p>
                   </div>
@@ -432,7 +432,7 @@ export default function CandidateSearch() {
                   onClick={() => setIsDrawerOpen(false)}
                   className="p-2 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/30 rounded-xl text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-250 transition-all hidden md:block"
                 >
-                  <X className="w-5 h-5" />
+                  <i className="fa-solid fa-xmark w-5 h-5" ></i>
                 </button>
               </div>
 
@@ -478,7 +478,7 @@ export default function CandidateSearch() {
                   disabled={!inputVal.trim() || isSending}
                   className="p-2.5 bg-purple-550 text-white rounded-xl hover:bg-purple-650 active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer flex items-center justify-center"
                 >
-                  <Send className="w-4.5 h-4.5" />
+                  <i className="fa-solid fa-paper-plane w-4.5 h-4.5" ></i>
                 </button>
               </form>
 

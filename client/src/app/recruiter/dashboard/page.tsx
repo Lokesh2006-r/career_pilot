@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Users, Briefcase, UserCheck, MessageSquare, ArrowUpRight, BarChart3, Clock, Sparkles } from "lucide-react";
+
 import Link from "next/link";
 
 export default function RecruiterDashboard() {
@@ -20,7 +20,7 @@ export default function RecruiterDashboard() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-500 border border-purple-500/20">
-              <Sparkles className="w-3 h-3" />
+              <i className="fa-solid fa-wand-magic-sparkles w-3 h-3" ></i>
               AI Recruiter Co-Pilot Active
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-700 dark:from-white dark:via-zinc-200 dark:to-zinc-400 bg-clip-text text-transparent">
@@ -35,7 +35,7 @@ export default function RecruiterDashboard() {
             href="/recruiter/search"
             className="inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-650 hover:from-purple-650 hover:to-indigo-750 text-white font-semibold text-sm shadow-[0_4px_20px_rgba(168,85,247,0.25)] hover:shadow-[0_4px_25px_rgba(168,85,247,0.4)] active:scale-95 transition-all duration-300 cursor-pointer"
           >
-            <Users className="w-4 h-4" />
+            <i className="fa-solid fa-users w-4 h-4" ></i>
             Explore Candidates Pool
           </Link>
         </div>
@@ -48,7 +48,7 @@ export default function RecruiterDashboard() {
           <div className="flex justify-between items-start mb-4">
             <span className="text-zinc-550 dark:text-zinc-400 text-xs font-semibold tracking-wide uppercase">Active Openings</span>
             <div className="p-2 bg-purple-500/10 rounded-xl text-purple-500 border border-purple-500/20">
-              <Briefcase className="w-5 h-5" />
+              <i className="fa-solid fa-briefcase w-5 h-5" ></i>
             </div>
           </div>
           <h3 className="text-3xl font-extrabold text-zinc-950 dark:text-white leading-none mb-1">{activeJobs}</h3>
@@ -60,7 +60,7 @@ export default function RecruiterDashboard() {
           <div className="flex justify-between items-start mb-4">
             <span className="text-zinc-550 dark:text-zinc-400 text-xs font-semibold tracking-wide uppercase">Shortlisted Twins</span>
             <div className="p-2 bg-pink-500/10 rounded-xl text-pink-500 border border-pink-500/20">
-              <UserCheck className="w-5 h-5" />
+              <i className="fa-solid fa-user-check w-5 h-5" ></i>
             </div>
           </div>
           <h3 className="text-3xl font-extrabold text-zinc-950 dark:text-white leading-none mb-1">{shortlistedCount}</h3>
@@ -72,7 +72,7 @@ export default function RecruiterDashboard() {
           <div className="flex justify-between items-start mb-4">
             <span className="text-zinc-550 dark:text-zinc-400 text-xs font-semibold tracking-wide uppercase">AI Chats Initiated</span>
             <div className="p-2 bg-indigo-500/10 rounded-xl text-indigo-500 border border-indigo-500/20">
-              <MessageSquare className="w-5 h-5" />
+              <i className="fa-solid fa-comment w-5 h-5" ></i>
             </div>
           </div>
           <h3 className="text-3xl font-extrabold text-zinc-950 dark:text-white leading-none mb-1">{chatsCount}</h3>
@@ -84,7 +84,7 @@ export default function RecruiterDashboard() {
           <div className="flex justify-between items-start mb-4">
             <span className="text-zinc-550 dark:text-zinc-400 text-xs font-semibold tracking-wide uppercase">Screening Time Saved</span>
             <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-500 border border-emerald-500/20">
-              <Clock className="w-5 h-5" />
+              <i className="fa-solid fa-clock w-5 h-5" ></i>
             </div>
           </div>
           <h3 className="text-3xl font-extrabold text-zinc-950 dark:text-white leading-none mb-1">{timeSaved}m</h3>
@@ -101,7 +101,7 @@ export default function RecruiterDashboard() {
         <div className="lg:col-span-8 glass-panel p-8 rounded-3xl space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-purple-500" />
+              <i className="fa-solid fa-chart-column w-5 h-5 text-purple-500" ></i>
               AI Pipeline Match Distribution (By Skill Groups)
             </h3>
             <span className="text-xs text-zinc-400 font-bold uppercase">Dynamic matching</span>
@@ -144,7 +144,7 @@ export default function RecruiterDashboard() {
         {/* Shortlisted Quick Summary */}
         <div className="lg:col-span-4 glass-panel p-8 rounded-3xl space-y-6">
           <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-            <UserCheck className="w-5 h-5 text-pink-550" />
+            <i className="fa-solid fa-user-check w-5 h-5 text-pink-550" ></i>
             Top Shortlisted
           </h3>
 
