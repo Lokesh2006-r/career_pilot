@@ -1492,7 +1492,7 @@ export default function MockInterviews() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="p-5 rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800/60">
                 <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                  <i className="fa-solid fa-award w-4 h-4" Icon></i>
+                  <i className="fa-solid fa-award w-4 h-4"></i>
                   Twin Assessment Summary
                 </h4>
                 <p className="text-xs text-zinc-650 dark:text-zinc-300 leading-relaxed font-semibold">
