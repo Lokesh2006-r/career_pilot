@@ -26,68 +26,11 @@ interface Message {
   content: string;
 }
 
-const MOCK_CANDIDATES: Candidate[] = [
-  {
-    id: "stud-1",
-    name: "Alex Johnson",
-    roleTarget: "Full Stack Engineer",
-    atsScore: 88,
-    leetcodeSolved: 144,
-    leetcodeStreak: 18,
-    skills: ["React", "Next.js", "Node.js", "TypeScript", "Python"],
-    personalityPrompt: "You are Alex Johnson's AI Twin. Speak with confidence about Full Stack Web applications, system optimization, React rendering loops, and backend security paradigms.",
-    avatar: "AJ",
-    email: "alex.johnson@university.edu",
-    education: "B.S. Computer Science, Stanford University",
-    projectsCount: 5
-  },
-  {
-    id: "stud-2",
-    name: "Sarah Chen",
-    roleTarget: "AI Research Engineer",
-    atsScore: 94,
-    leetcodeSolved: 210,
-    leetcodeStreak: 32,
-    skills: ["Python", "PyTorch", "LangChain", "Pinecone", "RAG Systems"],
-    personalityPrompt: "You are Sarah Chen's AI Twin. Focus deeply on Retrieval-Augmented Generation, vector embeddings, chunking strategies, and LLM orchestration logic.",
-    avatar: "SC",
-    email: "schen@mit.edu",
-    education: "M.S. Artificial Intelligence, MIT",
-    projectsCount: 4
-  },
-  {
-    id: "stud-3",
-    name: "Marcus Aurelius",
-    roleTarget: "Blockchain Developer",
-    atsScore: 82,
-    leetcodeSolved: 98,
-    leetcodeStreak: 5,
-    skills: ["Solidity", "Hardhat", "Ether.js", "Next.js", "Go"],
-    personalityPrompt: "You are Marcus Aurelius's AI Twin. Speak cleanly about blockchain security, multi-party smart contract escrows, decentralized ledger systems, and gas fee optimization.",
-    avatar: "MA",
-    email: "marcus@rome.edu",
-    education: "B.S. Software Engineering, Oxford University",
-    projectsCount: 3
-  },
-  {
-    id: "stud-4",
-    name: "Priya Patel",
-    roleTarget: "DevOps & Cloud Architect",
-    atsScore: 85,
-    leetcodeSolved: 112,
-    leetcodeStreak: 14,
-    skills: ["Docker", "Kubernetes", "AWS", "Terraform", "CI/CD Platforms"],
-    personalityPrompt: "You are Priya Patel's AI Twin. Focus on cloud scale metrics, container orchestration, zero-downtime Blue/Green deployments, infrastructure as code, and system reliability.",
-    avatar: "PP",
-    email: "priya.patel@georgiatech.edu",
-    education: "B.S. Computer Engineering, Georgia Tech",
-    projectsCount: 6
-  }
-];
+
 
 export default function CandidateSearch() {
   const { user } = useAuth();
-  const [candidates] = useState<Candidate[]>(MOCK_CANDIDATES);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkill, setSelectedSkill] = useState<string>("All");
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
@@ -111,6 +54,24 @@ export default function CandidateSearch() {
       }
     }
   }, [user]);
+
+  // Load live candidates
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/recruiter/candidates`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setCandidates(json.data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch candidates:", err);
+      }
+    };
+    fetchCandidates();
+  }, []);
 
   // Track searches in local storage
   useEffect(() => {

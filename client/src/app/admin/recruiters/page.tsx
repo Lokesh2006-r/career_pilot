@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+
 
 
 interface RecruiterAccount {
@@ -14,16 +14,31 @@ interface RecruiterAccount {
   avatar?: string;
 }
 
-const INITIAL_RECRUITERS: RecruiterAccount[] = [
-  { id: "rec-01", name: "Sarah Connor", email: "sconnor@cyberdyne.com", company: "Cyberdyne Systems", activeOpenings: 3, status: "Active", joinedDate: "2026-05-01" },
-  { id: "rec-02", name: "Peter Parker", email: "pparker@dailybugle.com", company: "Daily Bugle", activeOpenings: 1, status: "Active", joinedDate: "2026-05-03" },
-  { id: "rec-03", name: "Bruce Wayne", email: "bwayne@waynecorp.com", company: "Wayne Enterprises", activeOpenings: 8, status: "Suspended", joinedDate: "2026-05-05" },
-  { id: "rec-04", name: "Tony Stark", email: "tstark@starkindustries.com", company: "Stark Industries", activeOpenings: 5, status: "Active", joinedDate: "2026-05-10" }
-];
+
+
+import { useState, useEffect } from "react";
 
 export default function AdminRecruiters() {
-  const [recruiters, setRecruiters] = useState<RecruiterAccount[]>(INITIAL_RECRUITERS);
+  const [recruiters, setRecruiters] = useState<RecruiterAccount[]>([]);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const fetchRecruiters = async () => {
+      try {
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${API_BASE_URL}/api/admin/recruiters`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setRecruiters(json.data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch recruiters", err);
+      }
+    };
+    fetchRecruiters();
+  }, []);
 
   const handleToggleStatus = (id: string) => {
     setRecruiters(prev => prev.map(r => {

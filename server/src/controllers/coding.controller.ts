@@ -619,6 +619,7 @@ function calculateOverallStats(dailySubmissions: Record<string, number>, yearPar
   return {
     totalActiveDays,
     maxStreak,
+    currentStreak,
   };
 }
 
@@ -719,6 +720,7 @@ export async function getCodingProfile(req: Request, res: ExpressResponse) {
   const overallStats = calculateOverallStats(overallDailySubmissions, yearParam);
   result.overallActiveDays = overallStats.totalActiveDays;
   result.overallMaxStreak = overallStats.maxStreak;
+  result.overallCurrentStreak = overallStats.currentStreak;
 
   // Merge recent submissions from all platforms, sorted by most recent
   const allSubs: any[] = [

@@ -56,7 +56,7 @@ export default function ProfilePage() {
       const saved = localStorage.getItem(`student_profile_${user.uid}`);
       if (saved) {
         try {
-          setProfile(JSON.parse(saved));
+          setProfile(prev => ({ ...prev, ...JSON.parse(saved) }));
         } catch (e) {
           console.error(e);
         }

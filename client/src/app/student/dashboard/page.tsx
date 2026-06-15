@@ -130,6 +130,9 @@ export default function StudentDashboardOverview() {
   const [showQuizExplanation, setShowQuizExplanation] = useState(false);
   const [quizDayIndex, setQuizDayIndex] = useState(0);
 
+  // Heatmap cell hover — floating tooltip
+  const [selectedHeatCell, setSelectedHeatCell] = useState<{ date: string; level: number; x: number; y: number } | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const loadProfileName = async () => {
@@ -383,17 +386,9 @@ export default function StudentDashboardOverview() {
 
         const fetchProfileAndCoding = async () => {
           try {
-            const defaultHandles = user.email === "kit27cse25@gmail.com" ? {
-              leetcode: "Lokesh-123_",
-              codeforces: "Lokeshr_2006",
-              codechef: "kit27cse25"
-            } : {
-              leetcode: "",
-              codeforces: "",
-              codechef: ""
-            };
+            // Start with empty handles — only fill from saved profile or localStorage
+            let handles = { leetcode: "", codeforces: "", codechef: "" };
 
-            let handles = defaultHandles;
             try {
               const res = await fetch(`${API_BASE_URL}/api/student/profile/${user.uid}`);
               if (res.ok) {
@@ -420,10 +415,6 @@ export default function StudentDashboardOverview() {
                   }
                 } catch {}
               }
-            }
-
-            if (handles.codeforces === "lokesh_r" || handles.codechef === "lokesh_r") {
-              handles = defaultHandles;
             }
 
             localStorage.setItem(`coding_handles_${user.uid}`, JSON.stringify(handles));
@@ -1081,18 +1072,68 @@ export default function StudentDashboardOverview() {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <div
+              className="overflow-x-auto relative"
+              onMouseLeave={() => setSelectedHeatCell(null)}
+            >
+              {/* Floating tooltip */}
+              {selectedHeatCell && (
+                <div
+                  className="fixed z-50 pointer-events-none"
+                  style={{ left: selectedHeatCell.x, top: selectedHeatCell.y - 44 }}
+                >
+                  <div className="relative">
+                    <div className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap shadow-lg">
+                      {selectedHeatCell.level === 0
+                        ? 'No activity'
+                        : selectedHeatCell.level === 1
+                        ? 'Light practice'
+                        : selectedHeatCell.level === 2
+                        ? 'Medium practice'
+                        : 'Heavy practice'}{' '}
+                      on {selectedHeatCell.date}
+                    </div>
+                    {/* Arrow pointing down */}
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0"
+                      style={{
+                        borderLeft: '5px solid transparent',
+                        borderRight: '5px solid transparent',
+                        borderTop: '5px solid rgb(24 24 27)', // zinc-900
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="flex gap-1.5 min-w-[620px] pb-2">
                 {heatmapGrid.map((week, wi) => (
                   <div key={wi} className="flex flex-col gap-1.5">
                     {week.map((day, di) => {
                       const level = day >= 0 && day <= 3 ? day : 0;
+                      const weeks = 22;
+                      const totalDays = weeks * 7;
+                      const dayIdx = wi * 7 + di;
+                      const diffDays = totalDays - 1 - dayIdx;
+                      const cellDate = new Date(Date.now() - diffDays * 86400000);
+                      const dateStr = cellDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                      const isHovered = selectedHeatCell?.date === dateStr;
                       return (
-                        <div 
-                          key={di} 
-                          className="w-3.5 h-3.5 rounded-sm transition-all cursor-pointer hover:scale-125 hover:ring-1 hover:ring-emerald-400 border border-black/5 dark:border-white/5"
+                        <div
+                          key={di}
+                          onMouseEnter={(e) => {
+                            const rect = (e.target as HTMLElement).getBoundingClientRect();
+                            setSelectedHeatCell({
+                              date: dateStr,
+                              level,
+                              x: rect.left + rect.width / 2 - 70,
+                              y: rect.top,
+                            });
+                          }}
+                          className={`w-3.5 h-3.5 rounded-sm transition-transform duration-100 cursor-crosshair border border-black/5 dark:border-white/5 ${
+                            isHovered ? 'scale-125 ring-2 ring-white/80 dark:ring-zinc-900/80 shadow-md' : 'hover:scale-110'
+                          }`}
                           style={{ backgroundColor: `var(--heatmap-bg-${level})` }}
-                          title={`${day > 0 ? `${day === 1 ? 'Light' : day === 2 ? 'Medium' : 'Heavy'} Practice Logged` : "No practice logged"}`}
                         />
                       );
                     })}

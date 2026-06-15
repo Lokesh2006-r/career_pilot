@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 const pdfParse = require('pdf-parse');
-import { startInterview, answerQuestion, getInterviewHistory, executeCode } from '../controllers/interview.controller';
+import { startInterview, answerQuestion, getInterviewHistory, executeCode, generateSpeech } from '../controllers/interview.controller';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -9,6 +9,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.post('/start', startInterview);
 router.post('/answer', answerQuestion);
 router.post('/execute', executeCode);
+router.post('/tts', generateSpeech);
 router.get('/history/:userId', getInterviewHistory);
 
 router.post('/upload-resume', upload.single('resume'), async (req, res) => {

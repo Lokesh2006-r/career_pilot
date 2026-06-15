@@ -9,43 +9,35 @@ interface LogEntry {
   message: string;
 }
 
-const INITIAL_LOGS: LogEntry[] = [
-  { timestamp: "22:15:32", level: "INFO", message: "Initial system startup checks completed." },
-  { timestamp: "22:16:04", level: "SUCCESS", message: "Connected to MongoDB Atlas clusters securely." },
-  { timestamp: "22:18:41", level: "INFO", message: "Parsed ATS checklist scoring matrices." },
-  { timestamp: "22:20:12", level: "WARN", message: "Firebase Auth callback latency warning (230ms)." },
-  { timestamp: "22:21:05", level: "SUCCESS", message: "Simulated twin replica chat session created for candidate Alex Johnson." },
-  { timestamp: "22:24:50", level: "INFO", message: "Ingestion job #104 initialized for resume parser backend." }
-];
+
 
 export default function AdminDashboardOverview() {
-  const [logs, setLogs] = useState<LogEntry[]>(INITIAL_LOGS);
-  const [serverStatus] = useState("Online");
-  const [apiUsage] = useState(84.2); // percentage
-  const [studentCount, setStudentCount] = useState(142);
-  const [recruiterCount, setRecruiterCount] = useState(28);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [serverStatus, setServerStatus] = useState("Loading...");
+  const [apiUsage, setApiUsage] = useState(0); // percentage
+  const [studentCount, setStudentCount] = useState(0);
+  const [recruiterCount, setRecruiterCount] = useState(0);
 
-  // Simulate incoming live terminal logs
   useEffect(() => {
-    const timer = setInterval(() => {
-      const messages = [
-        "Ingested student profile update to local buffer.",
-        "Shortlisted candidate list updated for recruiter #4.",
-        "RAG search query completed on Pinecone Index 'candidate-embeddings'.",
-        "Refreshed speech assessment tokens for mock-interviews.",
-        "Secure auth route guard checked matching scopes."
-      ];
-      const levels: ("INFO" | "WARN" | "SUCCESS")[] = ["INFO", "SUCCESS", "INFO", "SUCCESS", "WARN"];
-      const randomIdx = Math.floor(Math.random() * messages.length);
-      const time = new Date().toTimeString().split(" ")[0];
-      
-      setLogs(prev => [
-        { timestamp: time, level: levels[randomIdx], message: messages[randomIdx] },
-        ...prev.slice(0, 8)
-      ]);
-    }, 4500);
-
-    return () => clearInterval(timer);
+    const fetchStats = async () => {
+      try {
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${API_BASE_URL}/api/admin/dashboard`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setStudentCount(json.data.studentCount);
+            setRecruiterCount(json.data.recruiterCount);
+            setApiUsage(json.data.apiUsage);
+            setServerStatus(json.data.serverStatus);
+            setLogs(json.data.logs);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch dashboard stats", err);
+      }
+    };
+    fetchStats();
   }, []);
 
   return (

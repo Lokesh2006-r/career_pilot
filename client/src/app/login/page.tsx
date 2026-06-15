@@ -118,7 +118,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@university.edu"
                   suppressHydrationWarning
-                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 shadow-sm"
                 />
               </div>
             </div>
@@ -137,15 +137,15 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   suppressHydrationWarning
-                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 shadow-sm"
                 />
               </div>
             </div>
 
             <div className="flex items-center justify-between text-xs pt-1.5">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" suppressHydrationWarning className="rounded-md border-zinc-300 dark:border-zinc-800 text-indigo-650 focus:ring-indigo-550 h-4 w-4" />
-                <span className="text-zinc-550 dark:text-zinc-400 font-semibold">Remember profile session</span>
+                <input type="checkbox" suppressHydrationWarning className="rounded-md border-zinc-300 dark:border-zinc-800 text-indigo-650 focus:ring-indigo-500 h-4 w-4" />
+                <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Remember profile session</span>
               </label>
             </div>
 

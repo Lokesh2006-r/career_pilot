@@ -38,6 +38,93 @@ interface DBInterviewSession {
   createdAt: string;
 }
 
+const APTITUDE_QUESTIONS = [
+  { q: "If a train travels 60 miles in 1 hour, how far will it travel in 3.5 hours?", options: ["180 miles", "210 miles", "200 miles", "150 miles"], answer: 1 },
+  { q: "What is 15% of 200?", options: ["30", "15", "25", "20"], answer: 0 },
+  { q: "If 5x + 3 = 18, what is x?", options: ["2", "3", "4", "5"], answer: 1 },
+  { q: "A shirt originally costs $40. It is on sale for 25% off. What is the sale price?", options: ["$25", "$30", "$35", "$10"], answer: 1 },
+  { q: "Which of the following is a prime number?", options: ["21", "25", "29", "33"], answer: 2 },
+  { q: "If the perimeter of a square is 36, what is its area?", options: ["36", "81", "18", "72"], answer: 1 },
+  { q: "What is the next number in the sequence: 2, 6, 12, 20, 30...?", options: ["42", "40", "38", "36"], answer: 0 },
+  { q: "If 3 apples cost $1.50, how much do 10 apples cost?", options: ["$3.00", "$4.50", "$5.00", "$6.00"], answer: 2 },
+  { q: "A rectangular garden is 10m long and 5m wide. What is its perimeter?", options: ["15m", "30m", "50m", "20m"], answer: 1 },
+  { q: "If a worker can complete a job in 8 hours, what fraction of the job can they complete in 3 hours?", options: ["1/8", "3/8", "5/8", "8/3"], answer: 1 },
+  { q: "What is the square root of 144?", options: ["10", "11", "12", "14"], answer: 2 },
+  { q: "If John is 5 years older than Mary, and Mary is 12, how old is John?", options: ["15", "16", "17", "18"], answer: 2 },
+  { q: "What is the result of 8 + 2 * 5?", options: ["50", "18", "15", "20"], answer: 1 },
+  { q: "A car gets 25 miles per gallon. How many gallons are needed for a 150-mile trip?", options: ["4", "5", "6", "7"], answer: 2 },
+  { q: "If you flip a fair coin 3 times, what is the probability of getting all heads?", options: ["1/8", "1/4", "1/2", "3/8"], answer: 0 },
+  { q: "Solve for y: 2y - 4 = 10", options: ["5", "6", "7", "8"], answer: 2 },
+  { q: "The sum of two numbers is 15 and their difference is 3. What is the larger number?", options: ["8", "9", "10", "12"], answer: 1 },
+  { q: "What is 3/4 as a decimal?", options: ["0.25", "0.50", "0.75", "0.85"], answer: 2 },
+  { q: "If a pizza is cut into 8 equal slices and you eat 3, what fraction is left?", options: ["3/8", "5/8", "1/2", "1/4"], answer: 1 },
+  { q: "What is the least common multiple of 4 and 6?", options: ["10", "12", "24", "18"], answer: 1 }
+];
+
+const CODING_CHALLENGES = [
+  {
+    title: "Two Sum",
+    difficulty: "Easy",
+    functionName: "twoSum",
+    description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
+    constraints: ["2 ≤ nums.length ≤ 10⁴", "-10⁹ ≤ nums[i] ≤ 10⁹", "-10⁹ ≤ target ≤ 10⁹", "Only one valid answer exists."],
+    testCases: [
+      { input: [[2,7,11,15], 9],  expected: [0,1],  label: "nums = [2,7,11,15], target = 9" },
+      { input: [[3,2,4], 6],      expected: [1,2],  label: "nums = [3,2,4], target = 6" },
+      { input: [[3,3], 6],        expected: [0,1],  label: "nums = [3,3], target = 6" },
+      { input: [[1,5,3,7], 8],    expected: [1,2],  label: "nums = [1,5,3,7], target = 8" },
+      { input: [[-1,-2,-3,-4,-5], -8], expected: [2,4], label: "nums = [-1,-2,-3,-4,-5], target = -8" },
+    ],
+    starterCode: {
+      javascript: `/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n  // Your solution here\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) return [map.get(complement), i];\n    map.set(nums[i], i);\n  }\n};`,
+      python: `def twoSum(nums, target):\n    # Your solution here\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i`,
+      cpp: `vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int, int> map;\n    for (int i = 0; i < nums.size(); i++) {\n        int c = target - nums[i];\n        if (map.count(c)) return {map[c], i};\n        map[nums[i]] = i;\n    }\n    return {};\n}`,
+      java: `public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> map = new HashMap<>();\n    for (int i = 0; i < nums.length; i++) {\n        int c = target - nums[i];\n        if (map.containsKey(c)) return new int[]{map.get(c), i};\n        map.put(nums[i], i);\n    }\n    return new int[]{};\n}`,
+    }
+  },
+  {
+    title: "Valid Parentheses",
+    difficulty: "Easy",
+    functionName: "isValid",
+    description: "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.\n\nAn input string is valid if:\n• Open brackets must be closed by the same type of brackets.\n• Open brackets must be closed in the correct order.\n• Every close bracket has a corresponding open bracket of the same type.",
+    constraints: ["1 ≤ s.length ≤ 10⁴", "s consists of parentheses only '()[]{}'."],
+    testCases: [
+      { input: ["()"],       expected: true,  label: 's = "()"' },
+      { input: ["()[]{}"],   expected: true,  label: 's = "()[]{}"' },
+      { input: ["(]"],       expected: false, label: 's = "(]"' },
+      { input: ["([)]"],     expected: false, label: 's = "([)]"' },
+      { input: ["{[]}"],     expected: true,  label: 's = "{[]}"' },
+    ],
+    starterCode: {
+      javascript: `/**\n * @param {string} s\n * @return {boolean}\n */\nfunction isValid(s) {\n  // Your solution here\n  const stack = [];\n  const map = { ')': '(', '}': '{', ']': '[' };\n  for (const c of s) {\n    if ('({['.includes(c)) stack.push(c);\n    else if (stack.pop() !== map[c]) return false;\n  }\n  return stack.length === 0;\n};`,
+      python: `def isValid(s):\n    stack = []\n    mapping = {')': '(', '}': '{', ']': '['}\n    for char in s:\n        if char in mapping:\n            top = stack.pop() if stack else '#'\n            if mapping[char] != top: return False\n        else:\n            stack.append(char)\n    return not stack`,
+      cpp: `bool isValid(string s) {\n    stack<char> st;\n    for (char c : s) {\n        if (c=='(' || c=='{' || c=='[') st.push(c);\n        else {\n            if (st.empty()) return false;\n            if (c==')' && st.top()!='(') return false;\n            if (c=='}' && st.top()!='{') return false;\n            if (c==']' && st.top()!='[') return false;\n            st.pop();\n        }\n    }\n    return st.empty();\n}`,
+      java: `public boolean isValid(String s) {\n    Deque<Character> stack = new ArrayDeque<>();\n    for (char c : s.toCharArray()) {\n        if (c=='(' || c=='{' || c=='[') stack.push(c);\n        else {\n            if (stack.isEmpty()) return false;\n            char top = stack.pop();\n            if (c==')' && top!='(') return false;\n            if (c=='}' && top!='{') return false;\n            if (c==']' && top!='[') return false;\n        }\n    }\n    return stack.isEmpty();\n}`,
+    }
+  },
+  {
+    title: "Longest Substring Without Repeating Characters",
+    difficulty: "Medium",
+    functionName: "lengthOfLongestSubstring",
+    description: "Given a string s, find the length of the longest substring without repeating characters.\n\nA substring is a contiguous non-empty sequence of characters within a string.",
+    constraints: ["0 ≤ s.length ≤ 5 × 10⁴", "s consists of English letters, digits, symbols and spaces."],
+    testCases: [
+      { input: ["abcabcbb"], expected: 3,  label: 's = "abcabcbb"' },
+      { input: ["bbbbb"],    expected: 1,  label: 's = "bbbbb"' },
+      { input: ["pwwkew"],   expected: 3,  label: 's = "pwwkew"' },
+      { input: [""],         expected: 0,  label: 's = ""' },
+      { input: ["dvdf"],     expected: 3,  label: 's = "dvdf"' },
+    ],
+    starterCode: {
+      javascript: `/**\n * @param {string} s\n * @return {number}\n */\nfunction lengthOfLongestSubstring(s) {\n  // Your solution here\n  const map = new Map();\n  let max = 0, left = 0;\n  for (let right = 0; right < s.length; right++) {\n    if (map.has(s[right])) left = Math.max(left, map.get(s[right]) + 1);\n    map.set(s[right], right);\n    max = Math.max(max, right - left + 1);\n  }\n  return max;\n};`,
+      python: `def lengthOfLongestSubstring(s):\n    char_map = {}\n    left = max_len = 0\n    for right, char in enumerate(s):\n        if char in char_map and char_map[char] >= left:\n            left = char_map[char] + 1\n        char_map[char] = right\n        max_len = max(max_len, right - left + 1)\n    return max_len`,
+      cpp: `int lengthOfLongestSubstring(string s) {\n    unordered_map<char, int> map;\n    int max_len = 0, left = 0;\n    for (int right = 0; right < s.size(); right++) {\n        if (map.count(s[right])) left = max(left, map[s[right]] + 1);\n        map[s[right]] = right;\n        max_len = max(max_len, right - left + 1);\n    }\n    return max_len;\n}`,
+      java: `public int lengthOfLongestSubstring(String s) {\n    Map<Character, Integer> map = new HashMap<>();\n    int max = 0, left = 0;\n    for (int right = 0; right < s.length(); right++) {\n        if (map.containsKey(s.charAt(right))) left = Math.max(left, map.get(s.charAt(right)) + 1);\n        map.put(s.charAt(right), right);\n        max = Math.max(max, right - left + 1);\n    }\n    return max;\n}`,
+    }
+  }
+];
+
+
 const CODE_TEMPLATES: Record<string, string> = {
   javascript: `// Write your JavaScript solution here\nfunction solution() {\n  console.log("Running sandbox verification...");\n  const latency = [12, 45, 68, 92];\n  const average = latency.reduce((a, b) => a + b, 0) / latency.length;\n  console.log("Average response latency:", average, "ms");\n  return average;\n}\nsolution();`,
   python: `# Write your Python solution here\ndef solution():\n    print("Running Python solution...")\n    latency = [12, 45, 68, 92]\n    average = sum(latency) / len(latency)\n    print(f"Average response latency: {average} ms")\n    return average\n\nsolution()`,
@@ -50,9 +137,22 @@ export default function MockInterviews() {
   
   const [selectedRole, setSelectedRole] = useState("Frontend Engineer");
   const [selectedDifficulty, setSelectedDifficulty] = useState<"Beginner" | "Moderate" | "Hard">("Moderate");
-  const [interviewType, setInterviewType] = useState<"technical" | "hr" | "resume">("technical");
+  const [interviewType, setInterviewType] = useState<"technical" | "hr" | "resume" | "full">("technical");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [viewState, setViewState] = useState<"config" | "active" | "completed">("config");
+  const [viewState, setViewState] = useState<"config" | "aptitude" | "coding_challenges" | "active" | "completed" | "disqualified">("config");
+
+  // Multi-round specific states
+  const [aptitudeScore, setAptitudeScore] = useState(0);
+  const [codingScore, setCodingScore] = useState(0);
+  const [currentMcqIndex, setCurrentMcqIndex] = useState(0);
+  const [currentCodingIndex, setCurrentCodingIndex] = useState(0);
+  const [selectedMcqOption, setSelectedMcqOption] = useState<number | null>(null);
+
+  // Test case results state
+  type TestResult = { passed: boolean; output: string; expected: string; runtime: number };
+  const [testResults, setTestResults] = useState<TestResult[]>([]);
+  const [isRunningTests, setIsRunningTests] = useState(false);
+  const [testRunComplete, setTestRunComplete] = useState(false);
   
   const [currentStep, setCurrentStep] = useState(1);
   const [totalSteps, setTotalSteps] = useState(3);
@@ -79,6 +179,8 @@ export default function MockInterviews() {
   const [isTtsEnabled, setIsTtsEnabled] = useState(true);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceName, setSelectedVoiceName] = useState<string>("");
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Custom Role Dropdown State
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
@@ -88,7 +190,9 @@ export default function MockInterviews() {
   // Webcam & Audio Stream State
   const [webcamStream, setWebcamStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  
+  const floatingCamRef = useRef<HTMLVideoElement | null>(null);
+  const [isCamMinimized, setIsCamMinimized] = useState(false);
+
   // Countdown Timer State
   const [timeLeft, setTimeLeft] = useState(120);
   
@@ -301,6 +405,13 @@ export default function MockInterviews() {
     }
   };
 
+  // Sync webcam stream to floating pip camera
+  useEffect(() => {
+    if (floatingCamRef.current && webcamStream) {
+      floatingCamRef.current.srcObject = webcamStream;
+    }
+  }, [webcamStream]);
+
   // Hardware lifecycle cleanups & face tracking loop start
   useEffect(() => {
     if (webcamStream && viewState === "active") {
@@ -313,6 +424,10 @@ export default function MockInterviews() {
       if (typeof window !== "undefined" && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
@@ -321,43 +436,74 @@ export default function MockInterviews() {
   }, [webcamStream, viewState]);
 
   // Speak AI question out loud
-  const speakQuestion = (text: string) => {
+  const speakQuestion = async (text: string) => {
+    if (!isTtsEnabled) return;
+
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
+    }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+    }
+
+    try {
+      setIsAudioLoading(true);
+      const res = await fetch(`${API_BASE_URL}/api/interview/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, voiceId: '21m00Tcm4TlvDq8ikWAM' }) // Rachel professional voice
+      });
+
+      if (!res.ok) {
+        throw new Error('ElevenLabs API failed');
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
       
-      setTimeout(() => {
-        const utterance = new SpeechSynthesisUtterance(text);
-        const list = window.speechSynthesis.getVoices();
-        
-        // Find selected voice or fallback to natural English
-        const chosenVoice = list.find(v => v.name === selectedVoiceName) || 
-                            list.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("natural")) ||
-                            list.find(v => v.lang.startsWith("en")) || 
-                            list[0];
-        
-        if (chosenVoice) {
-          utterance.voice = chosenVoice;
-        }
-        
-        // Read saved speech rate setting
-        let speed = 0.95;
-        const savedSettingsRaw = user?.uid 
-          ? (localStorage.getItem(`student_settings_${user.uid}`) || localStorage.getItem("student_settings"))
-          : localStorage.getItem("student_settings");
-        if (savedSettingsRaw) {
-          try {
-            const parsed = JSON.parse(savedSettingsRaw);
-            if (parsed.aiConfig?.speechSpeed) {
-              speed = Number(parsed.aiConfig.speechSpeed);
-            }
-          } catch (e) {
-            console.error("Failed to parse speech speed settings:", e);
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+      };
+      
+      await audio.play();
+    } catch (err) {
+      console.error("ElevenLabs TTS failed, falling back to browser synthesis:", err);
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        setTimeout(() => {
+          const utterance = new SpeechSynthesisUtterance(text);
+          const list = window.speechSynthesis.getVoices();
+          
+          const chosenVoice = list.find(v => v.name === selectedVoiceName) || 
+                              list.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("natural")) ||
+                              list.find(v => v.lang.startsWith("en")) || 
+                              list[0];
+          
+          if (chosenVoice) {
+            utterance.voice = chosenVoice;
           }
-        }
-        utterance.rate = speed;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
-      }, 150);
+          
+          let speed = 0.95;
+          const savedSettingsRaw = user?.uid 
+            ? (localStorage.getItem(`student_settings_${user.uid}`) || localStorage.getItem("student_settings"))
+            : localStorage.getItem("student_settings");
+          if (savedSettingsRaw) {
+            try {
+              const parsed = JSON.parse(savedSettingsRaw);
+              if (parsed.aiConfig?.speechSpeed) {
+                speed = Number(parsed.aiConfig.speechSpeed);
+              }
+            } catch (e) {}
+          }
+          utterance.rate = speed;
+          utterance.pitch = 1.0;
+          window.speechSynthesis.speak(utterance);
+        }, 150);
+      }
+    } finally {
+      setIsAudioLoading(false);
     }
   };
 
@@ -368,7 +514,12 @@ export default function MockInterviews() {
 
   // Countdown timer logic
   useEffect(() => {
-    if (viewState !== "active" || isLoading) return;
+    if (
+      viewState !== "active" &&
+      viewState !== "aptitude" &&
+      viewState !== "coding_challenges"
+    ) return;
+    if (viewState === "active" && isLoading) return;
 
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -384,10 +535,166 @@ export default function MockInterviews() {
     return () => clearInterval(timer);
   }, [viewState, isLoading, currentStep]);
 
+
   const handleAutoSubmit = () => {
-    // Collect both code compiler blocks and concept description text
-    const compiledCode = `[CODEWORKSPACE - LANGUAGE: ${selectedLanguage.toUpperCase()}]\n${codeText}\n\n[STDOUT COMPILER FEEDBACK]\n${consoleOutput || "No compilation run executed"}\n\n[CONCEPTUAL EXPLANATION]\n${answerText.trim() || "[Candidate time expired. No response logged.]"}`;
-    triggerSubmitAnswer(compiledCode);
+    if (viewState === "aptitude") {
+      handleNextAptitude();
+    } else if (viewState === "coding_challenges") {
+      handleNextCoding(false);
+    } else {
+      // Collect both code compiler blocks and concept description text
+      const compiledCode = `[CODEWORKSPACE - LANGUAGE: ${selectedLanguage.toUpperCase()}]\n${codeText}\n\n[STDOUT COMPILER FEEDBACK]\n${consoleOutput || "No compilation run executed"}\n\n[CONCEPTUAL EXPLANATION]\n${answerText.trim() || "[Candidate time expired. No response logged.]"}`;
+      triggerSubmitAnswer(compiledCode);
+    }
+  };
+
+  const handleNextAptitude = () => {
+    let finalScore = aptitudeScore;
+    if (selectedMcqOption === APTITUDE_QUESTIONS[currentMcqIndex].answer) {
+      finalScore += 1;
+      setAptitudeScore(finalScore);
+    }
+    
+    if (currentMcqIndex < APTITUDE_QUESTIONS.length - 1) {
+      setCurrentMcqIndex(prev => prev + 1);
+      setSelectedMcqOption(null);
+    } else {
+      // Cut-off evaluation: 14 out of 20 to pass (70%)
+      if (finalScore >= 14) {
+        setViewState("coding_challenges");
+        setCurrentCodingIndex(0);
+        setCodingScore(0);
+        setCodeText(CODE_TEMPLATES.javascript);
+        setSelectedLanguage("javascript");
+        setConsoleOutput("");
+        setConsoleError("");
+        setTimeLeft(15 * 60); // 15 mins for Coding round
+      } else {
+        setViewState("disqualified");
+      }
+    }
+  };
+
+  const handleNextCoding = (passedCurrent: boolean) => {
+    let finalScore = codingScore;
+    if (passedCurrent) {
+      finalScore += 1;
+      setCodingScore(finalScore);
+    }
+    
+    if (currentCodingIndex < CODING_CHALLENGES.length - 1) {
+      setCurrentCodingIndex(prev => prev + 1);
+      const nextChallenge = CODING_CHALLENGES[currentCodingIndex + 1];
+      setCodeText(nextChallenge.starterCode[selectedLanguage as keyof typeof nextChallenge.starterCode] || CODE_TEMPLATES[selectedLanguage]);
+      setConsoleOutput("");
+      setConsoleError("");
+      setTestResults([]);
+      setTestRunComplete(false);
+    } else {
+      // Cut-off evaluation: 2 out of 3 to pass
+      if (finalScore >= 2) {
+        setViewState("active");
+        setCurrentStep(1);
+        const initialTime = selectedDifficulty === "Beginner" ? 150 : selectedDifficulty === "Hard" ? 90 : 120;
+        setTimeLeft(initialTime);
+        startMockInterviewBackend();
+      } else {
+        setViewState("disqualified");
+      }
+    }
+  };
+
+  // Run test cases client-side (JS only) or via backend for other langs
+  const runTestCases = async () => {
+    const challenge = CODING_CHALLENGES[currentCodingIndex];
+    setIsRunningTests(true);
+    setTestRunComplete(false);
+    setTestResults([]);
+    setConsoleError("");
+
+    if (selectedLanguage === "javascript") {
+      // Client-side JS execution
+      const results: TestResult[] = [];
+      for (const tc of challenge.testCases) {
+        const start = performance.now();
+        try {
+          // eslint-disable-next-line no-new-func
+          const fn = new Function(`return (${codeText})`)();
+          const output = fn(...tc.input);
+          const runtime = Math.round(performance.now() - start);
+          const outputStr = JSON.stringify(output);
+          const expectedStr = JSON.stringify(tc.expected);
+          results.push({ passed: outputStr === expectedStr, output: outputStr, expected: expectedStr, runtime });
+        } catch (e: any) {
+          results.push({ passed: false, output: `Error: ${e.message}`, expected: JSON.stringify(tc.expected), runtime: 0 });
+        }
+      }
+      setTestResults(results);
+      setTestRunComplete(true);
+      setIsRunningTests(false);
+    } else {
+      // Backend execution for other languages
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/interview/execute`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ language: selectedLanguage, code: codeText })
+        });
+        const data = await response.json();
+        // Show raw output since we can't auto-evaluate non-JS
+        const output = data.stdout || data.stderr || "No output";
+        setConsoleOutput(output);
+        if (data.stderr) setConsoleError(data.stderr);
+        // Mark all as "manual" — user sees raw output
+        const results: TestResult[] = challenge.testCases.map(tc => ({
+          passed: false,
+          output: output.split('\n')[0] || "See console",
+          expected: JSON.stringify(tc.expected),
+          runtime: 0
+        }));
+        setTestResults(results);
+        setTestRunComplete(true);
+      } catch (err: any) {
+        setConsoleError(err.message || "Failed to connect to sandbox.");
+      } finally {
+        setIsRunningTests(false);
+      }
+    }
+  };
+
+
+  const startMockInterviewBackend = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/interview/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          role: selectedRole, 
+          type: "technical",
+          userId: user?.uid || 'anonymous',
+          difficulty: selectedDifficulty
+        }),
+      });
+      const data = await response.json();
+      if (data.question) {
+        setCurrentQuestion(data.question);
+        setCurrentStep(data.step || 1);
+        setTotalSteps(data.totalSteps || 3);
+        if (data.interviewId) {
+          setCurrentInterviewId(data.interviewId);
+        }
+        
+        if (isTtsEnabled) {
+          speakQuestion(data.question);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setCurrentQuestion("Failed to connect to the backend server. Please verify the backend is running.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleStartInterview = async () => {
@@ -397,18 +704,32 @@ export default function MockInterviews() {
     }
 
     setIsLoading(true);
-    setViewState("active");
     setCurrentStep(1);
     setHistory([]);
     setFeedback("");
     setAnswerText("");
-    setCodeText(CODE_TEMPLATES.javascript);
-    setSelectedLanguage("javascript");
     setConsoleOutput("");
     setConsoleError("");
     setReport(null);
+    setTestResults([]);
+    setTestRunComplete(false);
     startWebcam();
 
+    if (interviewType === "full") {
+      const firstChallenge = CODING_CHALLENGES[0];
+      setCodeText(firstChallenge.starterCode.javascript);
+      setSelectedLanguage("javascript");
+      setViewState("aptitude");
+      setCurrentMcqIndex(0);
+      setAptitudeScore(0);
+      setTimeLeft(10 * 60); // 10 minutes for Aptitude
+      setIsLoading(false);
+      return;
+    }
+
+    setCodeText(CODE_TEMPLATES.javascript);
+    setSelectedLanguage("javascript");
+    setViewState("active");
     const initialTime = selectedDifficulty === "Beginner" ? 150 : selectedDifficulty === "Hard" ? 90 : 120;
     setTimeLeft(initialTime);
 
@@ -671,7 +992,55 @@ export default function MockInterviews() {
   const lineNumbers = Array.from({ length: Math.max(codeLines.length, 1) }, (_, i) => i + 1);
 
   return (
-    <div className="space-y-8 font-sans print-hidden">
+    <div className="space-y-8 font-sans print-hidden relative">
+
+      {/* ─── FLOATING ROUND CAMERA PIP ─── */}
+      {(viewState === "aptitude" || viewState === "coding_challenges" || viewState === "active") && (
+        <div
+          className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2"
+          style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.45))" }}
+        >
+          {/* Minimize toggle */}
+          <button
+            onClick={() => setIsCamMinimized(p => !p)}
+            className="self-end flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 border border-white/10 text-[9px] font-black uppercase text-white/60 hover:text-white tracking-widest backdrop-blur-md transition-all cursor-pointer"
+          >
+            <i className={`fa-solid ${isCamMinimized ? 'fa-expand' : 'fa-compress'} text-[8px]`}></i>
+            {isCamMinimized ? 'Show' : 'Hide'}
+          </button>
+
+          {!isCamMinimized && (
+            <div className="relative">
+              {/* Animated ring */}
+              <div className="absolute inset-0 rounded-full animate-ping opacity-20 bg-indigo-500 pointer-events-none" style={{ animationDuration: '3s' }}></div>
+              {/* Glowing border ring */}
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-emerald-400 opacity-80 blur-sm pointer-events-none"></div>
+              {/* Camera circle */}
+              <div className="relative w-28 h-28 rounded-full overflow-hidden border-[3px] border-white/20 bg-black shadow-2xl">
+                {webcamStream ? (
+                  <video
+                    ref={floatingCamRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-full object-cover scale-x-[-1]"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-950 gap-1">
+                    <i className="fa-solid fa-video-slash text-zinc-600 text-lg"></i>
+                    <span className="text-[8px] font-bold text-zinc-600 uppercase tracking-wider text-center leading-tight">Camera<br/>Off</span>
+                  </div>
+                )}
+              </div>
+              {/* Live indicator */}
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-1 px-2 py-0.5 bg-black/70 rounded-full backdrop-blur-md border border-white/10">
+                <span className={`w-1.5 h-1.5 rounded-full ${webcamStream ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600'}`}></span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-white/70">{webcamStream ? 'Live' : 'Off'}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       {/* Stylesheet injection for native printing */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
@@ -759,7 +1128,7 @@ export default function MockInterviews() {
                         {roles.find(r => r.name === selectedRole)?.focus || "Choose your focus area"}
                       </span>
                     </div>
-                    <div className="shrink-0 ml-4 p-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-400 group-hover:text-zinc-650 dark:group-hover:text-zinc-200 transition-colors">
+                    <div className="shrink-0 ml-4 p-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-200 transition-colors">
                       <i className={`fa-solid fa-chevron-right ${`w-4 h-4 transform transition-transform duration-300 ${isRoleDropdownOpen ? "rotate-90 text-indigo-500" : ""}`} `}></i>
                     </div>
                   </button>
@@ -793,7 +1162,7 @@ export default function MockInterviews() {
                       {/* Dropdown List Items */}
                       <div className="overflow-y-auto space-y-1 pr-1 flex-1">
                         {roles.filter(r => r.name.toLowerCase().includes(roleSearchQuery.toLowerCase())).length === 0 ? (
-                          <div className="py-8 text-center text-zinc-450 text-xs font-bold uppercase tracking-wider">
+                          <div className="py-8 text-center text-zinc-400 text-xs font-bold uppercase tracking-wider">
                             No matching roles found
                           </div>
                         ) : (
@@ -844,7 +1213,7 @@ export default function MockInterviews() {
                         className={`flex-1 py-3.5 px-4 rounded-xl border text-xs font-bold transition-all cursor-pointer text-center ${
                           selectedDifficulty === level 
                             ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 border-zinc-900 dark:border-white shadow-md"
-                            : "border-zinc-250 dark:border-zinc-800 bg-white/20 dark:bg-zinc-900/10 text-zinc-600 dark:text-zinc-400 hover:border-zinc-400 dark:hover:border-zinc-700"
+                            : "border-zinc-200 dark:border-zinc-800 bg-white/20 dark:bg-zinc-900/10 text-zinc-600 dark:text-zinc-400 hover:border-zinc-400 dark:hover:border-zinc-700"
                         }`}
                       >
                         {level} {level === "Beginner" ? "• 150s" : level === "Hard" ? "• 90s" : "• 120s"}
@@ -858,7 +1227,28 @@ export default function MockInterviews() {
                   <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-3.5">
                     Assessment Focus Category
                   </label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button
+                      onClick={() => setInterviewType("full")}
+                      className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-center gap-3 cursor-pointer relative overflow-hidden group/item ${
+                        interviewType === "full" 
+                          ? "border-emerald-500 bg-emerald-500/5 shadow-[0_4px_15px_rgba(16,185,129,0.05)]" 
+                          : "border-zinc-200 dark:border-zinc-800 bg-white/5 dark:bg-zinc-900/10 hover:border-emerald-500/30"
+                      }`}
+                    >
+                      <div className={`p-3 rounded-xl shrink-0 self-start transition-transform group-hover/item:scale-105 duration-300 ${
+                        interviewType === "full" 
+                          ? "bg-emerald-500/15 text-emerald-500 border border-emerald-500/20" 
+                          : "bg-zinc-100 dark:bg-zinc-800/50 text-zinc-400 border border-transparent"
+                      }`}>
+                        <i className="fa-solid fa-layer-group w-5 h-5" ></i>
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Placement Drive</h3>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Aptitude, Tech & Mock.</p>
+                      </div>
+                    </button>
+
                     <button
                       onClick={() => setInterviewType("technical")}
                       className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-center gap-3 cursor-pointer relative overflow-hidden group/item ${
@@ -876,7 +1266,7 @@ export default function MockInterviews() {
                       </div>
                       <div>
                         <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Technical</h3>
-                        <p className="text-[10px] text-zinc-450 mt-0.5">Systems, syntax & tradeoffs.</p>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Systems, syntax & tradeoffs.</p>
                       </div>
                     </button>
 
@@ -897,7 +1287,7 @@ export default function MockInterviews() {
                       </div>
                       <div>
                         <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Behavioral</h3>
-                        <p className="text-[10px] text-zinc-455 mt-0.5">STAR method, leadership & logs.</p>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">STAR method, leadership & logs.</p>
                       </div>
                     </button>
 
@@ -918,7 +1308,7 @@ export default function MockInterviews() {
                       </div>
                       <div>
                         <h3 className="font-extrabold text-xs text-zinc-900 dark:text-white">Resume Based</h3>
-                        <p className="text-[10px] text-zinc-455 mt-0.5">Deep-dive on your projects.</p>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Deep-dive on your projects.</p>
                       </div>
                     </button>
                   </div>
@@ -944,7 +1334,7 @@ export default function MockInterviews() {
                 </div>
 
                 {/* Vocal Synthesis Dropdown & Test Settings */}
-                <div className="pt-5 border-t border-zinc-250 dark:border-zinc-800/60 space-y-4">
+                <div className="pt-5 border-t border-zinc-200 dark:border-zinc-800/60 space-y-4">
                   <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400">
                     Interviewer Premium Vocal Agent (TTS)
                   </label>
@@ -966,7 +1356,7 @@ export default function MockInterviews() {
                         disabled={!isTtsEnabled}
                         value={selectedVoiceName}
                         onChange={(e) => setSelectedVoiceName(e.target.value)}
-                        className="w-full p-3 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-750 dark:text-zinc-200 rounded-xl text-xs font-bold outline-none focus:border-indigo-500/50 transition-all disabled:opacity-40"
+                        className="w-full p-3 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 rounded-xl text-xs font-bold outline-none focus:border-indigo-500/50 transition-all disabled:opacity-40"
                       >
                         {availableVoices.length === 0 ? (
                           <option>Loading system vocal synthesizer voices...</option>
@@ -984,7 +1374,7 @@ export default function MockInterviews() {
                       type="button"
                       disabled={!isTtsEnabled || !selectedVoiceName}
                       onClick={handleTestVoiceName}
-                      className="px-5 py-3 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-xl shadow-sm hover:bg-zinc-100 dark:hover:bg-zinc-850 cursor-pointer transition-all disabled:opacity-40 shrink-0"
+                      className="px-5 py-3 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-xl shadow-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer transition-all disabled:opacity-40 shrink-0"
                     >
                       Sample Human Voice
                     </button>
@@ -1049,7 +1439,7 @@ export default function MockInterviews() {
                             <h4 className="font-extrabold text-sm text-zinc-900 dark:text-white mt-2 leading-tight">
                               {session.role}
                             </h4>
-                            <p className="text-[10px] text-zinc-450 mt-1 font-bold">
+                            <p className="text-[10px] text-zinc-400 mt-1 font-bold">
                               {new Date(session.createdAt).toLocaleDateString(undefined, { 
                                 month: 'short', day: 'numeric', year: 'numeric' 
                               })}
@@ -1062,7 +1452,7 @@ export default function MockInterviews() {
                             }`}>
                               {avgScore}
                             </span>
-                            <span className="text-[10px] text-zinc-450 font-bold block">Rating</span>
+                            <span className="text-[10px] text-zinc-400 font-bold block">Rating</span>
                           </div>
                         </div>
 
@@ -1094,7 +1484,7 @@ export default function MockInterviews() {
               </h3>
 
               {stats.total === 0 ? (
-                <div className="py-6 text-center text-zinc-455 text-xs">
+                <div className="py-6 text-center text-zinc-400 text-xs">
                   <i className="fa-solid fa-chart-line w-8 h-8 text-zinc-400 mx-auto opacity-30 mb-2" ></i>
                   <p className="font-bold uppercase tracking-wider text-[10px]">No Competency Vectors</p>
                   <p className="text-[10px] mt-0.5">Complete your initial assessment to index scores.</p>
@@ -1107,7 +1497,7 @@ export default function MockInterviews() {
                       {stats.rating}
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-wider text-zinc-450">Twin Rating Index</p>
+                      <p className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Twin Rating Index</p>
                       <p className="text-xs font-bold text-zinc-900 dark:text-white">Average performance ranking across loops.</p>
                     </div>
                   </div>
@@ -1138,6 +1528,318 @@ export default function MockInterviews() {
         </div>
       )}
 
+      {/* VIEW STATE: APTITUDE ROUND */}
+      {viewState === "aptitude" && (
+        <div className="glass-panel rounded-3xl p-8 max-w-4xl mx-auto shadow-lg border border-zinc-200 dark:border-zinc-800/40 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/5 rounded-full blur-3xl"></div>
+          
+          <div className="flex justify-between items-center mb-8 border-b border-zinc-200/50 dark:border-zinc-800/50 pb-4">
+            <div>
+              <h2 className="text-xl font-black text-zinc-900 dark:text-white flex items-center gap-2">
+                <i className="fa-solid fa-brain text-purple-500"></i> Round 1: Aptitude
+              </h2>
+              <p className="text-xs text-zinc-500 font-bold mt-1">Question {currentMcqIndex + 1} of {APTITUDE_QUESTIONS.length}</p>
+            </div>
+            
+            <div className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+              <i className={`fa-solid fa-clock ${timeLeft < 60 ? "text-rose-500 animate-bounce" : "text-zinc-500"}`}></i>
+              <span className={`text-lg font-black ${timeLeft < 60 ? "text-rose-500" : "text-zinc-700 dark:text-zinc-300"}`}>
+                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+              </span>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200 leading-relaxed">
+              {APTITUDE_QUESTIONS[currentMcqIndex].q}
+            </h3>
+          </div>
+
+          <div className="space-y-3 mb-8">
+            {APTITUDE_QUESTIONS[currentMcqIndex].options.map((opt, i) => (
+              <button
+                key={i}
+                onClick={() => setSelectedMcqOption(i)}
+                className={`w-full text-left p-4 rounded-xl border transition-all duration-200 font-bold text-sm ${
+                  selectedMcqOption === i 
+                    ? "bg-purple-500/10 border-purple-500 text-purple-700 dark:text-purple-300 shadow-md"
+                    : "bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-purple-500/30 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+                }`}
+              >
+                <span className="inline-block w-6 h-6 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 text-center leading-6 mr-3 text-xs">
+                  {String.fromCharCode(65 + i)}
+                </span>
+                {opt}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex justify-end pt-4 border-t border-zinc-200/50 dark:border-zinc-800/50">
+            <button
+              onClick={handleNextAptitude}
+              disabled={selectedMcqOption === null}
+              className="px-8 py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-xl font-bold text-sm transition-all shadow-lg active:scale-95 cursor-pointer flex items-center gap-2"
+            >
+              {currentMcqIndex === APTITUDE_QUESTIONS.length - 1 ? "Finish Round 1" : "Next Question"}
+              <i className="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* VIEW STATE: DISQUALIFIED ROUND */}
+      {viewState === "disqualified" && (
+        <div className="glass-panel rounded-3xl p-10 max-w-2xl mx-auto shadow-lg border border-red-500/30 relative overflow-hidden text-center mt-12">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-red-500/10 rounded-full blur-3xl"></div>
+          
+          <div className="w-20 h-20 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+            <i className="fa-solid fa-circle-xmark"></i>
+          </div>
+          
+          <h2 className="text-2xl font-black text-zinc-900 dark:text-white mb-4">Assessment Concluded</h2>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-8">
+            Thank you for participating in the Placement Drive. Unfortunately, your score did not meet the required threshold to proceed to the next round. Don't be discouraged—take some time to practice and try again later.
+          </p>
+
+          <button
+            onClick={() => setViewState("config")}
+            className="px-8 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-600 dark:text-red-400 rounded-xl font-bold text-sm transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-2 mx-auto"
+          >
+            <i className="fa-solid fa-rotate-left"></i> Return to Home
+          </button>
+        </div>
+      )}
+
+      {/* VIEW STATE: CODING CHALLENGES ROUND */}
+      {viewState === "coding_challenges" && (() => {
+        const challenge = CODING_CHALLENGES[currentCodingIndex];
+        const passedCount = testResults.filter(r => r.passed).length;
+        const allPassed = testRunComplete && passedCount === challenge.testCases.length;
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch min-h-[700px] rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/40 shadow-xl">
+
+            {/* LEFT: Problem Description Panel */}
+            <div className="lg:col-span-4 bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800/60 flex flex-col overflow-hidden">
+              {/* Header */}
+              <div className="px-5 py-4 border-b border-zinc-200 dark:border-zinc-800/60 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Round 2 · Challenge {currentCodingIndex + 1}/{CODING_CHALLENGES.length}</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                  <i className={`fa-solid fa-clock text-xs ${timeLeft < 120 ? "text-rose-500 animate-bounce" : "text-zinc-500"}`}></i>
+                  <span className={`text-sm font-black ${timeLeft < 120 ? "text-rose-500" : "text-zinc-700 dark:text-zinc-300"}`}>
+                    {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Scrollable problem body */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-5">
+                {/* Title + difficulty */}
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h2 className="text-base font-black text-zinc-900 dark:text-white">{challenge.title}</h2>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                      challenge.difficulty === 'Easy' ? 'text-emerald-600 bg-emerald-500/10' :
+                      challenge.difficulty === 'Medium' ? 'text-orange-500 bg-orange-500/10' :
+                      'text-red-500 bg-red-500/10'
+                    }`}>{challenge.difficulty}</span>
+                  </div>
+                  <p className="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-wrap">{challenge.description}</p>
+                </div>
+
+                {/* Examples */}
+                <div>
+                  <h4 className="text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-2">Examples</h4>
+                  <div className="space-y-2">
+                    {challenge.testCases.slice(0, 3).map((tc, i) => (
+                      <div key={i} className="bg-zinc-50 dark:bg-zinc-900 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800 font-mono text-[11px]">
+                        <div className="text-zinc-500 mb-1"><span className="text-zinc-400 font-bold">Input: </span>{tc.label}</div>
+                        <div className="text-zinc-500"><span className="text-zinc-400 font-bold">Output: </span>{JSON.stringify(tc.expected)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Constraints */}
+                <div>
+                  <h4 className="text-[11px] font-black text-zinc-500 uppercase tracking-widest mb-2">Constraints</h4>
+                  <ul className="space-y-1">
+                    {challenge.constraints.map((c, i) => (
+                      <li key={i} className="text-[12px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2">
+                        <span className="text-indigo-400 mt-0.5 shrink-0">•</span> {c}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Submit footer */}
+              <div className="p-4 border-t border-zinc-200 dark:border-zinc-800/60 shrink-0">
+                {testRunComplete && (
+                  <div className={`mb-3 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold ${
+                    allPassed
+                      ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
+                      : 'bg-rose-500/10 text-rose-600 border border-rose-500/20'
+                  }`}>
+                    <i className={`fa-solid ${allPassed ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i>
+                    {passedCount}/{challenge.testCases.length} test cases passed
+                  </div>
+                )}
+                <button
+                  onClick={() => handleNextCoding(allPassed)}
+                  disabled={!testRunComplete}
+                  className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md"
+                >
+                  <i className="fa-solid fa-arrow-right"></i>
+                  {currentCodingIndex === CODING_CHALLENGES.length - 1 ? 'Submit & Finish Round 2' : 'Submit & Next Challenge'}
+                </button>
+                {!testRunComplete && (
+                  <p className="text-center text-[10px] text-zinc-400 mt-2">Run your code first to enable submission</p>
+                )}
+              </div>
+            </div>
+
+            {/* RIGHT: Editor + Test Results */}
+            <div className="lg:col-span-8 bg-zinc-950 flex flex-col overflow-hidden">
+              {/* Editor toolbar */}
+              <div className="px-4 py-3 border-b border-zinc-800/60 flex items-center justify-between shrink-0 bg-[#161b22]">
+                <div className="flex items-center gap-3">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-rose-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                    <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                  </div>
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">solution.{selectedLanguage === 'javascript' ? 'js' : selectedLanguage === 'python' ? 'py' : selectedLanguage === 'cpp' ? 'cpp' : 'java'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={selectedLanguage}
+                    onChange={(e) => {
+                      const lang = e.target.value;
+                      setSelectedLanguage(lang);
+                      const code = challenge.starterCode[lang as keyof typeof challenge.starterCode];
+                      setCodeText(code || CODE_TEMPLATES[lang] || "");
+                      setTestResults([]);
+                      setTestRunComplete(false);
+                      setConsoleOutput("");
+                      setConsoleError("");
+                    }}
+                    className="bg-zinc-800 text-zinc-300 text-[11px] font-bold px-3 py-1.5 rounded-lg border border-zinc-700 outline-none focus:border-indigo-500"
+                  >
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                  </select>
+                  <button
+                    onClick={runTestCases}
+                    disabled={isRunningTests}
+                    className="flex items-center gap-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white rounded-lg text-[11px] font-black transition-all cursor-pointer active:scale-95 shadow-md"
+                  >
+                    {isRunningTests
+                      ? <><i className="fa-solid fa-spinner fa-spin"></i> Running...</>
+                      : <><i className="fa-solid fa-play"></i> Run Code</>}
+                  </button>
+                </div>
+              </div>
+
+              {/* Code editor */}
+              <div className="flex-1 flex bg-[#0d1117] overflow-hidden" style={{ minHeight: '320px' }}>
+                <div className="select-none text-right px-4 border-r border-zinc-800/80 text-zinc-600 leading-6 text-[11px] pt-4 overflow-hidden shrink-0">
+                  {lineNumbers.map(n => <div key={n}>{n}</div>)}
+                </div>
+                <textarea
+                  value={codeText}
+                  onChange={(e) => setCodeText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Tab") {
+                      e.preventDefault();
+                      const start = e.currentTarget.selectionStart;
+                      const end = e.currentTarget.selectionEnd;
+                      const newVal = codeText.substring(0, start) + "  " + codeText.substring(end);
+                      setCodeText(newVal);
+                      setTimeout(() => { e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2; }, 0);
+                    }
+                  }}
+                  className="flex-1 bg-transparent text-[#c9d1d9] outline-none resize-none leading-6 font-mono text-[13px] pt-4 px-4 custom-scrollbar"
+                  spellCheck={false}
+                />
+              </div>
+
+              {/* Test Results Panel */}
+              <div className="shrink-0 border-t border-zinc-800/60 bg-[#0d1117]" style={{ minHeight: '220px', maxHeight: '260px' }}>
+                {/* Results tab bar */}
+                <div className="flex items-center gap-4 px-4 py-2.5 border-b border-zinc-800/60 bg-[#161b22]">
+                  <span className="text-[11px] font-black text-zinc-300 uppercase tracking-widest">Test Results</span>
+                  {testRunComplete && (
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                      allPassed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                    }`}>
+                      {passedCount}/{challenge.testCases.length} Passed
+                    </span>
+                  )}
+                </div>
+
+                <div className="overflow-y-auto custom-scrollbar" style={{ maxHeight: '185px' }}>
+                  {!testRunComplete && !isRunningTests && (
+                    <div className="flex flex-col items-center justify-center h-24 text-zinc-600">
+                      <i className="fa-solid fa-flask text-2xl mb-2 opacity-30"></i>
+                      <p className="text-[11px] font-bold uppercase tracking-widest opacity-50">Run code to see results</p>
+                    </div>
+                  )}
+                  {isRunningTests && (
+                    <div className="flex items-center justify-center h-24 gap-3 text-zinc-500">
+                      <i className="fa-solid fa-spinner fa-spin"></i>
+                      <span className="text-[11px] font-bold">Executing test cases...</span>
+                    </div>
+                  )}
+                  {testRunComplete && (
+                    <div className="p-3 space-y-2">
+                      {testResults.map((result, i) => (
+                        <div key={i} className={`flex items-start gap-3 px-3 py-2.5 rounded-xl border text-[11px] font-mono ${
+                          result.passed
+                            ? 'bg-emerald-500/5 border-emerald-500/20'
+                            : 'bg-rose-500/5 border-rose-500/20'
+                        }`}>
+                          <div className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black mt-0.5 ${
+                            result.passed ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'
+                          }`}>
+                            {result.passed ? <i className="fa-solid fa-check"></i> : <i className="fa-solid fa-xmark"></i>}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`font-black text-[10px] uppercase ${
+                                result.passed ? 'text-emerald-400' : 'text-rose-400'
+                              }`}>{result.passed ? 'Accepted' : 'Wrong Answer'}</span>
+                              <span className="text-zinc-600 text-[9px]">Case {i + 1} · {challenge.testCases[i].label}</span>
+                              {result.runtime > 0 && <span className="text-zinc-600 text-[9px] ml-auto">{result.runtime}ms</span>}
+                            </div>
+                            {!result.passed && (
+                              <div className="space-y-0.5 text-[10px]">
+                                <div><span className="text-zinc-500">Output: </span><span className="text-rose-300">{result.output}</span></div>
+                                <div><span className="text-zinc-500">Expected: </span><span className="text-emerald-300">{result.expected}</span></div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {consoleError && (
+                    <div className="mx-3 mb-3 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-[11px] text-rose-400 font-mono flex items-start gap-2">
+                      <i className="fa-solid fa-triangle-exclamation mt-0.5 shrink-0"></i>
+                      <span className="break-all">{consoleError}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+
       {/* VIEW STATE: ACTIVE ASSESSMENT INTERVIEW WITH DUAL CODE / CONCEPT RESPONSES */}
       {viewState === "active" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -1149,7 +1851,7 @@ export default function MockInterviews() {
             <div className="px-5 py-4 border-b border-zinc-200/40 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-950/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-450">
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
                   {interviewType === 'technical' ? "PLACEMENT ALGORITHMIC ENVIRONMENT" : "BEHAVIORAL CASE workspace"}
                 </span>
               </div>
@@ -1170,7 +1872,7 @@ export default function MockInterviews() {
               {isLoading && !currentQuestion ? (
                 <div className="py-32 flex flex-col items-center justify-center space-y-4 flex-1">
                   <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-indigo-500 animate-spin" ></i>
-                  <span className="text-[10px] font-black text-zinc-450 uppercase tracking-widest animate-pulse">
+                  <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest animate-pulse">
                     Synthesizing Question Context...
                   </span>
                 </div>
@@ -1179,8 +1881,14 @@ export default function MockInterviews() {
                   {/* AI Recruiter Panel */}
                   <div className="space-y-2.5">
                     <div className="flex justify-between items-center">
-                      <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                      <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
                         AI Twin Recruiter
+                        {isAudioLoading && (
+                          <span className="flex items-center gap-1.5 text-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                            <i className="fa-solid fa-spinner fa-spin text-[8px]" ></i>
+                            <span className="text-[8px] font-black tracking-widest">GENERATING VOICE</span>
+                          </span>
+                        )}
                       </h3>
                       {isTtsEnabled && (
                         <button
@@ -1291,7 +1999,7 @@ export default function MockInterviews() {
                           className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border transition-all cursor-pointer ${
                             isListening 
                               ? "bg-rose-500 text-white border-rose-600 shadow-[0_0_15px_rgba(244,63,94,0.3)] animate-pulse" 
-                              : "bg-white dark:bg-zinc-900/60 text-zinc-650 dark:text-zinc-400 border-zinc-200 dark:border-zinc-855 hover:border-indigo-500/30"
+                              : "bg-white dark:bg-zinc-900/60 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/30"
                           }`}
                         >
                           {isListening ? <i className="fa-solid fa-microphone-slash w-3 h-3" ></i> : <i className="fa-solid fa-microphone w-3 h-3 text-indigo-500" ></i>}
@@ -1303,7 +2011,7 @@ export default function MockInterviews() {
                         value={answerText}
                         onChange={(e) => setAnswerText(e.target.value)}
                         placeholder="Detail your conceptual approach here. Use the STAR method to map out problem scenarios, tasks, exact execution action paths, and final latency/system results..."
-                        className="flex-1 w-full p-4 bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-zinc-850 text-zinc-900 dark:text-white text-xs font-semibold rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all resize-none placeholder-zinc-400 leading-relaxed shadow-inner min-h-[220px]"
+                        className="flex-1 w-full p-4 bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white text-xs font-semibold rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all resize-none placeholder-zinc-400 leading-relaxed shadow-inner min-h-[220px]"
                       />
                     </div>
 
@@ -1319,7 +2027,7 @@ export default function MockInterviews() {
                             setViewState("config");
                           }
                         }}
-                        className="text-xs font-bold text-zinc-450 hover:text-rose-500 transition-colors cursor-pointer"
+                        className="text-xs font-bold text-zinc-400 hover:text-rose-500 transition-colors cursor-pointer"
                       >
                         Cancel Loop
                       </button>
@@ -1448,7 +2156,7 @@ export default function MockInterviews() {
                   <i className="fa-solid fa-circle-check w-4 h-4" ></i>
                   Realtime Feedback
                 </h4>
-                <p className="text-xs text-zinc-650 dark:text-zinc-300 leading-relaxed font-semibold">
+                <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-semibold">
                   {feedback}
                 </p>
               </div>
@@ -1489,13 +2197,40 @@ export default function MockInterviews() {
               <ScoreCircle score={report.confidenceScore} label="Tone Integrity Vector" colorClass="stroke-orange-500" glowColor="rgba(249,115,22,0.5)" />
             </div>
 
+            {interviewType === "full" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                <div className="p-5 bg-purple-500/10 border border-purple-500/20 rounded-2xl flex items-center justify-between">
+                  <div>
+                    <h4 className="text-[10px] font-black text-purple-500 uppercase tracking-widest flex items-center gap-1.5">
+                      <i className="fa-solid fa-brain"></i> Round 1: Aptitude
+                    </h4>
+                    <p className="text-sm font-extrabold text-zinc-800 dark:text-zinc-200 mt-1">Score: {aptitudeScore} / {APTITUDE_QUESTIONS.length}</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-full border-4 border-purple-500/30 flex items-center justify-center text-xs font-black text-purple-500">
+                    {Math.round((aptitudeScore / APTITUDE_QUESTIONS.length) * 100)}%
+                  </div>
+                </div>
+                <div className="p-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-between">
+                  <div>
+                    <h4 className="text-[10px] font-black text-blue-500 uppercase tracking-widest flex items-center gap-1.5">
+                      <i className="fa-solid fa-code"></i> Round 2: Coding
+                    </h4>
+                    <p className="text-sm font-extrabold text-zinc-800 dark:text-zinc-200 mt-1">Score: {codingScore} / {CODING_CHALLENGES.length}</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-full border-4 border-blue-500/30 flex items-center justify-center text-xs font-black text-blue-500">
+                    {Math.round((codingScore / CODING_CHALLENGES.length) * 100)}%
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="p-5 rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800/60">
                 <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
                   <i className="fa-solid fa-award w-4 h-4"></i>
                   Twin Assessment Summary
                 </h4>
-                <p className="text-xs text-zinc-650 dark:text-zinc-300 leading-relaxed font-semibold">
+                <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-semibold">
                   {report.summary || "You successfully communicated core system methodologies. Your answers demonstrated logical execution flows and structured logic matching mid-to-senior profiles."}
                 </p>
               </div>
@@ -1505,7 +2240,7 @@ export default function MockInterviews() {
                   <i className="fa-solid fa-shield-halved w-4 h-4" ></i>
                   Identified Skill Gaps
                 </h4>
-                <ul className="text-xs text-zinc-655 dark:text-zinc-300 space-y-1.5 font-semibold list-disc list-inside">
+                <ul className="text-xs text-zinc-600 dark:text-zinc-300 space-y-1.5 font-semibold list-disc list-inside">
                   {report.gaps && report.gaps.length > 0 ? (
                     report.gaps.map((gap, i) => <li key={i}>{gap}</li>)
                   ) : (
@@ -1524,23 +2259,23 @@ export default function MockInterviews() {
               <h3 className="text-xs font-black text-zinc-400 uppercase tracking-widest">Chronological Session Logs</h3>
               <div className="space-y-4">
                 {history.map((item, index) => (
-                  <div key={index} className="p-5 bg-zinc-50/50 dark:bg-zinc-955/25 border border-zinc-200 dark:border-zinc-800/60 rounded-2xl space-y-3">
+                  <div key={index} className="p-5 bg-zinc-50/50 dark:bg-zinc-950/25 border border-zinc-200 dark:border-zinc-800/60 rounded-2xl space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-[10px] font-black text-indigo-500 uppercase tracking-wider">LOCKED QUESTION {index + 1}</span>
                     </div>
-                    <p className="text-xs font-extrabold text-zinc-805 dark:text-zinc-150 leading-relaxed">
+                    <p className="text-xs font-extrabold text-zinc-800 dark:text-zinc-200 leading-relaxed">
                       {item.question}
                     </p>
                     
-                    <div className="pl-4 border-l-2 border-zinc-250 dark:border-zinc-800 py-1 space-y-2">
-                      <div className="text-[10px] font-bold text-zinc-450 uppercase tracking-wider">Candidate response transcript:</div>
-                      <p className="text-xs text-zinc-650 dark:text-zinc-350 leading-relaxed whitespace-pre-wrap italic bg-black/10 dark:bg-black/35 p-3 rounded-xl">
+                    <div className="pl-4 border-l-2 border-zinc-200 dark:border-zinc-800 py-1 space-y-2">
+                      <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Candidate response transcript:</div>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap italic bg-black/10 dark:bg-black/35 p-3 rounded-xl">
                         {item.answer}
                       </p>
                       {item.feedback && (
                         <>
                           <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mt-2">AI Recruiter comment:</div>
-                          <p className="text-xs text-zinc-700 dark:text-zinc-305 leading-relaxed font-semibold">
+                          <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed font-semibold">
                             {item.feedback}
                           </p>
                         </>
@@ -1554,7 +2289,7 @@ export default function MockInterviews() {
             {/* Recruiter verbose summary */}
             <div className="space-y-3.5 mt-8">
               <h3 className="text-xs font-black text-zinc-400 uppercase tracking-widest">Placement Board Boardroom Report</h3>
-              <div className="p-6 bg-zinc-55 dark:bg-zinc-950/40 border border-zinc-200 dark:border-zinc-800/50 rounded-3xl leading-relaxed text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-line font-semibold shadow-inner">
+              <div className="p-6 bg-zinc-50 dark:bg-zinc-950/40 border border-zinc-200 dark:border-zinc-800/50 rounded-3xl leading-relaxed text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-line font-semibold shadow-inner">
                 {report.detailedEvaluation}
               </div>
             </div>
@@ -1569,7 +2304,7 @@ export default function MockInterviews() {
               </button>
               <button 
                 onClick={handlePrint}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-250 dark:border-zinc-750 text-zinc-800 dark:text-white text-xs font-black uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-white text-xs font-black uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer"
               >
                 <i className="fa-solid fa-download w-4 h-4 text-indigo-500" ></i>
                 Export PDF Report
@@ -1628,9 +2363,9 @@ export default function MockInterviews() {
             <h3 className="text-xs font-black uppercase text-zinc-500 tracking-wider mb-3">Interview Q&A Transcript Review</h3>
             <div className="space-y-4">
               {history.map((item, idx) => (
-                <div key={idx} className="p-4 border border-zinc-150 rounded-xl space-y-2 text-xs">
+                <div key={idx} className="p-4 border border-zinc-200 rounded-xl space-y-2 text-xs">
                   <p className="font-extrabold text-zinc-900">Q{idx + 1}: {item.question}</p>
-                  <p className="text-zinc-650 italic pl-3 border-l-2 border-zinc-300 whitespace-pre-wrap">Answer: {item.answer}</p>
+                  <p className="text-zinc-600 italic pl-3 border-l-2 border-zinc-300 whitespace-pre-wrap">Answer: {item.answer}</p>
                   {item.feedback && <p className="text-emerald-700 pl-3">Critique: {item.feedback}</p>}
                 </div>
               ))}
@@ -1645,7 +2380,7 @@ export default function MockInterviews() {
           <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 rounded-3xl max-w-3xl w-full max-h-[85vh] overflow-y-auto shadow-2xl p-6 md:p-8 space-y-6 animate-in zoom-in-95 duration-200 relative">
             
             {/* Modal Header */}
-            <div className="flex justify-between items-start pb-4 border-b border-zinc-150 dark:border-zinc-800/60">
+            <div className="flex justify-between items-start pb-4 border-b border-zinc-200 dark:border-zinc-800/60">
               <div>
                 <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wide border ${
                   selectedHistorySession.type === 'technical' 
@@ -1692,7 +2427,7 @@ export default function MockInterviews() {
                 {/* Recruiter Evaluation Detailed text */}
                 <div className="space-y-2">
                   <h4 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Detailed Evaluation Summary</h4>
-                  <div className="p-5 bg-zinc-50 dark:bg-zinc-955/45 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed font-semibold whitespace-pre-wrap">
+                  <div className="p-5 bg-zinc-50 dark:bg-zinc-950/45 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed font-semibold whitespace-pre-wrap">
                     {selectedHistorySession.report.detailedEvaluation}
                   </div>
                 </div>
@@ -1701,14 +2436,14 @@ export default function MockInterviews() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/35 border border-zinc-200 dark:border-zinc-800">
                     <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-2">Twin Assessment Summary</h4>
-                    <p className="text-xs text-zinc-650 dark:text-zinc-300 font-semibold leading-relaxed">
+                    <p className="text-xs text-zinc-600 dark:text-zinc-300 font-semibold leading-relaxed">
                       {selectedHistorySession.report.summary || "You successfully communicated core system methodologies. Your answers demonstrated logical execution flows and structured logic matching mid-to-senior profiles."}
                     </p>
                   </div>
 
                   <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/35 border border-zinc-200 dark:border-zinc-800">
                     <h4 className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-2">Identified Skill Gaps</h4>
-                    <ul className="text-xs text-zinc-650 dark:text-zinc-300 space-y-1 font-semibold list-disc list-inside">
+                    <ul className="text-xs text-zinc-600 dark:text-zinc-300 space-y-1 font-semibold list-disc list-inside">
                       {selectedHistorySession.report.gaps && selectedHistorySession.report.gaps.length > 0 ? (
                         selectedHistorySession.report.gaps.map((gap, i) => <li key={i}>{gap}</li>)
                       ) : (
@@ -1728,8 +2463,8 @@ export default function MockInterviews() {
                     <h4 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Dialogue Transcript Logs</h4>
                     <div className="space-y-3 max-h-[30vh] overflow-y-auto pr-1">
                       {selectedHistorySession.history.map((qa, index) => (
-                        <div key={index} className="p-4 bg-zinc-50/50 dark:bg-zinc-900/10 border border-zinc-200 dark:border-zinc-850 rounded-xl space-y-2">
-                          <p className="text-xs font-extrabold text-zinc-800 dark:text-zinc-250">
+                        <div key={index} className="p-4 bg-zinc-50/50 dark:bg-zinc-900/10 border border-zinc-200 dark:border-zinc-800 rounded-xl space-y-2">
+                          <p className="text-xs font-extrabold text-zinc-800 dark:text-zinc-200">
                             Q{index + 1}: {qa.question}
                           </p>
                           <div className="pl-3 border-l border-zinc-200 dark:border-zinc-800 italic text-[11px] text-zinc-550 dark:text-zinc-400 bg-black/5 dark:bg-black/20 p-2.5 rounded-lg whitespace-pre-wrap">
@@ -1749,7 +2484,7 @@ export default function MockInterviews() {
             )}
 
             {/* Modal actions */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-zinc-150 dark:border-zinc-800/60">
+            <div className="flex justify-end gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800/60">
               <button 
                 onClick={handleCloseModal}
                 className="px-5 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 text-xs font-bold hover:bg-zinc-200 dark:hover:bg-zinc-800 cursor-pointer"
@@ -1816,9 +2551,9 @@ export default function MockInterviews() {
             <h3 className="text-xs font-black uppercase text-zinc-500 tracking-wider mb-3">Interview Q&A Transcript Review</h3>
             <div className="space-y-4">
               {selectedHistorySession.history && selectedHistorySession.history.map((item, idx) => (
-                <div key={idx} className="p-4 border border-zinc-150 rounded-xl space-y-2 text-xs">
+                <div key={idx} className="p-4 border border-zinc-200 rounded-xl space-y-2 text-xs">
                   <p className="font-extrabold text-zinc-900">Q{idx + 1}: {item.question}</p>
-                  <p className="text-zinc-650 italic pl-3 border-l-2 border-zinc-300 whitespace-pre-wrap">Answer: {item.answer}</p>
+                  <p className="text-zinc-600 italic pl-3 border-l-2 border-zinc-300 whitespace-pre-wrap">Answer: {item.answer}</p>
                   {item.feedback && <p className="text-emerald-700 pl-3">Critique: {item.feedback}</p>}
                 </div>
               ))}
@@ -1854,7 +2589,7 @@ function ScoreCircle({ score, label, colorClass, glowColor }: { score: number; l
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center p-6 bg-zinc-900/40 border border-zinc-800/40 rounded-3xl backdrop-blur-xl relative overflow-hidden group shadow-[0_4px_30px_rgba(0,0,0,0.2)]">
+    <div className="flex flex-col items-center p-6 bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800/40 rounded-3xl backdrop-blur-xl relative overflow-hidden group shadow-[0_4px_30px_rgba(0,0,0,0.2)]">
       <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-550"></div>
       <div className="relative w-28 h-28 flex items-center justify-center">
         <svg className="w-full h-full transform -rotate-90">
@@ -1862,7 +2597,7 @@ function ScoreCircle({ score, label, colorClass, glowColor }: { score: number; l
             cx="56"
             cy="56"
             r={radius}
-            className="stroke-zinc-850"
+            className="stroke-zinc-200 dark:stroke-zinc-800"
             strokeWidth={strokeWidth}
             fill="transparent"
           />
@@ -1882,11 +2617,11 @@ function ScoreCircle({ score, label, colorClass, glowColor }: { score: number; l
           />
         </svg>
         <div className="absolute flex flex-col items-center">
-          <span className="text-2xl font-black text-white">{score}</span>
+          <span className="text-2xl font-black text-zinc-900 dark:text-white">{score}</span>
           <span className="text-[9px] text-zinc-500 font-extrabold tracking-widest uppercase">Index</span>
         </div>
       </div>
-      <span className="mt-4 text-xs font-bold text-zinc-400 uppercase tracking-widest text-center">{label}</span>
+      <span className="mt-4 text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest text-center">{label}</span>
     </div>
   );
 }

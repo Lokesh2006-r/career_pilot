@@ -94,6 +94,7 @@ export default function StudentLayout({
             <MobileNavItem href="/student/resume-builder" icon={<i className="fa-solid fa-wand-magic-sparkles w-5 h-5" ></i>} label="Resume Builder" active={pathname === "/student/resume-builder"} onClick={() => setIsSidebarOpen(false)} />
             <MobileNavItem href="/student/mock-interviews" icon={<i className="fa-solid fa-video w-5 h-5" ></i>} label="AI Mock Interview" active={pathname === "/student/mock-interviews"} onClick={() => setIsSidebarOpen(false)} />
             <MobileNavItem href="/student/coding" icon={<i className="fa-solid fa-code w-5 h-5" ></i>} label="Coding Tracker" active={pathname === "/student/coding"} onClick={() => setIsSidebarOpen(false)} />
+            <MobileNavItem href="/student/exam-craft" icon={<i className="fa-solid fa-graduation-cap w-5 h-5" ></i>} label="Exam Craft" active={pathname === "/student/exam-craft"} onClick={() => setIsSidebarOpen(false)} />
             <MobileNavItem href="/student/projects" icon={<i className="fa-solid fa-lightbulb w-5 h-5" ></i>} label="Project Recs" active={pathname === "/student/projects"} onClick={() => setIsSidebarOpen(false)} />
             <MobileNavItem href="/student/jobs" icon={<i className="fa-solid fa-briefcase w-5 h-5" ></i>} label="Internship/Job Offers Feed" active={pathname === "/student/jobs"} onClick={() => setIsSidebarOpen(false)} />
           </nav>
@@ -137,6 +138,7 @@ export default function StudentLayout({
             <NavItem href="/student/resume-builder" icon={<i className="fa-solid fa-wand-magic-sparkles w-5 h-5" ></i>} label="Resume Builder" active={pathname === "/student/resume-builder"} />
             <NavItem href="/student/mock-interviews" icon={<i className="fa-solid fa-video w-5 h-5" ></i>} label="AI Mock Interview" active={pathname === "/student/mock-interviews"} />
             <NavItem href="/student/coding" icon={<i className="fa-solid fa-code w-5 h-5" ></i>} label="Coding Tracker" active={pathname === "/student/coding"} />
+            <NavItem href="/student/exam-craft" icon={<i className="fa-solid fa-graduation-cap w-5 h-5" ></i>} label="Exam Craft" active={pathname === "/student/exam-craft"} />
             <NavItem href="/student/projects" icon={<i className="fa-solid fa-lightbulb w-5 h-5" ></i>} label="Project Recs" active={pathname === "/student/projects"} />
             <NavItem href="/student/jobs" icon={<i className="fa-solid fa-briefcase w-5 h-5" ></i>} label="Internship/Job Offers Feed" active={pathname === "/student/jobs"} />
           </nav>
@@ -227,6 +229,7 @@ export default function StudentLayout({
               <BottomTabItem href="/student/resume-builder" icon={<i className="fa-solid fa-wand-magic-sparkles w-[18px] h-[18px]" ></i>} label="Builder" active={pathname === "/student/resume-builder"} />
               <BottomTabItem href="/student/mock-interviews" icon={<i className="fa-solid fa-video w-[18px] h-[18px]" ></i>} label="Interview" active={pathname === "/student/mock-interviews"} />
               <BottomTabItem href="/student/coding" icon={<i className="fa-solid fa-code w-[18px] h-[18px]" ></i>} label="Coding" active={pathname === "/student/coding"} />
+              <BottomTabItem href="/student/exam-craft" icon={<i className="fa-solid fa-graduation-cap w-[18px] h-[18px]" ></i>} label="Exams" active={pathname === "/student/exam-craft"} />
               <BottomTabItem href="/student/projects" icon={<i className="fa-solid fa-lightbulb w-[18px] h-[18px]" ></i>} label="Projects" active={pathname === "/student/projects"} />
               <BottomTabItem href="/student/jobs" icon={<i className="fa-solid fa-briefcase w-[18px] h-[18px]" ></i>} label="Jobs" active={pathname === "/student/jobs"} />
               <BottomTabItem href="/student/settings" icon={<i className="fa-solid fa-gear w-[18px] h-[18px]" ></i>} label="Settings" active={pathname === "/student/settings"} />

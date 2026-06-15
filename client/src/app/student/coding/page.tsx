@@ -46,6 +46,7 @@ interface ProfileData {
   errors?: Record<string, string>;
   overallActiveDays?: number;
   overallMaxStreak?: number;
+  overallCurrentStreak?: number;
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
@@ -296,6 +297,7 @@ export default function CodingTracker() {
         errors:            json.errors,
         overallActiveDays: json.data?.overallActiveDays,
         overallMaxStreak:  json.data?.overallMaxStreak,
+        overallCurrentStreak: json.data?.overallCurrentStreak,
       });
     } catch (e: any) {
       setError(e.message || "Network error — is the server running?");
@@ -606,13 +608,24 @@ export default function CodingTracker() {
               </div>
 
               {/* Streak */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/20 dark:border-orange-500/30 mb-3">
-                <i className="fa-solid fa-fire w-5 h-5 text-orange-500 flex-shrink-0" ></i>
-                <div>
-                  <p className="text-[10px] text-orange-600 dark:text-orange-300 font-black uppercase tracking-widest">LeetCode Streak</p>
-                  {loading ? <Skeleton className="h-5 w-20 mt-1" /> : (
-                    <p className="text-lg font-extrabold text-orange-900 dark:text-white">{lc?.streak ?? "—"} Days</p>
-                  )}
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/20 dark:border-orange-500/30">
+                  <i className="fa-solid fa-fire w-5 h-5 text-orange-500 flex-shrink-0" ></i>
+                  <div className="min-w-0">
+                    <p className="text-[9px] text-orange-600 dark:text-orange-300 font-black uppercase tracking-widest truncate">Current Streak</p>
+                    {loading ? <Skeleton className="h-5 w-10 mt-1" /> : (
+                      <p className="text-lg font-extrabold text-orange-900 dark:text-white truncate">{data?.overallCurrentStreak ?? 0}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 dark:border-amber-500/30">
+                  <i className="fa-solid fa-bolt w-5 h-5 text-amber-500 flex-shrink-0" ></i>
+                  <div className="min-w-0">
+                    <p className="text-[9px] text-amber-600 dark:text-amber-300 font-black uppercase tracking-widest truncate">Max Streak</p>
+                    {loading ? <Skeleton className="h-5 w-10 mt-1" /> : (
+                      <p className="text-lg font-extrabold text-amber-900 dark:text-white truncate">{data?.overallMaxStreak ?? 0}</p>
+                    )}
+                  </div>
                 </div>
               </div>
 

@@ -18,30 +18,7 @@ interface Candidate {
   education: string;
 }
 
-const MOCK_CANDIDATES: Candidate[] = [
-  {
-    id: "stud-1",
-    name: "Alex Johnson",
-    roleTarget: "Full Stack Engineer",
-    atsScore: 88,
-    leetcodeSolved: 144,
-    skills: ["React", "Next.js", "Node.js", "TypeScript", "Python"],
-    avatar: "AJ",
-    email: "alex.johnson@university.edu",
-    education: "B.S. Computer Science, Stanford University"
-  },
-  {
-    id: "stud-2",
-    name: "Sarah Chen",
-    roleTarget: "AI Research Engineer",
-    atsScore: 94,
-    leetcodeSolved: 210,
-    skills: ["Python", "PyTorch", "LangChain", "Pinecone", "RAG Systems"],
-    avatar: "SC",
-    email: "schen@mit.edu",
-    education: "M.S. Artificial Intelligence, MIT"
-  }
-];
+import { API_BASE_URL } from "@/lib/api";
 
 export default function RecruiterShortlist() {
   const { user } = useAuth();
@@ -49,20 +26,32 @@ export default function RecruiterShortlist() {
 
   useEffect(() => {
     if (!user) return;
-    const key = `shortlisted_candidates_${user.uid}`;
-    const saved = localStorage.getItem(key);
-    if (saved) {
+    
+    const fetchShortlisted = async () => {
       try {
-        const ids: string[] = JSON.parse(saved);
-        const list = MOCK_CANDIDATES.filter(c => ids.includes(c.id));
-        setShortlisted(list);
-      } catch (e) {
-        setShortlisted(MOCK_CANDIDATES);
+        const res = await fetch(`${API_BASE_URL}/api/recruiter/candidates`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            const allCandidates: Candidate[] = json.data;
+            const key = `shortlisted_candidates_${user.uid}`;
+            const saved = localStorage.getItem(key);
+            
+            if (saved) {
+              const ids: string[] = JSON.parse(saved);
+              const list = allCandidates.filter(c => ids.includes(c.id));
+              setShortlisted(list);
+            } else {
+              setShortlisted([]);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch shortlisted candidates:", err);
       }
-    } else {
-      setShortlisted(MOCK_CANDIDATES);
-      localStorage.setItem(key, JSON.stringify(MOCK_CANDIDATES.map(c => c.id)));
-    }
+    };
+    
+    fetchShortlisted();
   }, [user]);
 
   const handleRemove = (id: string) => {

@@ -1,14 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
 
 import Link from "next/link";
 
 export default function RecruiterDashboard() {
-  const [activeJobs] = useState(4);
-  const [shortlistedCount] = useState(8);
-  const [chatsCount] = useState(12);
-  const [timeSaved] = useState(480); // minutes
+  const { user } = useAuth();
+  const [activeJobs] = useState(0); // Feature not yet built
+  const [shortlistedCount, setShortlistedCount] = useState(0);
+  const [chatsCount, setChatsCount] = useState(0);
+  const [timeSaved] = useState(0); 
+  const [topShortlisted, setTopShortlisted] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+    
+    // Load counts from local storage
+    const chatsKey = `recruiter_analytics_chats_${user.uid}`;
+    setChatsCount(parseInt(localStorage.getItem(chatsKey) || "0", 10));
+
+    const shortKey = `shortlisted_candidates_${user.uid}`;
+    const shortSaved = localStorage.getItem(shortKey);
+    let shortIds: string[] = [];
+    if (shortSaved) {
+      try {
+        shortIds = JSON.parse(shortSaved);
+        setShortlistedCount(shortIds.length);
+      } catch (e) {
+        setShortlistedCount(0);
+      }
+    }
+
+    // Fetch live candidates to map shortlisted top
+    if (shortIds.length > 0) {
+      fetch(`${API_BASE_URL}/api/recruiter/candidates`)
+        .then(res => res.json())
+        .then(json => {
+          if (json.success && json.data) {
+            const allCandidates: any[] = json.data;
+            const mapped = allCandidates.filter(c => shortIds.includes(c.id)).slice(0, 2);
+            setTopShortlisted(mapped);
+          }
+        })
+        .catch(err => console.error("Error fetching candidates for dashboard:", err));
+    }
+  }, [user]);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -149,21 +187,18 @@ export default function RecruiterDashboard() {
           </h3>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-900/30">
-              <div>
-                <p className="text-xs font-black text-zinc-900 dark:text-white">Alex Johnson</p>
-                <p className="text-[9px] text-zinc-450 font-bold uppercase mt-0.5">85% Leetcode • 92% AI Match</p>
+            {topShortlisted.map(cand => (
+              <div key={cand.id} className="flex items-center justify-between p-3 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-900/30">
+                <div>
+                  <p className="text-xs font-black text-zinc-900 dark:text-white">{cand.name}</p>
+                  <p className="text-[9px] text-zinc-450 font-bold uppercase mt-0.5">{cand.leetcodeSolved} Leetcode • {cand.atsScore}% ATS Match</p>
+                </div>
+                <Link href="/recruiter/search" className="text-[10px] font-bold text-purple-550 hover:underline">Chat Clone</Link>
               </div>
-              <Link href="/recruiter/search" className="text-[10px] font-bold text-purple-550 hover:underline">Chat Clone</Link>
-            </div>
-
-            <div className="flex items-center justify-between p-3 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-900/30">
-              <div>
-                <p className="text-xs font-black text-zinc-900 dark:text-white">Sarah Chen</p>
-                <p className="text-[9px] text-zinc-450 font-bold uppercase mt-0.5">78% Leetcode • 89% AI Match</p>
-              </div>
-              <Link href="/recruiter/search" className="text-[10px] font-bold text-purple-550 hover:underline">Chat Clone</Link>
-            </div>
+            ))}
+            {topShortlisted.length === 0 && (
+              <div className="text-xs text-zinc-500 font-semibold italic">No candidates shortlisted yet.</div>
+            )}
           </div>
         </div>
 

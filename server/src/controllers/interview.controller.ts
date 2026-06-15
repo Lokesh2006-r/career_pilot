@@ -430,15 +430,6 @@ Return ONLY a valid JSON object. No explanation, no markdown.`;
         console.error('Failed to parse Gemini JSON on final evaluation, using fallback.', err);
       }
 
-      res.status(200).json({
-        feedback: parsed.feedback,
-        nextQuestion: null,
-        step: nextStep,
-        totalSteps,
-        isCompleted: true,
-        report: parsed.report
-      });
-
       // Save completed interview to MongoDB
       if (isDBConnected() && req.body.interviewId) {
         try {
@@ -459,6 +450,15 @@ Return ONLY a valid JSON object. No explanation, no markdown.`;
           console.error('[Interview] MongoDB final update error:', dbErr);
         }
       }
+
+      res.status(200).json({
+        feedback: parsed.feedback,
+        nextQuestion: null,
+        step: nextStep,
+        totalSteps,
+        isCompleted: true,
+        report: parsed.report
+      });
     }
   } catch (error: any) {
     console.error('[Answer Question Error]:', error);
@@ -539,3 +539,50 @@ Do NOT return any markdown, explanation, or wrap the JSON in anything other than
   }
 };
 
+export const generateSpeech = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { text, voiceId = 'pNInz6obpgDQGcFmaJgB' } = req.body;
+    if (!text) {
+      res.status(400).json({ error: 'Text is required' });
+      return;
+    }
+
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) {
+      res.status(500).json({ error: 'ELEVENLABS_API_KEY is not configured' });
+      return;
+    }
+
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'xi-api-key': apiKey,
+      },
+      body: JSON.stringify({
+        text,
+        model_id: 'eleven_turbo_v2_5'
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[ElevenLabs API Error]:', response.status, errorText);
+      res.status(response.status).json({ error: 'ElevenLabs API error', details: errorText });
+      return;
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    res.set({
+      'Content-Type': 'audio/mpeg',
+      'Content-Length': buffer.length.toString()
+    });
+
+    res.send(buffer);
+  } catch (error: any) {
+    console.error('[Generate Speech Error]:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+};

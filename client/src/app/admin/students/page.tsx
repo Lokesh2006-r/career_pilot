@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+
 
 
 interface StudentAccount {
@@ -12,16 +12,31 @@ interface StudentAccount {
   joinedDate: string;
 }
 
-const INITIAL_STUDENTS: StudentAccount[] = [
-  { id: "std-01", name: "Alex Johnson", email: "alex.johnson@university.edu", atsScore: 88, status: "Active", joinedDate: "2026-04-12" },
-  { id: "std-02", name: "Sarah Chen", email: "schen@mit.edu", atsScore: 94, status: "Active", joinedDate: "2026-04-15" },
-  { id: "std-03", name: "Marcus Aurelius", email: "marcus@rome.edu", atsScore: 82, status: "Suspended", joinedDate: "2026-04-20" },
-  { id: "std-04", name: "Priya Patel", email: "priya.patel@georgiatech.edu", atsScore: 85, status: "Active", joinedDate: "2026-04-22" }
-];
+
+
+import { useState, useEffect } from "react";
 
 export default function AdminStudents() {
-  const [students, setStudents] = useState<StudentAccount[]>(INITIAL_STUDENTS);
+  const [students, setStudents] = useState<StudentAccount[]>([]);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${API_BASE_URL}/api/admin/students`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setStudents(json.data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch students", err);
+      }
+    };
+    fetchStudents();
+  }, []);
 
   const handleToggleStatus = (id: string) => {
     setStudents(prev => prev.map(s => {

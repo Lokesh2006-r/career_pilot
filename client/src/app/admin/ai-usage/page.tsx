@@ -1,13 +1,33 @@
 "use client";
 
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 
 export default function AdminAiUsage() {
-  const [totalTokens] = useState("12.4M");
-  const [averageResponseTime] = useState("840ms");
-  const [activeModel] = useState("GPT-4o Mini (Default)");
-  const [activeAgents] = useState(14);
+  const [totalTokens, setTotalTokens] = useState("0");
+  const [averageResponseTime, setAverageResponseTime] = useState("0ms");
+  const [activeModel, setActiveModel] = useState("N/A");
+  const [activeAgents, setActiveAgents] = useState(0);
+
+  useEffect(() => {
+    const fetchUsage = async () => {
+      try {
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${API_BASE_URL}/api/admin/ai-usage`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setTotalTokens(json.data.totalTokens);
+            setAverageResponseTime(json.data.averageResponseTime);
+            setActiveModel(json.data.activeModel);
+            setActiveAgents(json.data.activeAgents);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch AI usage", err);
+      }
+    };
+    fetchUsage();
+  }, []);
 
   return (
     <div className="space-y-8 animate-fade-in">

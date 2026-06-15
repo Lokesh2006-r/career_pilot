@@ -16,53 +16,7 @@ interface Candidate {
   avatar: string;
   education: string;
 }
-
-const MOCK_CANDIDATES: Candidate[] = [
-  {
-    id: "stud-1",
-    name: "Alex Johnson",
-    roleTarget: "Full Stack Engineer",
-    atsScore: 88,
-    leetcodeSolved: 144,
-    leetcodeStreak: 18,
-    skills: ["React", "Next.js", "Node.js", "TypeScript", "Python"],
-    avatar: "AJ",
-    education: "Stanford University"
-  },
-  {
-    id: "stud-2",
-    name: "Sarah Chen",
-    roleTarget: "AI Research Engineer",
-    atsScore: 94,
-    leetcodeSolved: 210,
-    leetcodeStreak: 32,
-    skills: ["Python", "PyTorch", "LangChain", "Pinecone", "RAG Systems"],
-    avatar: "SC",
-    education: "MIT"
-  },
-  {
-    id: "stud-3",
-    name: "Marcus Aurelius",
-    roleTarget: "Blockchain Developer",
-    atsScore: 82,
-    leetcodeSolved: 98,
-    leetcodeStreak: 5,
-    skills: ["Solidity", "Hardhat", "Ether.js", "Next.js", "Go"],
-    avatar: "MA",
-    education: "Oxford University"
-  },
-  {
-    id: "stud-4",
-    name: "Priya Patel",
-    roleTarget: "DevOps & Cloud Architect",
-    atsScore: 85,
-    leetcodeSolved: 112,
-    leetcodeStreak: 14,
-    skills: ["Docker", "Kubernetes", "AWS", "Terraform", "CI/CD Platforms"],
-    avatar: "PP",
-    education: "Georgia Tech"
-  }
-];
+import { API_BASE_URL } from "@/lib/api";
 
 export default function RecruiterAnalytics() {
   const { user } = useAuth();
@@ -71,12 +25,12 @@ export default function RecruiterAnalytics() {
   const [searchesCount, setSearchesCount] = useState(14);
   const [chatsCount, setChatsCount] = useState(8);
   const [loading, setLoading] = useState(true);
+  const [allCandidates, setAllCandidates] = useState<Candidate[]>([]);
 
   useEffect(() => {
     if (!user) return;
     
-    // Load local storage counters
-    const loadTelemetry = () => {
+    const loadTelemetry = async () => {
       setLoading(true);
       try {
         const savedShortlist = localStorage.getItem(`shortlisted_candidates_${user.uid}`);
@@ -93,6 +47,19 @@ export default function RecruiterAnalytics() {
         if (savedChats) {
           setChatsCount(Number(savedChats) + 8); // small baseline plus real clone chats
         }
+        // Load actual candidates from server
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/recruiter/candidates`);
+          if (res.ok) {
+            const json = await res.json();
+            if (json.success && json.data) {
+              setAllCandidates(json.data);
+            }
+          }
+        } catch (err) {
+          console.error("Failed to fetch candidates", err);
+        }
+
       } catch (err) {
         console.error("Error reading recruiter telemetry:", err);
       } finally {
@@ -106,17 +73,17 @@ export default function RecruiterAnalytics() {
   }, [user]);
 
   // Derive pipeline profiles
-  const shortlistedCandidates = MOCK_CANDIDATES.filter(c => shortlisted.includes(c.id));
+  const shortlistedCandidates = allCandidates.filter(c => shortlisted.includes(c.id));
   const activePipelineCount = shortlisted.length;
   
   // Calculate dynamic conversion rate
-  const conversionRate = MOCK_CANDIDATES.length > 0
-    ? ((activePipelineCount / MOCK_CANDIDATES.length) * 100).toFixed(1)
+  const conversionRate = allCandidates.length > 0
+    ? ((activePipelineCount / allCandidates.length) * 100).toFixed(1)
     : "0.0";
 
   // Chart rendering for candidate pipeline comparison
   const renderComparisonChart = () => {
-    const listToRender = shortlistedCandidates.length > 0 ? shortlistedCandidates : MOCK_CANDIDATES;
+    const listToRender = shortlistedCandidates.length > 0 ? shortlistedCandidates : allCandidates;
     const isPlaceholder = shortlistedCandidates.length === 0;
 
     return (

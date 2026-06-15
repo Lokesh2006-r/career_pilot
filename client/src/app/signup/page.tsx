@@ -132,12 +132,12 @@ export default function SignupPage() {
             <i className="fa-solid fa-triangle-exclamation w-5 h-5 text-amber-500 shrink-0 mt-0.5 animate-pulse" ></i>
             <div className="text-xs font-medium">
               <p className="font-extrabold text-amber-500 uppercase tracking-wider mb-1">Sandbox Active</p>
-              <p className="text-zinc-550 dark:text-zinc-400 mb-2 leading-relaxed">
+              <p className="text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed">
                 Authentication services are not configured. You can skip directly to the dashboard to test the premium features.
               </p>
               <button 
                 onClick={handleDevBypass} 
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-550 text-white rounded-lg font-bold uppercase tracking-wider text-[9px] hover:bg-amber-600 transition-all cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 text-white rounded-lg font-bold uppercase tracking-wider text-[9px] hover:bg-amber-400 transition-all cursor-pointer shadow-sm"
               >
                 Skip Auth to Dashboard
                 <i className="fa-solid fa-arrow-right w-3 h-3" ></i>
@@ -174,7 +174,7 @@ export default function SignupPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 shadow-sm"
                 />
               </div>
             </div>
@@ -189,7 +189,7 @@ export default function SignupPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@university.edu"
-                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 shadow-sm"
                 />
               </div>
             </div>
@@ -205,7 +205,7 @@ export default function SignupPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 shadow-sm"
                   />
                 </div>
               </div>
@@ -220,7 +220,7 @@ export default function SignupPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 shadow-sm"
                   />
                 </div>
               </div>
@@ -235,7 +235,7 @@ export default function SignupPage() {
                   value={languages}
                   onChange={(e) => setLanguages(e.target.value)}
                   placeholder="e.g. Python, JavaScript, C++"
-                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 shadow-sm"
                 />
               </div>
             </div>
@@ -249,7 +249,7 @@ export default function SignupPage() {
                   value={skills}
                   onChange={(e) => setSkills(e.target.value)}
                   placeholder="e.g. React, Node.js, Next.js"
-                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-550/10 focus:border-indigo-500 transition-all duration-300 shadow-sm"
+                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-950/50 border border-zinc-250 dark:border-zinc-850 rounded-xl text-xs font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-650 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 shadow-sm"
                 />
               </div>
             </div>

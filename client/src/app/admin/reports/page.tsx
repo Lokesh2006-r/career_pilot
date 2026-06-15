@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+
 
 
 interface Report {
@@ -13,14 +13,30 @@ interface Report {
   date: string;
 }
 
-const INITIAL_REPORTS: Report[] = [
-  { id: "rep-01", source: "System Monitor", targetUser: "Bruce Wayne", reason: "Multiple concurrent token authentication requests from distant coordinates.", severity: "High", status: "Pending", date: "2026-05-20" },
-  { id: "rep-02", source: "Alex Johnson (Student)", targetUser: "Stark Industries (Recruiter)", reason: "Suspicious API chat queries targeting internal personal details.", severity: "Medium", status: "Pending", date: "2026-05-21" },
-  { id: "rep-03", source: "Firebase Guard", targetUser: "Marcus Aurelius", reason: "Unauthorized attempt to access Admin path scopes.", severity: "High", status: "Resolved", date: "2026-05-18" }
-];
+
+
+import { useState, useEffect } from "react";
 
 export default function AdminReports() {
-  const [reports, setReports] = useState<Report[]>(INITIAL_REPORTS);
+  const [reports, setReports] = useState<Report[]>([]);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${API_BASE_URL}/api/admin/reports`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setReports(json.data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch reports", err);
+      }
+    };
+    fetchReports();
+  }, []);
 
   const handleResolve = (id: string) => {
     setReports(prev => prev.map(r => {
@@ -94,6 +110,12 @@ export default function AdminReports() {
             </div>
           </div>
         ))}
+        {reports.length === 0 && (
+          <div className="glass-panel p-10 rounded-3xl text-center border border-zinc-200/50 dark:border-zinc-800/40">
+            <i className="fa-solid fa-shield-halved text-4xl text-zinc-300 dark:text-zinc-700 mb-4"></i>
+            <p className="text-zinc-500 font-bold">No security reports or flags found.</p>
+          </div>
+        )}
       </div>
     </div>
   );
