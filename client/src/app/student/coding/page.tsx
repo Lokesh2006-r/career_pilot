@@ -288,13 +288,60 @@ export default function CodingTracker() {
 
       if (!json.success) throw new Error(json.error || "Failed to fetch profile data");
 
+      let codeforcesData = json.data.codeforces;
+      let errors = json.errors || {};
+
+      // 1.5 Fallback: Fetch CF from client-side if server failed (browser bypasses Cloudflare)
+      if (cf && !codeforcesData) {
+        try {
+          const [infoRes, ratingRes, statusRes] = await Promise.all([
+            fetch(`https://codeforces.com/api/user.info?handles=${cf}`).then(r => r.json()),
+            fetch(`https://codeforces.com/api/user.rating?handle=${cf}`).then(r => r.json()).catch(() => ({ result: [] })),
+            fetch(`https://codeforces.com/api/user.status?handle=${cf}`).then(r => r.json()).catch(() => ({ result: [] })),
+          ]);
+
+          if (infoRes.status === 'OK' && infoRes.result && infoRes.result.length > 0) {
+            const user = infoRes.result[0];
+            const ratingHistory = (ratingRes.result || []).slice(-8).map((r: any) => ({
+              name: r.contestName,
+              date: new Date(r.ratingUpdateTimeSeconds * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+              timestamp: r.ratingUpdateTimeSeconds * 1000,
+              rank: r.rank,
+              rating: r.newRating,
+              delta: r.newRating - r.oldRating,
+            }));
+
+            const solved = new Set<string>();
+            const cfSubs: any[] = [];
+            for (const s of (statusRes.result || [])) {
+              if (s.verdict === 'OK') solved.add(`${s.problem?.contestId}-${s.problem?.index}`);
+            }
+
+            codeforcesData = {
+              handle: user.handle,
+              rating: user.rating || 0,
+              maxRating: user.maxRating || 0,
+              rank: user.rank || 'unrated',
+              maxRank: user.maxRank || 'unrated',
+              avatar: user.avatar || '',
+              solved: solved.size,
+              ratingHistory,
+            };
+            delete errors.codeforces;
+          }
+        } catch (err) {
+          // Suppress raw console error and show friendly UI message
+          errors.codeforces = "Codeforces API is currently blocked by Cloudflare security. Please try again later.";
+        }
+      }
+
       setData({
         leetcode:          json.data.leetcode,
-        codeforces:        json.data.codeforces,
+        codeforces:        codeforcesData,
         codechef:          json.data.codechef,
         heatmap:           json.data.heatmap,
         recentSubmissions: json.recentSubmissions,
-        errors:            json.errors,
+        errors:            errors,
         overallActiveDays: json.data?.overallActiveDays,
         overallMaxStreak:  json.data?.overallMaxStreak,
         overallCurrentStreak: json.data?.overallCurrentStreak,
@@ -554,11 +601,18 @@ export default function CodingTracker() {
       {/* ── Platform-level errors ────────────────────────────────────────────── */}
       {data?.errors && Object.keys(data.errors).length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {Object.entries(data.errors).map(([platform, msg]) => (
-            <div key={platform} className="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-400 font-bold">
-              ⚠️ {platform}: {msg}
-            </div>
-          ))}
+          {Object.entries(data.errors).map(([platform, msg]) => {
+            // Show a clean message — hide raw JSON/HTML parse errors
+            const isRawError = msg.includes("Unexpected token") || msg.includes("DOCTYPE") || msg.includes("SyntaxError");
+            const displayMsg = isRawError
+              ? `${platform.charAt(0).toUpperCase() + platform.slice(1)} is temporarily unavailable. Try refreshing in a moment.`
+              : msg;
+            return (
+              <div key={platform} className="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-400 font-bold">
+                ⚠️ {displayMsg}
+              </div>
+            );
+          })}
         </div>
       )}
 

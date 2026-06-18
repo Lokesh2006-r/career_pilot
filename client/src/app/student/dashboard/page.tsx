@@ -174,8 +174,11 @@ export default function StudentDashboardOverview() {
   useEffect(() => {
     loadProfileName();
     window.addEventListener('profile_updated', loadProfileName);
+    const openChat = () => setIsChatOpen(true);
+    window.addEventListener('openAITwin', openChat);
     return () => {
       window.removeEventListener('profile_updated', loadProfileName);
+      window.removeEventListener('openAITwin', openChat);
     };
   }, [user]);
 
@@ -765,7 +768,7 @@ export default function StudentDashboardOverview() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in text-zinc-900 dark:text-zinc-100">
+    <div className="space-y-4 md:space-y-8 animate-fade-in text-zinc-900 dark:text-zinc-100">
       
       {/* AI Twin Slide-out Chat Panel */}
       {isChatOpen && typeof document !== 'undefined' && (
@@ -820,32 +823,19 @@ export default function StudentDashboardOverview() {
       )}
 
       {/* Top Banner section */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 glass-panel rounded-3xl relative overflow-hidden">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 md:p-6 glass-panel rounded-2xl md:rounded-3xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="z-10">
-          <div className="flex items-center gap-2 text-indigo-500 font-extrabold text-xs uppercase tracking-wider mb-1.5">
-            <i className="fa-solid fa-wand-magic-sparkles w-4.5 h-4.5" ></i>
+        <div className="z-10 flex-1">
+          <div className="flex items-center gap-2 text-indigo-500 font-extrabold text-xs uppercase tracking-wider mb-1">
+            <i className="fa-solid fa-wand-magic-sparkles w-4 h-4" ></i>
             Performance & practice cockpit
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Welcome back, {firstName}</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-1 max-w-xl text-sm leading-relaxed">
+          <h1 className="text-xl md:text-3xl font-extrabold tracking-tight">Welcome back, {firstName}</h1>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-0.5 max-w-xl text-xs md:text-sm leading-relaxed hidden sm:block">
             Your placement preparedness indices are computed live. Log your daily coding, mock interviews, and revise core CS fundamentals.
           </p>
         </div>
       </header>
-
-      {/* Floating AI Twin Button */}
-      {!isChatOpen && (
-        <button 
-          onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-24 md:bottom-8 right-6 z-50 p-4 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-2xl shadow-indigo-600/40 transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer group"
-        >
-          <i className="fa-solid fa-microchip w-6 h-6 animate-pulse" ></i>
-          <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2 transition-all duration-300 ease-in-out font-bold text-sm">
-            Consult AI Twin
-          </span>
-        </button>
-      )}
 
       {/* Toast Alert message */}
       {logSuccessMessage && (
@@ -863,7 +853,7 @@ export default function StudentDashboardOverview() {
       ) : (
         <>
           {/* Practice statistics overview cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
             <MetricCard 
               title="Placement Readiness" 
               value={`${placementReadiness}%`} 
@@ -891,7 +881,7 @@ export default function StudentDashboardOverview() {
           </div>
 
           {/* Interactive practice tools section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-6">
             
             {/* Practice checklist widget */}
             <div className="lg:col-span-2 glass-panel rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
@@ -1399,14 +1389,14 @@ export default function StudentDashboardOverview() {
 
 function MetricCard({ title, value, trend, icon, link }: { title: string; value: string; trend: string; icon: React.ReactNode; link?: string }) {
   const content = (
-    <div className="glass-panel p-6 rounded-3xl flex flex-col justify-between group relative overflow-hidden transition-all hover:border-indigo-550/30 bg-white/20 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm h-full cursor-pointer">
-      <div className="flex justify-between items-start mb-4">
-        <span className="text-zinc-400 text-xs font-bold uppercase tracking-wider">{title}</span>
-        <div className="p-2 bg-white/50 dark:bg-zinc-900/40 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40">{icon}</div>
+    <div className="glass-panel p-3 md:p-6 rounded-2xl md:rounded-3xl flex flex-col justify-between group relative overflow-hidden transition-all hover:border-indigo-550/30 bg-white/20 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm h-full cursor-pointer">
+      <div className="flex justify-between items-start mb-2 md:mb-4">
+        <span className="text-zinc-400 text-[9px] md:text-xs font-bold uppercase tracking-wider leading-tight">{title}</span>
+        <div className="p-1.5 md:p-2 bg-white/50 dark:bg-zinc-900/40 rounded-lg md:rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 shrink-0 [&>*]:w-4 [&>*]:h-4 md:[&>*]:w-5 md:[&>*]:h-5">{icon}</div>
       </div>
       <div>
-        <h3 className="text-3xl font-extrabold text-zinc-950 dark:text-white leading-none mb-2">{value}</h3>
-        <p className="text-[10px] text-zinc-550 dark:text-zinc-450 font-bold">{trend}</p>
+        <h3 className="text-xl md:text-3xl font-extrabold text-zinc-950 dark:text-white leading-none mb-1 md:mb-2">{value}</h3>
+        <p className="text-[9px] md:text-[10px] text-zinc-550 dark:text-zinc-450 font-bold leading-tight">{trend}</p>
       </div>
     </div>
   );

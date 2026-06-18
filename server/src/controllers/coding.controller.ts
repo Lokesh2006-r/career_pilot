@@ -178,16 +178,30 @@ async function fetchLeetCode(username: string, yearParam?: string | number) {
 
 async function fetchCodeforces(handle: string) {
   const base = 'https://codeforces.com/api';
+  const CF_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    'Accept': 'application/json',
+  };
 
-  const [infoRes, ratingRes, statusRes] = await Promise.all([
-    fetch(`${base}/user.info?handles=${handle}`),
-    fetch(`${base}/user.rating?handle=${handle}`),
-    fetch(`${base}/user.status?handle=${handle}`),
+  // Safe fetch+JSON helper — throws clean error if CF returns HTML/block page
+  const cfFetch = async (url: string) => {
+    const res = await fetchWithTimeout(url, 10000, CF_HEADERS);
+    const contentType = res.headers.get('content-type') || '';
+    if (!res.ok || !contentType.includes('application/json')) {
+      const body = await res.text();
+      if (body.trim().startsWith('<')) {
+        throw new Error(`Codeforces is temporarily unavailable (rate-limited or blocked). Try again in a moment.`);
+      }
+      throw new Error(`Codeforces API error: HTTP ${res.status}`);
+    }
+    return res.json() as Promise<any>;
+  };
+
+  const [info, rating, status] = await Promise.all([
+    cfFetch(`${base}/user.info?handles=${handle}`),
+    cfFetch(`${base}/user.rating?handle=${handle}`).catch(() => ({ result: [] })),
+    cfFetch(`${base}/user.status?handle=${handle}`).catch(() => ({ result: [] })),
   ]);
-
-  const info   = await infoRes.json()   as any;
-  const rating = await ratingRes.json() as any;
-  const status = await statusRes.json() as any;
 
   if (info.status !== 'OK') throw new Error(`Codeforces user "${handle}" not found`);
 
