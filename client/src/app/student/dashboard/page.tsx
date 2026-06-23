@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { API_BASE_URL } from "@/lib/api";
+import { ExcelReportModal } from "@/components/ExcelReportModal";
 
 interface Message {
   role: 'user' | 'model';
@@ -132,6 +133,7 @@ export default function StudentDashboardOverview() {
 
   // Heatmap cell hover — floating tooltip
   const [selectedHeatCell, setSelectedHeatCell] = useState<{ date: string; level: number; x: number; y: number } | null>(null);
+  const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -768,53 +770,54 @@ export default function StudentDashboardOverview() {
   };
 
   return (
-    <div className="space-y-4 md:space-y-8 animate-fade-in text-zinc-900 dark:text-zinc-100">
+    <div className="flex flex-col gap-10 animate-fade-in text-zinc-900 dark:text-zinc-100 max-w-7xl mx-auto pb-10">
       
       {/* AI Twin Slide-out Chat Panel */}
       {isChatOpen && typeof document !== 'undefined' && (
         require('react-dom').createPortal(
           <>
             <div onClick={() => setIsChatOpen(false)} className="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm z-[100]" />
-            <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white/90 dark:bg-zinc-950/90 border-l border-zinc-200/50 dark:border-zinc-800/40 backdrop-blur-2xl z-[101] flex flex-col shadow-2xl animate-in slide-in-from-right duration-350">
-              <div className="p-5 border-b border-zinc-200/50 dark:border-zinc-800/40 flex items-center justify-between">
+            <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 z-[101] flex flex-col shadow-2xl animate-in slide-in-from-right duration-350">
+              <div className="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-500 border border-indigo-500/20">
-                    <i className="fa-solid fa-microchip w-5 h-5 animate-pulse" ></i>
+                  <div className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-md border border-zinc-200 dark:border-zinc-800">
+                    <i className="fa-solid fa-terminal w-4 h-4 text-zinc-700 dark:text-zinc-300"></i>
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-zinc-900 dark:text-white flex items-center gap-1.5">
-                      AI Twin Chat
-                      <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 text-indigo-500 fill-indigo-500/20" ></i>
+                    <h3 className="font-semibold text-sm text-zinc-900 dark:text-white flex items-center gap-1.5">
+                      CareerPilot AI Assistant
                     </h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">Academic & Placement Guide</p>
+                    <p className="text-xs text-zinc-500">Placement & Academic Guidance</p>
                   </div>
                 </div>
-                <button onClick={() => setIsChatOpen(false)} className="p-2 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 rounded-xl text-zinc-550">
-                  <i className="fa-solid fa-xmark w-5 h-5" ></i>
+                <button onClick={() => setIsChatOpen(false)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-md text-zinc-500 transition-colors">
+                  <i className="fa-solid fa-xmark w-4 h-4"></i>
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto p-5 space-y-4">
                 {chatMessages.map((msg, index) => (
                   <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm leading-relaxed ${msg.role === 'user' ? 'bg-gradient-to-tr from-indigo-500 to-purple-600 text-white rounded-tr-none' : 'bg-zinc-100 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 rounded-tl-none border border-zinc-200/50 dark:border-zinc-800/30'}`}>
+                    <div className={`max-w-[85%] rounded-lg px-4 py-3 text-sm leading-relaxed ${msg.role === 'user' ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900' : 'bg-zinc-50 border border-zinc-200 text-zinc-800 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-200'}`}>
                       <p className="whitespace-pre-line">{msg.content}</p>
                     </div>
                   </div>
                 ))}
                 {isSending && (
                   <div className="flex justify-start">
-                    <div className="bg-zinc-100/80 dark:bg-zinc-900/60 rounded-2xl rounded-tl-none px-4 py-3 border border-zinc-200/50 dark:border-zinc-800/30 flex gap-1.5 items-center">
-                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></span>
-                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                    <div className="bg-zinc-50 border border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800 rounded-lg px-4 py-3 flex gap-1.5 items-center">
+                      <span className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"></span>
+                      <span className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                      <span className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                     </div>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
               </div>
-              <form onSubmit={handleSendMessage} className="p-5 border-t border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-50/50 dark:bg-zinc-950/20 flex gap-2">
-                <input type="text" value={inputVal} onChange={(e) => setInputVal(e.target.value)} placeholder="Ask your twin something..." className="flex-1 px-4 py-3 bg-white dark:bg-zinc-900/60 border border-zinc-200/50 dark:border-zinc-800/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" />
-                <button type="submit" disabled={!inputVal.trim() || isSending} className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl disabled:opacity-50 transition-colors"><i className="fa-solid fa-paper-plane w-4 h-4" ></i></button>
+              <form onSubmit={handleSendMessage} className="p-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 flex gap-2">
+                <input type="text" value={inputVal} onChange={(e) => setInputVal(e.target.value)} placeholder="Type a command or question..." className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 dark:text-white" />
+                <button type="submit" disabled={!inputVal.trim() || isSending} className="px-3 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-medium rounded-md disabled:opacity-50 transition-colors">
+                  Send
+                </button>
               </form>
             </div>
           </>,
@@ -822,627 +825,334 @@ export default function StudentDashboardOverview() {
         )
       )}
 
-      {/* Top Banner section */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 md:p-6 glass-panel rounded-2xl md:rounded-3xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="z-10 flex-1">
-          <div className="flex items-center gap-2 text-indigo-500 font-extrabold text-xs uppercase tracking-wider mb-1">
-            <i className="fa-solid fa-wand-magic-sparkles w-4 h-4" ></i>
-            Performance & practice cockpit
+      {/* Header section */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+        <div>
+          <div className="flex items-center gap-2 text-zinc-500 font-medium text-[11px] uppercase tracking-wider mb-1">
+            <i className="fa-solid fa-layer-group w-3.5 h-3.5"></i>
+            Performance Dashboard
           </div>
-          <h1 className="text-xl md:text-3xl font-extrabold tracking-tight">Welcome back, {firstName}</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-0.5 max-w-xl text-xs md:text-sm leading-relaxed hidden sm:block">
-            Your placement preparedness indices are computed live. Log your daily coding, mock interviews, and revise core CS fundamentals.
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">Overview, {firstName}</h1>
+        </div>
+        <div className="flex items-center gap-3">
         </div>
       </header>
 
       {/* Toast Alert message */}
       {logSuccessMessage && (
-        <div className="fixed top-24 md:top-6 right-6 px-5 py-4 bg-emerald-500 text-white rounded-2xl shadow-xl flex items-center gap-3 z-50 animate-bounce">
-          <i className="fa-regular fa-circle-check w-5 h-5" ></i>
-          <span className="text-xs font-extrabold uppercase tracking-wide">{logSuccessMessage}</span>
+        <div className="fixed bottom-6 right-6 px-4 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-slide-up border border-zinc-800 dark:border-zinc-200">
+          <i className="fa-regular fa-circle-check w-4 h-4 text-emerald-500"></i>
+          <span className="text-xs font-semibold">{logSuccessMessage}</span>
         </div>
       )}
 
       {statsLoading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-indigo-500 animate-spin" ></i>
-          <p className="text-sm text-zinc-400 font-bold uppercase tracking-wider animate-pulse">Aggregating overall performance metrics...</p>
+        <div className="flex flex-col items-center justify-center py-24 gap-4">
+          <i className="fa-solid fa-spinner fa-spin w-6 h-6 text-zinc-400"></i>
+          <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider animate-pulse">Aggregating telemetry...</p>
         </div>
       ) : (
         <>
-          {/* Practice statistics overview cards */}
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+          {/* Executive Metrics Row */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12 pb-6 border-b border-zinc-200 dark:border-zinc-800">
             <MetricCard 
-              title="Placement Readiness" 
+              title="Readiness Index" 
               value={`${placementReadiness}%`} 
-              trend={placementReadiness >= 75 ? "Target credentials met" : "Complete key preparation steps"} 
-              icon={<i className="fa-solid fa-bullseye w-5 h-5 text-indigo-500" ></i>} 
+              trend={placementReadiness >= 75 ? "Target credentials met" : "Preparation required"} 
+              icon={<i className="fa-solid fa-bullseye w-4 h-4 text-zinc-600 dark:text-zinc-400"></i>} 
             />
             <MetricCard 
-              title="Consistency score" 
+              title="Consistency" 
               value={`${consistencyScore}%`} 
-              trend={`${practiceLogs.length} logged sessions in last 30d`} 
-              icon={<i className="fa-solid fa-chart-line w-5 h-5 text-cyan-500" ></i>} 
+              trend={`${practiceLogs.length} sessions logged (30d)`} 
+              icon={<i className="fa-solid fa-chart-line w-4 h-4 text-zinc-600 dark:text-zinc-400"></i>} 
             />
             <MetricCard 
-              title="Daily practice streak" 
-              value={`${practiceStreak} Days`} 
-              trend={practiceStreak > 0 ? "🔥 Keep the fire burning!" : "Log a practice session today"} 
-              icon={<i className="fa-solid fa-fire w-5 h-5 text-amber-500 fill-amber-500/10" ></i>} 
+              title="Active Streak" 
+              value={`${practiceStreak}d`} 
+              trend={practiceStreak > 0 ? "Maintained activity" : "No recent activity"} 
+              icon={<i className="fa-solid fa-bolt w-4 h-4 text-zinc-600 dark:text-zinc-400"></i>} 
             />
             <MetricCard 
-              title="Weekly Practice" 
+              title="Weekly Volume" 
               value={`${weeklyPracticeMinutes}m`} 
-              trend={`Target: ${weeklyMinutesTarget}m | ${Math.round((weeklyPracticeMinutes/weeklyMinutesTarget)*100)}%`} 
-              icon={<i className="fa-solid fa-clock w-5 h-5 text-emerald-500" ></i>} 
+              trend={`Target: ${weeklyMinutesTarget}m (${Math.round((weeklyPracticeMinutes/weeklyMinutesTarget)*100)}%)`} 
+              icon={<i className="fa-solid fa-clock w-4 h-4 text-zinc-600 dark:text-zinc-400"></i>} 
             />
           </div>
 
-          {/* Interactive practice tools section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-6">
+          {/* Bento Grid Layout - Now completely flat */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
             
-            {/* Practice checklist widget */}
-            <div className="lg:col-span-2 glass-panel rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-4">
+            {/* Heatmap & Timeline Feed - Main Span */}
+            <div className="md:col-span-8 flex flex-col gap-10">
+              
+              <div className="flex flex-col">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div>
-                    <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-                      <i className="fa-solid fa-square-check w-5 h-5 text-indigo-500" ></i>
-                      Daily Practice Checklist
+                    <h3 className="font-semibold text-sm text-zinc-900 dark:text-white flex items-center gap-2">
+                      Activity Graph
                     </h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Customize and tick off daily practice milestones.</p>
+                    <p className="text-xs text-zinc-500 mt-0.5">
+                      Aggregated commits, mock interviews, and logged milestones.
+                    </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-indigo-500">{checklistCompletedPct}% Done</span>
-                    <div className="w-20 h-2 bg-zinc-200/50 dark:bg-zinc-800/40 rounded-full overflow-hidden">
-                      <div className="bg-indigo-500 h-full transition-all duration-500" style={{ width: `${checklistCompletedPct}%` }}></div>
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => setIsExcelModalOpen(true)} className="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 border border-emerald-500/20">
+                      <i className="fa-solid fa-download"></i> Report
+                    </button>
+                    <div className="flex items-center gap-1.5 border-l border-zinc-200 dark:border-zinc-800 pl-3">
+                      <span className="text-[10px] text-zinc-500">Less</span>
+                      {[0, 1, 2, 3, 4].map(v => (
+                        <div 
+                          key={v} 
+                          className="w-3 h-3 rounded-[2px]" 
+                          style={{ backgroundColor: `var(--heatmap-bg-${v})` }}
+                        />
+                      ))}
+                      <span className="text-[10px] text-zinc-500">More</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Checklist Add form */}
-                <form onSubmit={addTask} className="flex gap-2 mb-4 bg-zinc-50/50 dark:bg-zinc-900/30 p-2 rounded-xl border border-zinc-200/40 dark:border-zinc-800/40">
-                  <input 
-                    type="text" 
-                    value={newTaskLabel}
-                    onChange={(e) => setNewTaskLabel(e.target.value)}
-                    placeholder="Add a new custom preparation task..." 
-                    className="flex-1 px-3 py-2 bg-transparent text-xs focus:outline-none dark:text-white"
-                  />
-                  <select 
-                    value={newTaskCategory}
-                    onChange={(e) => setNewTaskCategory(e.target.value as any)}
-                    className="px-2.5 py-1.5 text-[10px] font-bold uppercase rounded-lg border border-zinc-200/60 dark:border-zinc-800/50 bg-white dark:bg-zinc-950 focus:outline-none dark:text-zinc-300"
-                  >
-                    <option value="coding">Coding</option>
-                    <option value="interview">Interview</option>
-                    <option value="resume">Resume</option>
-                    <option value="academics">Revision</option>
-                  </select>
-                  <button 
-                    type="submit" 
-                    className="p-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors cursor-pointer"
-                  >
-                    <i className="fa-solid fa-plus w-4 h-4" ></i>
-                  </button>
-                </form>
-
-                {/* Tasks List */}
-                <div className="space-y-2.5 max-h-[260px] overflow-y-auto pr-1">
-                  {dailyTasks.length > 0 ? (
-                    dailyTasks.map((task) => (
-                      <div 
-                        key={task.id}
-                        className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
-                          task.completed 
-                            ? "bg-zinc-50/30 dark:bg-zinc-900/10 border-indigo-500/10 text-zinc-400 dark:text-zinc-500" 
-                            : "bg-white dark:bg-zinc-900/20 border-zinc-200/50 dark:border-zinc-800/30 hover:border-indigo-500/20"
-                        }`}
-                      >
-                        <div 
-                          onClick={() => toggleTask(task.id)}
-                          className="flex items-center gap-3 cursor-pointer flex-1 select-none"
-                        >
-                          {task.completed ? (
-                            <i className="fa-solid fa-square-check w-4.5 h-4.5 text-indigo-500 shrink-0" ></i>
-                          ) : (
-                            <i className="fa-regular fa-square w-4.5 h-4.5 text-zinc-400 shrink-0" ></i>
-                          )}
-                          <span className={`text-xs font-semibold ${task.completed ? 'line-through' : ''}`}>
-                            {task.label}
-                          </span>
+                <div className="overflow-x-auto relative" onMouseLeave={() => setSelectedHeatCell(null)}>
+                  {selectedHeatCell && (
+                    <div className="fixed z-50 pointer-events-none" style={{ left: selectedHeatCell.x, top: selectedHeatCell.y - 36 }}>
+                      <div className="relative">
+                        <div className="bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-[10px] font-medium px-2.5 py-1.5 rounded shadow-lg whitespace-nowrap">
+                          {selectedHeatCell.level === 0 ? 'No activity' : `${selectedHeatCell.level} activity level`} on {selectedHeatCell.date}
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
-                            task.category === "coding" ? "text-blue-500 bg-blue-500/10 border border-blue-550/15" :
-                            task.category === "interview" ? "text-emerald-500 bg-emerald-500/10 border border-emerald-550/15" :
-                            task.category === "resume" ? "text-purple-500 bg-purple-500/10 border border-purple-550/15" :
-                            "text-amber-500 bg-amber-500/10 border border-amber-550/15"
-                          }`}>
-                            {task.category}
-                          </span>
-                          <button 
-                            onClick={() => deleteTask(task.id)}
-                            className="p-1 hover:bg-rose-500/10 text-zinc-400 hover:text-rose-500 rounded-lg transition-colors cursor-pointer"
-                          >
-                            <i className="fa-solid fa-trash-can w-3.5 h-3.5" ></i>
-                          </button>
-                        </div>
+                        <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0" style={{ borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '4px solid rgb(24 24 27)' }} />
                       </div>
-                    ))
-                  ) : (
-                    <div className="py-10 text-center text-zinc-400 text-xs font-semibold">
-                      Your checklist is empty. Add tasks using the form above.
                     </div>
                   )}
-                </div>
-              </div>
-            </div>
 
-            {/* Pomodoro Timer widget */}
-            <div className="glass-panel rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
-              <div>
-                <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-1">
-                  <i className="fa-solid fa-clock w-5 h-5 text-indigo-500" ></i>
-                  Focus Practice Block
-                </h3>
-                <p className="text-xs text-zinc-550 dark:text-zinc-400 mb-6">Commit to a 25-minute undistracted revision sprint.</p>
-              </div>
-
-              <div className="flex flex-col items-center justify-center my-4">
-                <div className="text-5xl font-black tracking-tight tabular-nums text-zinc-950 dark:text-white mb-6 bg-gradient-to-tr from-indigo-500 to-purple-650 bg-clip-text text-transparent drop-shadow-sm">
-                  {String(timerMinutes).padStart(2, '0')}:{String(timerSeconds).padStart(2, '0')}
-                </div>
-                
-                <div className="flex gap-3">
-                  <button 
-                    onClick={() => setTimerIsRunning(!timerIsRunning)}
-                    className={`px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer ${
-                      timerIsRunning 
-                        ? "bg-zinc-200 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200" 
-                        : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-md shadow-indigo-500/10"
-                    }`}
-                  >
-                    {timerIsRunning ? (
-                      <>
-                        <i className="fa-solid fa-pause w-3.5 h-3.5" ></i> Pause
-                      </>
-                    ) : (
-                      <>
-                        <i className="fa-solid fa-play w-3.5 h-3.5" ></i> Start Focus
-                      </>
-                    )}
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setTimerIsRunning(false);
-                      setTimerMinutes(25);
-                      setTimerSeconds(0);
-                    }}
-                    className="p-2.5 border border-zinc-200/50 dark:border-zinc-800/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/30 rounded-xl text-zinc-500 dark:text-zinc-400 cursor-pointer"
-                    title="Reset Timer"
-                  >
-                    <i className="fa-solid fa-rotate-left w-4 h-4" ></i>
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-6 text-[10px] text-zinc-400 dark:text-zinc-550 text-center leading-relaxed border-t border-zinc-100 dark:border-zinc-900/60 pt-3">
-                Completed focus blocks will automatically load ready-to-log minutes to your timeline grid.
-              </div>
-            </div>
-
-          </div>
-
-          {/* Practice activity grid & timeline */}
-          <div className="glass-panel rounded-3xl p-6 group">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
-              <div>
-                <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-                  <i className="fa-solid fa-calendar w-5 h-5 text-indigo-500" ></i>
-                  Practice Activity Grid
-                </h3>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                  Consolidated tracking of mock interviews, resume improvements, and solved coding milestones.
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] text-zinc-400 font-bold">Less</span>
-                {[0, 1, 2, 3].map(v => (
-                  <div 
-                    key={v} 
-                    className="w-3.5 h-3.5 rounded-sm border border-black/5 dark:border-white/5" 
-                    style={{ backgroundColor: `var(--heatmap-bg-${v})` }}
-                  />
-                ))}
-                <span className="text-[10px] text-zinc-400 font-bold">More</span>
-              </div>
-            </div>
-
-            <div
-              className="overflow-x-auto relative"
-              onMouseLeave={() => setSelectedHeatCell(null)}
-            >
-              {/* Floating tooltip */}
-              {selectedHeatCell && (
-                <div
-                  className="fixed z-50 pointer-events-none"
-                  style={{ left: selectedHeatCell.x, top: selectedHeatCell.y - 44 }}
-                >
-                  <div className="relative">
-                    <div className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap shadow-lg">
-                      {selectedHeatCell.level === 0
-                        ? 'No activity'
-                        : selectedHeatCell.level === 1
-                        ? 'Light practice'
-                        : selectedHeatCell.level === 2
-                        ? 'Medium practice'
-                        : 'Heavy practice'}{' '}
-                      on {selectedHeatCell.date}
-                    </div>
-                    {/* Arrow pointing down */}
-                    <div
-                      className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0"
-                      style={{
-                        borderLeft: '5px solid transparent',
-                        borderRight: '5px solid transparent',
-                        borderTop: '5px solid rgb(24 24 27)', // zinc-900
-                      }}
-                    />
+                  <div className="flex gap-[3px] min-w-[620px] pb-1 pt-1">
+                    {heatmapGrid.map((week, wi) => (
+                      <div key={wi} className="flex flex-col gap-[3px]">
+                        {week.map((day, di) => {
+                          const level = day >= 0 && day <= 4 ? day : 0;
+                          const weeks = 22;
+                          const totalDays = weeks * 7;
+                          const dayIdx = wi * 7 + di;
+                          const diffDays = totalDays - 1 - dayIdx;
+                          const cellDate = new Date(Date.now() - diffDays * 86400000);
+                          const dateStr = cellDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                          const isHovered = selectedHeatCell?.date === dateStr;
+                          return (
+                            <div
+                              key={di}
+                              onMouseEnter={(e) => {
+                                const rect = (e.target as HTMLElement).getBoundingClientRect();
+                                setSelectedHeatCell({ date: dateStr, level, x: rect.left + rect.width / 2 - 50, y: rect.top });
+                              }}
+                              className={`w-[11px] h-[11px] rounded-[2px] transition-all cursor-default border border-black/5 dark:border-white/5 ${isHovered ? 'ring-1 ring-zinc-400 scale-110 z-10' : ''}`}
+                              style={{ backgroundColor: `var(--heatmap-bg-${level})` }}
+                            />
+                          );
+                        })}
+                      </div>
+                    ))}
                   </div>
                 </div>
-              )}
-
-              <div className="flex gap-1.5 min-w-[620px] pb-2">
-                {heatmapGrid.map((week, wi) => (
-                  <div key={wi} className="flex flex-col gap-1.5">
-                    {week.map((day, di) => {
-                      const level = day >= 0 && day <= 3 ? day : 0;
-                      const weeks = 22;
-                      const totalDays = weeks * 7;
-                      const dayIdx = wi * 7 + di;
-                      const diffDays = totalDays - 1 - dayIdx;
-                      const cellDate = new Date(Date.now() - diffDays * 86400000);
-                      const dateStr = cellDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                      const isHovered = selectedHeatCell?.date === dateStr;
-                      return (
-                        <div
-                          key={di}
-                          onMouseEnter={(e) => {
-                            const rect = (e.target as HTMLElement).getBoundingClientRect();
-                            setSelectedHeatCell({
-                              date: dateStr,
-                              level,
-                              x: rect.left + rect.width / 2 - 70,
-                              y: rect.top,
-                            });
-                          }}
-                          className={`w-3.5 h-3.5 rounded-sm transition-transform duration-100 cursor-crosshair border border-black/5 dark:border-white/5 ${
-                            isHovered ? 'scale-125 ring-2 ring-white/80 dark:ring-zinc-900/80 shadow-md' : 'hover:scale-110'
-                          }`}
-                          style={{ backgroundColor: `var(--heatmap-bg-${level})` }}
-                        />
-                      );
-                    })}
-                  </div>
-                ))}
               </div>
-            </div>
-          </div>
 
-          {/* Practice logger & Daily Quiz Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            {/* Practice Session Logger */}
-            <div className="lg:col-span-2 glass-panel rounded-3xl p-6 flex flex-col justify-between">
-              <div>
-                <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-1">
-                  <i className="fa-solid fa-chart-line w-5 h-5 text-indigo-500" ></i>
-                  Log Daily Practice Session
-                </h3>
-                <p className="text-xs text-zinc-550 dark:text-zinc-400 mb-4">Record your practice logs to visualize daily consistency metrics.</p>
-
-                <form onSubmit={handleLogPractice} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-black uppercase text-zinc-400 dark:text-zinc-550 mb-1.5">Practice Category</label>
-                      <select 
-                        value={logCategory}
-                        onChange={(e) => setLogCategory(e.target.value as any)}
-                        className="w-full px-4 py-2.5 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/50 dark:bg-zinc-900/50 text-xs focus:outline-none dark:text-zinc-200"
-                      >
-                        <option value="coding">LeetCode / Coding Practice</option>
-                        <option value="interview">Mock Interview Preparation</option>
-                        <option value="revision">CS Fundamentals / Academics</option>
-                        <option value="resume">Resume Optimization</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-black uppercase text-zinc-400 dark:text-zinc-550 mb-1.5">Duration (Minutes)</label>
-                      <input 
-                        type="number" 
-                        min="1" 
-                        max="300"
-                        value={logDuration}
-                        onChange={(e) => setLogDuration(Number(e.target.value))}
-                        className="w-full px-4 py-2.5 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/50 dark:bg-zinc-900/50 text-xs focus:outline-none dark:text-zinc-200"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] font-black uppercase text-zinc-400 dark:text-zinc-550 mb-1.5">Practice Notes / Key Takeaways</label>
-                    <textarea 
-                      rows={3}
-                      value={logNotes}
-                      onChange={(e) => setLogNotes(e.target.value)}
-                      placeholder="Specify solved problem details, networking topics reviewed, or behavioral points analyzed..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/50 dark:bg-zinc-900/50 text-xs focus:outline-none dark:text-zinc-200 resize-none"
-                    />
-                  </div>
-
-                  <button 
-                    type="submit" 
-                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/10 cursor-pointer"
-                  >
-                    Submit Practice Log
-                  </button>
-                </form>
-              </div>
-            </div>
-
-            {/* Rotating Quiz node */}
-            <div className="glass-panel rounded-3xl p-6 flex flex-col justify-between">
-              <div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-indigo-500 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-full">
-                  Daily Revision Node
-                </span>
-                <h3 className="text-base font-extrabold mt-3.5 flex items-center gap-1.5">
-                  <i className="fa-solid fa-circle-question w-5 h-5 text-indigo-500" ></i>
-                  CS Brainteaser
-                </h3>
-                <span className="text-[10px] text-zinc-400 font-bold block mb-4 mt-0.5">{activeQuiz.topic}</span>
-                
-                <p className="text-xs font-bold leading-relaxed mb-4 text-zinc-800 dark:text-zinc-200">
-                  {activeQuiz.question}
-                </p>
-
-                <div className="space-y-2">
-                  {activeQuiz.options.map((opt, oIdx) => {
-                    const isSelected = selectedOption === oIdx;
-                    const isCorrect = oIdx === activeQuiz.correctAnswer;
-                    
-                    let btnColor = "bg-white/50 dark:bg-zinc-900/20 border-zinc-200/50 dark:border-zinc-800/30 hover:border-indigo-550/20 text-zinc-700 dark:text-zinc-300";
-                    if (quizAnswered) {
-                      if (isCorrect) {
-                        btnColor = "bg-emerald-500/10 border-emerald-500/40 text-emerald-600 dark:text-emerald-400";
-                      } else if (isSelected) {
-                        btnColor = "bg-rose-500/10 border-rose-500/40 text-rose-600 dark:text-rose-400";
-                      } else {
-                        btnColor = "opacity-50 border-zinc-200/30 dark:border-zinc-800/10 bg-transparent text-zinc-400";
-                      }
-                    }
-
-                    return (
-                      <button 
-                        key={oIdx}
-                        disabled={quizAnswered}
-                        onClick={() => handleQuizAnswerSubmit(oIdx)}
-                        className={`w-full p-3 rounded-xl border text-left text-xs font-semibold leading-relaxed transition-all cursor-pointer ${btnColor}`}
-                      >
-                        {opt}
-                      </button>
-                    );
-                  })}
+              <div className="flex flex-col flex-1">
+                <div className="flex items-center justify-between mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                  <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">
+                    Event Timeline
+                  </h3>
+                  <span className="text-[10px] text-zinc-500 uppercase tracking-widest">{timelineActivities.length} Events</span>
                 </div>
-              </div>
 
-              {showQuizExplanation && (
-                <div className="mt-4 p-3 bg-indigo-500/5 border border-indigo-500/10 rounded-xl">
-                  <p className="text-[9px] font-black uppercase text-indigo-500 tracking-wider mb-1">Explanation</p>
-                  <p className="text-[11px] text-zinc-550 dark:text-zinc-300 leading-relaxed">
-                    {activeQuiz.explanation}
-                  </p>
-                </div>
-              )}
-            </div>
-
-          </div>
-
-          {/* AI Twin Recommendations & Diagnostic Mastery */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <div className="lg:col-span-2 glass-panel rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-4">
-                  <i className="fa-solid fa-microchip w-5 h-5 text-indigo-500 animate-pulse" ></i>
-                  AI Twin Recommendations
-                </h3>
-                <div className="space-y-4">
-                  {recommendations.slice(0, 3).map((rec, i) => (
-                    <RecommendationItem key={i} title={rec.title} desc={rec.desc} type={rec.type} />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="glass-panel rounded-3xl p-6 flex flex-col justify-between">
-              <div>
-                <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-5">
-                  <i className="fa-solid fa-trophy w-5 h-5 text-amber-500" ></i>
-                  Diagnostic Mastery
-                </h3>
-                <div className="space-y-4.5">
-                  {skillsToDisplay.map((skill, idx) => (
-                    <SkillBar key={skill} name={skill} progress={getProgress(skill, idx)} gradient={getGradient(idx)} />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Activity Feed and Timeline Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            {/* Timeline Activities Feed */}
-            <div className="lg:col-span-2 glass-panel rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-5">
-                  <i className="fa-solid fa-clock-rotate-left w-5 h-5 text-indigo-500" ></i>
-                  Practice Timeline & Submissions
-                </h3>
-
-                <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1">
+                <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
                   {timelineActivities.length > 0 ? (
                     timelineActivities.slice(0, 10).map((act, i) => {
-                      let tagColor = "text-indigo-500 bg-indigo-500/10 border-indigo-500/20";
-                      if (act.type === 'coding') tagColor = "text-blue-500 bg-blue-500/10 border-blue-500/20";
-                      if (act.type === 'interview') tagColor = "text-emerald-500 bg-emerald-500/10 border-emerald-550/20";
+                      let typeLabel = "LOG";
+                      if (act.type === 'coding') typeLabel = "CODE";
+                      if (act.type === 'interview') typeLabel = "INTV";
                       
                       return (
-                        <div key={act.id} className="p-3.5 rounded-xl border border-zinc-200/50 dark:border-zinc-800/30 bg-white/10 dark:bg-zinc-900/10 flex items-start justify-between gap-4">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-extrabold text-xs text-zinc-900 dark:text-white">{act.title}</span>
-                              {act.duration && (
-                                <span className="text-[10px] text-zinc-400 font-bold">({act.duration} mins)</span>
-                              )}
+                        <div key={act.id} className="group flex items-start gap-4 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 px-2 rounded-md transition-colors -mx-2">
+                          <div className="w-12 shrink-0 pt-0.5">
+                            <span className="text-[10px] font-mono text-zinc-400">{act.time.substring(5).replace('-', '/')}</span>
+                          </div>
+                          <div className="flex-1 space-y-1 border-l-2 border-zinc-200 dark:border-zinc-800 pl-4">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-xs text-zinc-900 dark:text-white">{act.title}</span>
+                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500">{typeLabel}</span>
                             </div>
-                            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">{act.desc}</p>
-                            <span className="text-[9px] text-zinc-400 font-black block pt-1 uppercase">{act.time}</span>
+                            <p className="text-[11px] text-zinc-500 leading-relaxed truncate max-w-[400px]">{act.desc}</p>
                           </div>
-                          
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border ${tagColor}`}>
-                              {act.type}
-                            </span>
-                            {act.type === 'log' && (
-                              <button 
-                                onClick={() => deleteLog(act.id)}
-                                className="p-1 hover:bg-rose-500/10 text-zinc-450 hover:text-rose-500 rounded-lg transition-colors cursor-pointer"
-                                title="Delete Log"
-                              >
-                                <i className="fa-solid fa-trash-can w-3.5 h-3.5" ></i>
-                              </button>
-                            )}
-                          </div>
+                          {act.type === 'log' && (
+                            <button onClick={() => deleteLog(act.id)} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-zinc-400 hover:text-rose-500 rounded transition-all shrink-0">
+                              <i className="fa-solid fa-xmark w-3 h-3"></i>
+                            </button>
+                          )}
                         </div>
                       );
                     })
                   ) : (
-                    <div className="py-12 text-center text-zinc-400 text-xs">
-                      No preparation milestones recorded. Use the tools above to log custom practice.
+                    <div className="py-8 text-center text-zinc-400 text-xs">
+                      No events recorded. Telemetry will appear here.
                     </div>
                   )}
                 </div>
               </div>
+
             </div>
 
-            {/* Quick Actions and Modules links */}
-            <div className="flex flex-col gap-6">
+            {/* Side Panel - Recommendations & Tasks */}
+            <div className="md:col-span-4 flex flex-col gap-10">
               
-              <div className="glass-panel rounded-3xl p-6 group">
-                <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2 mb-5">
-                  <i className="fa-solid fa-graduation-cap w-5 h-5 text-indigo-500" ></i>
-                  Academic Revision Nodes
-                </h3>
-                <div className="space-y-3.5">
-                  <AcademicFocusItem title="Operating Systems Paging" sub="Virtual Memory architectures, page fault diagnostics & LRU Cache replacement schemes" />
-                  <AcademicFocusItem title="Computer Networks Handshake" sub="TCP Connection parameters, SYN-ACK verification, sequence offsets & network latency" />
+              {/* Recommendations Terminal */}
+              <div className="flex flex-col text-zinc-600 dark:text-zinc-300">
+                <div className="flex items-center justify-between mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                  <h3 className="font-semibold text-sm text-zinc-900 dark:text-white flex items-center gap-2">
+                    <i className="fa-solid fa-terminal text-[10px]"></i> Actionable Insights
+                  </h3>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                </div>
+                <div className="space-y-4">
+                  {recommendations.slice(0, 3).map((rec, i) => (
+                    <div key={i} className="space-y-1.5">
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-[9px] font-mono text-zinc-500 uppercase">[{rec.type}]</span>
+                        <span className="text-zinc-800 dark:text-zinc-100 font-medium">{rec.title}</span>
+                      </div>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed pl-10 border-l border-zinc-200 dark:border-zinc-800">{rec.desc}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <Link 
-                href="/student/mock-interviews" 
-                className="glass-panel rounded-3xl p-6 flex flex-col justify-between group overflow-hidden relative hover:border-indigo-550/30 transition-all duration-300 flex-1 min-h-[160px]"
-              >
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700"></div>
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-indigo-500 bg-indigo-500/10 border border-indigo-550/25 px-2.5 py-1 rounded-full">
-                    Diagnostic Module
-                  </span>
-                  <h3 className="text-lg font-bold mt-4 mb-2">Conduct AI Mock Interview</h3>
-                  <p className="text-xs text-zinc-550 dark:text-zinc-405 leading-relaxed">
-                    Start a live, 3-question mock interview simulating FAANG parameters. Diagnostic scorecard is updated instantly.
-                  </p>
+              {/* Action Items List */}
+              <div className="flex-1 flex flex-col">
+                <div className="flex items-center justify-between mb-3 border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                  <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">
+                    Action Items
+                  </h3>
+                  <span className="text-[10px] font-medium text-zinc-500">{checklistCompletedPct}% Done</span>
                 </div>
-                <div className="mt-6 flex justify-between items-center z-10">
-                  <span className="text-xs font-semibold text-indigo-500 group-hover:underline">Launch interface</span>
-                  <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-zinc-200/50 dark:border-zinc-800/40 text-indigo-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300">
-                    <i className="fa-solid fa-arrow-up-right-from-square w-4 h-4" ></i>
+
+                <div className="w-full h-1 bg-zinc-100 dark:bg-zinc-900 rounded-full mb-4 overflow-hidden">
+                  <div className="h-full bg-zinc-800 dark:bg-zinc-200 transition-all duration-500" style={{ width: `${checklistCompletedPct}%` }}></div>
+                </div>
+
+                <div className="space-y-1 flex-1 overflow-y-auto min-h-[150px] mb-4">
+                  {dailyTasks.map((task) => (
+                    <div key={task.id} className="group flex items-center justify-between py-2 hover:bg-zinc-50 dark:hover:bg-zinc-900/20 px-2 -mx-2 rounded transition-colors">
+                      <div onClick={() => toggleTask(task.id)} className="flex items-center gap-3 cursor-pointer flex-1">
+                        <div className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center transition-colors ${task.completed ? 'bg-zinc-900 border-zinc-900 dark:bg-white dark:border-white text-white dark:text-zinc-900' : 'border-zinc-300 dark:border-zinc-700'}`}>
+                          {task.completed && <i className="fa-solid fa-check text-[8px]"></i>}
+                        </div>
+                        <span className={`text-[11px] ${task.completed ? 'text-zinc-400 line-through' : 'text-zinc-700 dark:text-zinc-300'}`}>{task.label}</span>
+                      </div>
+                      <button onClick={() => deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 p-1 text-zinc-400 hover:text-rose-500 transition-colors">
+                        <i className="fa-solid fa-xmark w-3 h-3"></i>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <form onSubmit={addTask} className="flex gap-2 border-t border-zinc-200 dark:border-zinc-800 pt-3">
+                  <input type="text" value={newTaskLabel} onChange={(e) => setNewTaskLabel(e.target.value)} placeholder="Add task..." className="flex-1 px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-xs focus:outline-none focus:border-zinc-400 dark:text-zinc-200" />
+                  <button type="submit" className="px-3 py-1.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-medium rounded hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors">Add</button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Secondary Features Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 border-t border-zinc-200 dark:border-zinc-800 pt-10 mt-6">
+            
+            {/* Session Logger */}
+            <div className="flex flex-col">
+              <h3 className="font-semibold text-sm text-zinc-900 dark:text-white mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-3">Log Session</h3>
+              <form onSubmit={handleLogPractice} className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-medium text-zinc-500 mb-1">Type</label>
+                    <select value={logCategory} onChange={(e) => setLogCategory(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-zinc-200 dark:border-zinc-800 rounded text-[11px] bg-zinc-50 dark:bg-zinc-900 focus:outline-none dark:text-zinc-200">
+                      <option value="coding">Coding</option>
+                      <option value="interview">Interview</option>
+                      <option value="revision">Theory</option>
+                      <option value="resume">Career</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium text-zinc-500 mb-1">Duration (m)</label>
+                    <input type="number" min="1" value={logDuration} onChange={(e) => setLogDuration(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-zinc-200 dark:border-zinc-800 rounded text-[11px] bg-zinc-50 dark:bg-zinc-900 focus:outline-none dark:text-zinc-200" />
                   </div>
                 </div>
-              </Link>
+                <div>
+                  <label className="block text-[10px] font-medium text-zinc-500 mb-1">Notes</label>
+                  <input type="text" value={logNotes} onChange={(e) => setLogNotes(e.target.value)} placeholder="Summary of work..." className="w-full px-2.5 py-1.5 border border-zinc-200 dark:border-zinc-800 rounded text-[11px] bg-zinc-50 dark:bg-zinc-900 focus:outline-none dark:text-zinc-200" />
+                </div>
+                <button type="submit" className="w-full py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white rounded text-xs font-medium transition-colors border border-zinc-200 dark:border-zinc-700">Submit Log</button>
+              </form>
+            </div>
 
+            {/* Diagnostic Mastery */}
+            <div className="flex flex-col">
+              <h3 className="font-semibold text-sm text-zinc-900 dark:text-white mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-3">Competency Map</h3>
+              <div className="space-y-4 pt-1">
+                {skillsToDisplay.map((skill, idx) => (
+                  <SkillBar key={skill} name={skill} progress={getProgress(skill, idx)} />
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex flex-col">
+              <h3 className="font-semibold text-sm text-zinc-900 dark:text-white mb-4 border-b border-zinc-200 dark:border-zinc-800 pb-3">Evaluations</h3>
+              <div className="flex flex-col justify-center items-center text-center group cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/30 p-6 rounded-xl transition-colors h-full border border-dashed border-zinc-200 dark:border-zinc-800">
+                <i className="fa-solid fa-microphone-lines text-xl text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white mb-3 transition-colors"></i>
+                <h4 className="font-semibold text-sm text-zinc-900 dark:text-white">Mock Interview</h4>
+                <p className="text-[11px] text-zinc-500 mt-1 max-w-[200px]">Launch a technical diagnostic loop to update readiness scores.</p>
+                <Link href="/student/mock-interviews" className="mt-4 text-[10px] font-bold text-zinc-900 dark:text-white uppercase tracking-wider bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded">Launch Module</Link>
+              </div>
             </div>
 
           </div>
         </>
       )}
+      <ExcelReportModal 
+        isOpen={isExcelModalOpen} 
+        onClose={() => setIsExcelModalOpen(false)} 
+        practiceLogs={practiceLogs} 
+        interviews={interviews}
+        codingProfile={codingProfile}
+      />
     </div>
   );
 }
 
-function MetricCard({ title, value, trend, icon, link }: { title: string; value: string; trend: string; icon: React.ReactNode; link?: string }) {
-  const content = (
-    <div className="glass-panel p-3 md:p-6 rounded-2xl md:rounded-3xl flex flex-col justify-between group relative overflow-hidden transition-all hover:border-indigo-550/30 bg-white/20 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm h-full cursor-pointer">
-      <div className="flex justify-between items-start mb-2 md:mb-4">
-        <span className="text-zinc-400 text-[9px] md:text-xs font-bold uppercase tracking-wider leading-tight">{title}</span>
-        <div className="p-1.5 md:p-2 bg-white/50 dark:bg-zinc-900/40 rounded-lg md:rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 shrink-0 [&>*]:w-4 [&>*]:h-4 md:[&>*]:w-5 md:[&>*]:h-5">{icon}</div>
+function MetricCard({ title, value, trend, icon }: { title: string; value: string; trend: string; icon: React.ReactNode }) {
+  return (
+    <div className="flex flex-col justify-between h-full group">
+      <div className="flex justify-between items-start mb-3">
+        <span className="text-zinc-500 text-[10px] md:text-xs font-medium tracking-wide uppercase">{title}</span>
+        {icon}
       </div>
       <div>
-        <h3 className="text-xl md:text-3xl font-extrabold text-zinc-950 dark:text-white leading-none mb-1 md:mb-2">{value}</h3>
-        <p className="text-[9px] md:text-[10px] text-zinc-550 dark:text-zinc-450 font-bold leading-tight">{trend}</p>
+        <h3 className="text-2xl md:text-4xl font-bold text-zinc-900 dark:text-white leading-none mb-2 tracking-tight transition-transform group-hover:translate-x-1">{value}</h3>
+        <p className="text-[10px] text-zinc-400 font-medium">{trend}</p>
       </div>
-    </div>
-  );
-  return link ? <Link href={link}>{content}</Link> : content;
-}
-
-function RecommendationItem({ title, desc, type }: { title: string; desc: string; type: string }) {
-  const colors: any = { 
-    coding: "text-blue-500 bg-blue-500/10 border-blue-550/20", 
-    resume: "text-emerald-500 bg-emerald-500/10 border-emerald-550/20", 
-    job: "text-purple-500 bg-purple-500/10 border-purple-550/20" 
-  };
-  return (
-    <div className="p-4 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/20 hover:border-indigo-500/30 transition-all duration-300 flex items-start justify-between gap-4">
-      <div className="space-y-1">
-        <h4 className="font-bold text-sm text-zinc-900 dark:text-white">{title}</h4>
-        <p className="text-xs text-zinc-550 dark:text-zinc-400 leading-relaxed">{desc}</p>
-      </div>
-      <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border shrink-0 ${colors[type] || colors.job}`}>
-        {type}
-      </span>
     </div>
   );
 }
 
-function SkillBar({ name, progress, gradient }: { name: string; progress: number; gradient: string }) {
+function SkillBar({ name, progress }: { name: string; progress: number }) {
   return (
     <div>
-      <div className="flex justify-between text-xs mb-1.5 font-bold text-zinc-850 dark:text-zinc-300">
+      <div className="flex justify-between text-[11px] mb-1.5 font-medium text-zinc-700 dark:text-zinc-300">
         <span>{name}</span>
-        <span className="text-indigo-500 dark:text-indigo-400">{progress}%</span>
+        <span className="text-zinc-400">{progress}%</span>
       </div>
-      <div className="h-2 w-full bg-zinc-200/50 dark:bg-zinc-800/30 rounded-full overflow-hidden border border-zinc-250/20 dark:border-zinc-850/20">
-        <div className={`h-full bg-gradient-to-r ${gradient}`} style={{ width: `${progress}%` }}></div>
-      </div>
-    </div>
-  );
-}
-
-function AcademicFocusItem({ title, sub }: { title: string; sub: string }) {
-  return (
-    <div className="flex items-start gap-3 p-3.5 rounded-xl border border-zinc-200/40 dark:border-zinc-800/30 bg-white/10 dark:bg-zinc-900/10 hover:border-indigo-500/15 transition-colors">
-      <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0"></div>
-      <div>
-        <h4 className="font-bold text-xs">{title}</h4>
-        <p className="text-[10px] text-zinc-550 dark:text-zinc-400 mt-0.5 leading-relaxed">{sub}</p>
+      <div className="h-1.5 w-full bg-zinc-100 dark:bg-zinc-900 rounded-full overflow-hidden">
+        <div className="h-full bg-zinc-800 dark:bg-zinc-200" style={{ width: `${progress}%` }}></div>
       </div>
     </div>
   );

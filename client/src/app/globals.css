@@ -234,49 +234,20 @@ body {
   position: relative;
 }
 
-/* Elegant Mesh Background */
+/* Elegant Mesh Background Removed for flat UI */
 body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -10;
-  pointer-events: none;
-  background-image: 
-    radial-gradient(circle at 10% 20%, var(--mesh-color-1) 0%, transparent 40%),
-    radial-gradient(circle at 90% 10%, var(--mesh-color-2) 0%, transparent 40%),
-    radial-gradient(circle at 50% 80%, var(--mesh-color-3) 0%, transparent 45%),
-    radial-gradient(circle at 80% 80%, var(--mesh-color-4) 0%, transparent 35%);
-  filter: blur(80px);
-  animation: mesh-float 25s ease-in-out infinite alternate;
+  display: none;
 }
 
-@keyframes mesh-float {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(2%, 3%) scale(1.05);
-  }
-  100% {
-    transform: translate(-1%, -2%) scale(0.98);
-  }
-}
-
-/* Premium UI Utilities */
+/* Premium UI Utilities - Flattened */
 .glass-panel {
   background: var(--card-bg);
-  backdrop-filter: blur(16px) saturate(120%);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
   border: 1px solid var(--card-border);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-panel-hover:hover {
   border-color: var(--card-hover-border);
-  box-shadow: 0 10px 30px -10px var(--glow-color);
   transform: translateY(-2px);
 }
 
@@ -299,37 +270,21 @@ body::before {
   background: rgba(156, 163, 175, 0.4);
 }
 
-/* Glowing text effects */
+/* Glowing text effects - Disabled for flat UI */
 .glow-text-primary {
-  text-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+  text-shadow: none;
 }
 
-/* Interactive elements */
+/* Interactive elements - Flattened */
 .btn-premium {
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-premium::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -50%;
-  width: 200%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-  transform: skewX(-15deg);
-  transition: 0.75s;
-}
-
-.btn-premium:hover::after {
-  left: 120%;
+/* Global shadow override for all pages */
+* {
+  box-shadow: none !important;
 }
 
 /* Colorful Theme restores the standard colorful palette for specific sections (like the Coding Tracker) */
@@ -486,4 +441,21 @@ body::before {
 
 .animate-fade-in {
   animation: fade-in 0.2s ease-out forwards;
+}
+
+/* ── Typography Global Enforcements ── */
+h1, h2 {
+  font-weight: 700 !important;
+}
+
+h3, h4, h5, h6 {
+  font-weight: 600 !important;
+}
+
+button, .btn {
+  font-weight: 600 !important;
+}
+
+strong, b {
+  font-weight: 600 !important;
 }

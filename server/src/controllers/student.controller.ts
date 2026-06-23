@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import StudentProfile from '../models/StudentProfile';
+import AIClone from '../models/AIClone';
 
 export const getProfile = async (req: Request, res: Response) => {
   try {
@@ -32,6 +33,36 @@ export const updateProfile = async (req: Request, res: Response) => {
     return res.json({ success: true, data: profile });
   } catch (error: any) {
     console.error('Error updating student profile:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const getCloneProfile = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) return res.status(400).json({ success: false, error: 'User ID is required' });
+    const clone = await AIClone.findOne({ userId });
+    return res.json({ success: true, data: clone });
+  } catch (error: any) {
+    console.error('Error fetching clone:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const trainClone = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { knowledgeBase, isActive } = req.body;
+    if (!userId) return res.status(400).json({ success: false, error: 'User ID is required' });
+    
+    const clone = await AIClone.findOneAndUpdate(
+      { userId },
+      { $set: { knowledgeBase, isActive } },
+      { upsert: true, new: true }
+    );
+    return res.json({ success: true, data: clone });
+  } catch (error: any) {
+    console.error('Error training clone:', error);
     return res.status(500).json({ success: false, error: error.message });
   }
 };

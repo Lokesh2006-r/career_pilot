@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
+import ReactMarkdown from 'react-markdown';
 
 // ... (keeping Candidate and Message interfaces, MOCK_CANDIDATES array unchanged)
 interface Candidate {
@@ -139,17 +140,18 @@ export default function CandidateSearch() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+      const response = await fetch(`${API_BASE_URL}/api/recruiter/clone-chat/${selectedCandidate.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          messages: updatedMessages,
-          systemPrompt: selectedCandidate.personalityPrompt
+          messages: updatedMessages
         }),
       });
       const data = await response.json();
       if (data.reply) {
         setChatMessages(prev => [...prev, { role: 'model', content: data.reply }]);
+      } else if (data.error) {
+        setChatMessages(prev => [...prev, { role: 'model', content: `[System]: ${data.error}` }]);
       } else {
         setChatMessages(prev => [...prev, { role: 'model', content: "I encountered an issue syncing. Let me retry." }]);
       }
@@ -409,7 +411,11 @@ export default function CandidateSearch() {
                         ? 'bg-gradient-to-tr from-purple-500 to-indigo-650 text-white rounded-tr-none border border-purple-600/10' 
                         : 'bg-white/80 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 rounded-tl-none border border-zinc-200/50 dark:border-zinc-800/40'
                     }`}>
-                      <p className="whitespace-pre-line">{msg.content}</p>
+                      <div className="[&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>li]:mb-1 [&>h3]:font-bold [&>h3]:mb-2 [&>strong]:font-bold [&>em]:italic break-words">
+                        <ReactMarkdown>
+                          {msg.content}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 ))}

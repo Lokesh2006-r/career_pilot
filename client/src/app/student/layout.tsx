@@ -19,7 +19,7 @@ const NAV_ITEMS = [
   { href: "/student/exam-craft",      icon: "fa-solid fa-graduation-cap",      label: "Exam Craft" },
   { href: "/student/projects",        icon: "fa-solid fa-lightbulb",           label: "Projects" },
   { href: "/student/jobs",            icon: "fa-solid fa-briefcase",           label: "Jobs" },
-  { href: "/student/settings",        icon: "fa-solid fa-gear",                label: "Settings" },
+  { href: "/student/ai-clone",        icon: "fa-solid fa-robot",               label: "AI Clone" },
 ];
 
 

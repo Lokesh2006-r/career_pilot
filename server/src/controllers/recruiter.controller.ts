@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import StudentProfile from '../models/StudentProfile';
 import Resume from '../models/Resume';
+import AIClone from '../models/AIClone';
+import { GoogleGenAI } from '@google/genai';
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+
 
 // Candidates List Endpoint
 export const getCandidates = async (req: Request, res: Response) => {
@@ -52,5 +57,63 @@ export const getCandidates = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error('Error fetching candidates:', error);
     return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const chatWithClone = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { studentId } = req.params;
+    const { messages, knowledgeBaseOverride, isActiveOverride } = req.body;
+
+    if (!studentId || !messages || !Array.isArray(messages)) {
+      res.status(400).json({ error: 'Invalid request' });
+      return;
+    }
+
+    const studentProfile = await StudentProfile.findOne({ userId: studentId });
+    const cloneData = await AIClone.findOne({ userId: studentId });
+
+    const isCloneActive = isActiveOverride !== undefined ? isActiveOverride : cloneData?.isActive;
+
+    if (!isCloneActive) {
+      res.status(404).json({ error: 'This candidate has not activated their AI Clone.' });
+      return;
+    }
+
+    const finalKnowledgeBase = knowledgeBaseOverride !== undefined ? knowledgeBaseOverride : (cloneData?.knowledgeBase || "");
+
+    const systemInstruction = `You are the AI Clone of ${studentProfile?.fullName || 'the candidate'}. 
+Your goal is to answer questions from a recruiter confidently, professionally, and honestly, based ONLY on the knowledge base provided. Do not make up experience. If asked something outside the knowledge base, state that you don't have that specific experience but express willingness to learn. Keep responses concise and conversational.
+KNOWLEDGE BASE:
+${finalKnowledgeBase}`;
+
+    let formattedMessages = messages;
+    while (formattedMessages.length > 0 && formattedMessages[0].role !== 'user') {
+      formattedMessages.shift();
+    }
+
+    const contents = formattedMessages.map((msg: any) => ({
+      role: msg.role === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.content }]
+    }));
+
+    if (!process.env.GEMINI_API_KEY) {
+      res.status(200).json({ reply: "Mock Clone Response: I am an AI representation of this candidate based on their profile data (API KEY MISSING). My background includes React and Node.js." });
+      return;
+    }
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents,
+      config: { systemInstruction }
+    });
+
+    const reply = response.text || "I'm having trouble thinking of a response right now.";
+    res.status(200).json({ reply });
+    return;
+  } catch (error: any) {
+    console.error('Error in clone chat:', error);
+    res.status(500).json({ error: error.message });
+    return;
   }
 };

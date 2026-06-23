@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 import { API_BASE_URL } from "@/lib/api";
+import { OnboardingView } from "./OnboardingView";
+import { TemplatesGallery } from "./TemplatesGallery";
 
 interface Experience {
   company: string;
@@ -59,6 +61,7 @@ export default function ResumeBuilder() {
   const userId = user?.uid || "sandbox-uid";
 
   const [activeTab, setActiveTab] = useState<"personal" | "experience" | "projects" | "education" | "skills">("personal");
+  const [step, setStep] = useState<"onboarding" | "templates" | "editor">("onboarding");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [parsing, setParsing] = useState(false);
@@ -414,10 +417,17 @@ export default function ResumeBuilder() {
       skills: { ...resumeData.skills, [field]: value }
     });
   };
-
   const handlePrint = () => {
     window.print();
   };
+
+  if (step === "onboarding") {
+    return <OnboardingView setStep={setStep} handleUploadResume={handleUploadResume} parsing={parsing} />;
+  }
+
+  if (step === "templates") {
+    return <TemplatesGallery setStep={setStep} resumeData={resumeData} setResumeData={setResumeData} />;
+  }
 
   return (
     <div className="space-y-8 animate-fade-in print:m-0 print:p-0">
@@ -1518,6 +1528,12 @@ export default function ResumeBuilder() {
                     </div>
 
                   </div>
+                ) : resumeData.template === 'creative' ? (
+                  <CreativeTemplate resumeData={resumeData} />
+                ) : resumeData.template === 'professional' ? (
+                  <ProfessionalTemplate resumeData={resumeData} />
+                ) : resumeData.template === 'tech' ? (
+                  <TechTemplate resumeData={resumeData} />
                 ) : (
                   // MODERN TEMPLATE (DEFAULT)
                   <div className="space-y-5 text-[10px] leading-relaxed">
