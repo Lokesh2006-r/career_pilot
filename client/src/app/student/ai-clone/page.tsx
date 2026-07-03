@@ -40,7 +40,10 @@ export default function AIClonePage() {
       const res = await fetch(`${API_BASE_URL}/api/student/clone/${user?.uid}`);
       const data = await res.json();
       if (data.success && data.data) {
-        setKnowledgeBase(data.data.knowledgeBase || "");
+        // Clear knowledge base if it only contains empty template labels (no real content)
+        const kb: string = data.data.knowledgeBase || "";
+        const isEmptyTemplate = kb.trim() !== "" && !/[a-zA-Z0-9]{10,}/.test(kb.replace(/^(Personal Info:|Name:|Summary:|Experience:|Projects:|Education:|Skills:|---)/gm, "").trim());
+        setKnowledgeBase(isEmptyTemplate ? "" : kb);
         setIsActive(data.data.isActive || false);
       }
     } catch (err) {
@@ -128,14 +131,14 @@ ${[...(pd.skills?.languages || []), ...(pd.skills?.frameworks || []), ...(pd.ski
     setChatLoading(true);
 
     try {
-      // We'll reuse the recruiter endpoint for testing, but pass our own studentId
+      // Pass isActiveOverride: true so the student can always test their own clone
       const res = await fetch(`${API_BASE_URL}/api/recruiter/clone-chat/${user.uid}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           messages: [...messages, userMessage],
           knowledgeBaseOverride: knowledgeBase,
-          isActiveOverride: isActive
+          isActiveOverride: true  // always allow owner to test
         })
       });
       const data = await res.json();
@@ -266,18 +269,18 @@ ${[...(pd.skills?.languages || []), ...(pd.skills?.frameworks || []), ...(pd.ski
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask your clone a question..."
               className="flex-1 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500"
-              disabled={chatLoading || !isActive}
+              disabled={chatLoading}
             />
             <button 
               type="submit" 
-              disabled={chatLoading || !isActive}
+              disabled={chatLoading}
               className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50"
             >
               <i className="fa-solid fa-paper-plane"></i>
             </button>
           </form>
           {!isActive && (
-            <p className="text-[10px] text-rose-500 mt-2 text-center">Activate your clone to test it.</p>
+            <p className="text-[10px] text-amber-500 mt-2 text-center">Clone is paused — recruiters can&apos;t see it, but you can still test it here.</p>
           )}
         </div>
       </div>

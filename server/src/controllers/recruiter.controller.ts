@@ -75,6 +75,7 @@ export const chatWithClone = async (req: Request, res: Response): Promise<void> 
 
     const isCloneActive = isActiveOverride !== undefined ? isActiveOverride : cloneData?.isActive;
 
+    // Only block if neither override is true nor clone is active in DB
     if (!isCloneActive) {
       res.status(404).json({ error: 'This candidate has not activated their AI Clone.' });
       return;
