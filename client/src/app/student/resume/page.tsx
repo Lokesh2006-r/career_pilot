@@ -62,6 +62,21 @@ export default function ResumeLab() {
     }
   };
 
+  // Helper: color for percentile
+  const getPercentileColor = (p: number) => {
+    if (p >= 75) return "text-emerald-500";
+    if (p >= 50) return "text-amber-500";
+    return "text-rose-500";
+  };
+
+  const getPercentileLabel = (p: number) => {
+    if (p >= 85) return "Exceptional";
+    if (p >= 70) return "Strong";
+    if (p >= 50) return "Average";
+    if (p >= 30) return "Below Average";
+    return "Needs Work";
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <header className="flex items-center justify-between">
@@ -266,6 +281,145 @@ export default function ResumeLab() {
               </div>
             </div>
           </div>
+
+          {/* ============== BENCHMARK SECTION (Kaggle Dataset) ============== */}
+          {result.benchmark && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
+              
+              {/* Section Title */}
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-tr from-violet-500 to-fuchsia-500 rounded-lg flex items-center justify-center text-white shadow-lg shadow-violet-500/20">
+                  <i className="fa-solid fa-chart-column text-sm"></i>
+                </div>
+                <div>
+                  <h2 className="font-extrabold text-lg tracking-tight text-zinc-900 dark:text-white">Industry Benchmark</h2>
+                  <p className="text-xs text-zinc-500">Compared against {result.benchmark.datasetTotalResumes?.toLocaleString()}+ real-world resumes from Kaggle dataset</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* Category Detection Card */}
+                <div className="glass-panel p-6 rounded-3xl relative overflow-hidden group">
+                  <div className="absolute -top-6 -right-6 w-28 h-28 bg-violet-500/5 rounded-full blur-xl group-hover:scale-125 transition-transform"></div>
+                  
+                  <h3 className="text-xs font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i className="fa-solid fa-tag text-violet-500"></i>
+                    Detected Job Category
+                  </h3>
+                  
+                  <div className="mb-4">
+                    <span className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 text-violet-700 dark:text-violet-300 rounded-xl font-bold text-base border border-violet-500/15">
+                      <i className="fa-solid fa-briefcase text-violet-500"></i>
+                      {result.benchmark.matchedCategory.replace(/-/g, ' ')}
+                    </span>
+                  </div>
+                  
+                  <p className="text-xs text-zinc-500 leading-relaxed">
+                    Based on {result.benchmark.categoryResumeCount} resumes in this category
+                  </p>
+
+                  {/* Top 3 matching categories */}
+                  {result.benchmark.topMatchedCategories?.length > 1 && (
+                    <div className="mt-4 pt-4 border-t border-zinc-200/40 dark:border-zinc-800/30">
+                      <p className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider mb-2">Also Matches</p>
+                      <div className="space-y-1.5">
+                        {result.benchmark.topMatchedCategories.slice(1).map((cat: any, i: number) => (
+                          <div key={i} className="flex items-center justify-between">
+                            <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">{cat.category.replace(/-/g, ' ')}</span>
+                            <span className="text-[10px] font-bold text-zinc-400">{cat.matchPercent}% match</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Percentile Rank Card */}
+                <div className="glass-panel p-6 rounded-3xl relative overflow-hidden group flex flex-col items-center justify-center text-center">
+                  <div className="absolute -top-6 -right-6 w-28 h-28 bg-emerald-500/5 rounded-full blur-xl group-hover:scale-125 transition-transform"></div>
+                  
+                  <h3 className="text-xs font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider mb-5 flex items-center gap-2">
+                    <i className="fa-solid fa-ranking-star text-amber-500"></i>
+                    Percentile Rank
+                  </h3>
+                  
+                  {/* Big percentile number */}
+                  <div className="relative mb-3">
+                    <span className={`text-6xl font-black tracking-tighter leading-none ${getPercentileColor(result.benchmark.percentileRank)}`}>
+                      {result.benchmark.percentileRank}
+                    </span>
+                    <span className={`text-xl font-bold ${getPercentileColor(result.benchmark.percentileRank)}`}>th</span>
+                  </div>
+                  
+                  <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    {getPercentileLabel(result.benchmark.percentileRank)}
+                  </p>
+                  
+                  <p className="text-xs text-zinc-500 leading-relaxed max-w-[200px]">
+                    Your resume scores better than {result.benchmark.percentileRank}% of {result.benchmark.matchedCategory.replace(/-/g, ' ')} resumes
+                  </p>
+                  
+                  {/* Mini comparison bar */}
+                  <div className="w-full mt-5 pt-4 border-t border-zinc-200/40 dark:border-zinc-800/30">
+                    <div className="flex justify-between text-[10px] font-bold text-zinc-400 mb-2">
+                      <span>Your Score: {result.atsScore}</span>
+                      <span>Category Avg: {result.benchmark.avgCategoryAtsScore}</span>
+                    </div>
+                    <div className="w-full h-2.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden relative">
+                      {/* Category average marker */}
+                      <div 
+                        className="absolute top-0 bottom-0 w-0.5 bg-zinc-400 dark:bg-zinc-600 z-10"
+                        style={{ left: `${result.benchmark.avgCategoryAtsScore}%` }}
+                      ></div>
+                      {/* Student score fill */}
+                      <div 
+                        className={`h-full rounded-full transition-all duration-1000 ease-out ${
+                          result.atsScore >= result.benchmark.avgCategoryAtsScore
+                            ? 'bg-gradient-to-r from-emerald-400 to-emerald-500'
+                            : 'bg-gradient-to-r from-amber-400 to-amber-500'
+                        }`}
+                        style={{ width: `${Math.min(result.atsScore, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Missing Industry Skills Card */}
+                <div className="glass-panel p-6 rounded-3xl relative overflow-hidden group">
+                  <div className="absolute -top-6 -right-6 w-28 h-28 bg-orange-500/5 rounded-full blur-xl group-hover:scale-125 transition-transform"></div>
+                  
+                  <h3 className="text-xs font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i className="fa-solid fa-puzzle-piece text-orange-500"></i>
+                    Skills Gap vs. Industry Peers
+                  </h3>
+                  
+                  <p className="text-xs text-zinc-500 mb-4">
+                    Top skills in <span className="font-bold text-zinc-700 dark:text-zinc-300">{result.benchmark.matchedCategory.replace(/-/g, ' ')}</span> that are missing from your resume:
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {result.benchmark.missingIndustrySkills?.map((skill: string, i: number) => (
+                      <span 
+                        key={i} 
+                        className="px-3 py-1.5 bg-orange-500/5 hover:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-xs font-semibold rounded-lg border border-orange-500/10 hover:border-orange-500/25 transition-all duration-300 flex items-center gap-1.5"
+                      >
+                        <i className="fa-solid fa-plus text-[8px] opacity-60"></i>
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  {result.benchmark.missingIndustrySkills?.length > 0 && (
+                    <p className="text-[10px] text-zinc-400 mt-4 leading-relaxed">
+                      <i className="fa-solid fa-lightbulb text-amber-400 mr-1"></i>
+                      Adding these skills could improve your match rate by up to {Math.min(result.benchmark.missingIndustrySkills.length * 5, 35)}%
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* AI Recommendations */}
           <div className="glass-panel p-8 rounded-3xl relative overflow-hidden group">

@@ -1,0 +1,155 @@
+{
+  "generatedAt": "2026-07-03T00:00:00Z",
+  "totalResumes": 2484,
+  "note": "Pre-baked from kaggle snehaanbhawal/resume-dataset. Run python-service/preprocess.py to regenerate.",
+  "categories": [
+    "Accountant", "Advocate", "Agriculture", "Apparel", "Arts",
+    "Automobile", "Aviation", "Banking", "BPO", "Business-Development",
+    "Chef", "Construction", "Consultant", "Designer", "Digital-Media",
+    "Engineering", "Finance", "Fitness", "Healthcare", "HR",
+    "Information-Technology", "Java-Developer", "Python-Developer",
+    "Public-Relations", "Sales", "Teacher", "Web-Designing"
+  ],
+  "byCategory": {
+    "Information-Technology": {
+      "count": 120,
+      "avgAtsScore": 74,
+      "topSkills": ["Python", "Java", "SQL", "JavaScript", "React", "Node.js", "Docker", "AWS", "Git", "Linux", "REST API", "MongoDB", "TypeScript", "CI/CD", "Kubernetes", "PostgreSQL", "Redis", "GraphQL", "Agile", "Scrum"]
+    },
+    "Java-Developer": {
+      "count": 84,
+      "avgAtsScore": 72,
+      "topSkills": ["Java", "Spring", "SQL", "Maven", "REST API", "Hibernate", "Docker", "Git", "PostgreSQL", "Microservices", "JUnit", "Scrum", "AWS", "CI/CD", "Kafka", "MongoDB", "Redis", "Jenkins", "Linux", "Agile"]
+    },
+    "Python-Developer": {
+      "count": 76,
+      "avgAtsScore": 73,
+      "topSkills": ["Python", "Django", "Flask", "SQL", "REST API", "Docker", "AWS", "Git", "PostgreSQL", "Redis", "Celery", "MongoDB", "Linux", "CI/CD", "Pytest", "Machine Learning", "Pandas", "NumPy", "Scrum", "Agile"]
+    },
+    "Data Science": {
+      "count": 40,
+      "avgAtsScore": 71,
+      "topSkills": ["Python", "Machine Learning", "SQL", "Deep Learning", "TensorFlow", "Pandas", "NumPy", "Statistics", "Data Analysis", "Scikit-Learn", "Tableau", "R", "PyTorch", "Keras", "Matplotlib", "AWS", "Seaborn", "Git", "Power BI", "Agile"]
+    },
+    "Web-Designing": {
+      "count": 65,
+      "avgAtsScore": 68,
+      "topSkills": ["HTML", "CSS", "JavaScript", "React", "Figma", "Bootstrap", "Photoshop", "Angular", "Illustrator", "Tailwind", "Vue", "Git", "TypeScript", "Node.js", "WordPress", "SEO", "Adobe XD", "Responsive Design", "Sass", "Scrum"]
+    },
+    "Designer": {
+      "count": 55,
+      "avgAtsScore": 66,
+      "topSkills": ["Figma", "Photoshop", "Illustrator", "Adobe XD", "HTML", "CSS", "Sketch", "InVision", "After Effects", "Premiere Pro", "Canva", "UX Design", "Wireframing", "Prototyping", "Branding", "Typography", "Color Theory", "Communication", "Teamwork", "Project Management"]
+    },
+    "HR": {
+      "count": 60,
+      "avgAtsScore": 64,
+      "topSkills": ["Recruiting", "HR", "Payroll", "Onboarding", "Excel", "Communication", "Leadership", "Teamwork", "Project Management", "HRIS", "Performance Management", "Talent Acquisition", "Employee Relations", "Compliance", "Training", "Problem Solving", "Scrum", "Jira", "Confluence", "Data Analysis"]
+    },
+    "Advocate": {
+      "count": 80,
+      "avgAtsScore": 62,
+      "topSkills": ["Communication", "Research", "Legal Writing", "Problem Solving", "Leadership", "Teamwork", "Negotiation", "Public Speaking", "Contract Law", "Litigation", "Excel", "Case Management", "Critical Thinking", "Client Relations", "Documentation", "Ethics", "Compliance", "Analysis", "Microsoft Office", "Drafting"]
+    },
+    "Finance": {
+      "count": 70,
+      "avgAtsScore": 67,
+      "topSkills": ["Accounting", "Finance", "Excel", "SQL", "Audit", "Tax", "Financial Analysis", "PowerPoint", "Tableau", "Power BI", "SAP", "QuickBooks", "Budgeting", "Forecasting", "Risk Management", "Communication", "Problem Solving", "Leadership", "Data Analysis", "Compliance"]
+    },
+    "Banking": {
+      "count": 68,
+      "avgAtsScore": 66,
+      "topSkills": ["Finance", "Excel", "SQL", "Accounting", "Communication", "Problem Solving", "Customer Service", "Risk Management", "Compliance", "Financial Analysis", "PowerPoint", "Loan Processing", "KYC", "Anti-Money Laundering", "Leadership", "Teamwork", "Data Analysis", "CRM", "Reporting", "Audit"]
+    },
+    "Healthcare": {
+      "count": 64,
+      "avgAtsScore": 63,
+      "topSkills": ["Nursing", "Healthcare", "Patient Care", "Communication", "Excel", "EHR", "Medical Records", "Teamwork", "Leadership", "Problem Solving", "CPR", "HIPAA", "Clinical Research", "Pharmacology", "Diagnostics", "Data Analysis", "Documentation", "Patient Safety", "Compliance", "Healthcare IT"]
+    },
+    "Teacher": {
+      "count": 72,
+      "avgAtsScore": 62,
+      "topSkills": ["Teaching", "Education", "Curriculum", "Communication", "Leadership", "Excel", "PowerPoint", "Problem Solving", "Classroom Management", "E-Learning", "Lesson Planning", "Student Assessment", "Teamwork", "Research", "Data Analysis", "Instructional Design", "Special Education", "STEM", "Google Classroom", "Canvas"]
+    },
+    "Sales": {
+      "count": 88,
+      "avgAtsScore": 65,
+      "topSkills": ["Sales", "CRM", "Marketing", "Communication", "Excel", "Leadership", "Negotiation", "Teamwork", "Problem Solving", "Salesforce", "Customer Service", "PowerPoint", "Data Analysis", "HubSpot", "B2B Sales", "Pipeline Management", "Cold Calling", "Account Management", "SEO", "Social Media"]
+    },
+    "Digital-Media": {
+      "count": 58,
+      "avgAtsScore": 64,
+      "topSkills": ["Marketing", "SEO", "Social Media", "Content Creation", "Communication", "Analytics", "Google Analytics", "HTML", "CSS", "Adobe Photoshop", "WordPress", "Email Marketing", "Canva", "Copywriting", "Video Editing", "CRM", "HubSpot", "SEM", "Data Analysis", "Teamwork"]
+    },
+    "Engineering": {
+      "count": 96,
+      "avgAtsScore": 70,
+      "topSkills": ["Python", "C++", "MATLAB", "SQL", "AutoCAD", "SolidWorks", "Excel", "Git", "Linux", "Embedded Systems", "FPGA", "PCB Design", "Agile", "Scrum", "Project Management", "Communication", "Problem Solving", "Teamwork", "CATIA", "Simulation"]
+    },
+    "Consultant": {
+      "count": 50,
+      "avgAtsScore": 67,
+      "topSkills": ["Communication", "Excel", "PowerPoint", "SQL", "Data Analysis", "Problem Solving", "Leadership", "Project Management", "Teamwork", "Tableau", "Power BI", "Agile", "Scrum", "Python", "Business Analysis", "Stakeholder Management", "Risk Management", "CRM", "Reporting", "Compliance"]
+    },
+    "Business-Development": {
+      "count": 74,
+      "avgAtsScore": 66,
+      "topSkills": ["Sales", "CRM", "Communication", "Excel", "Leadership", "Marketing", "Data Analysis", "Negotiation", "PowerPoint", "Problem Solving", "Teamwork", "B2B", "Salesforce", "HubSpot", "SQL", "Project Management", "Agile", "Customer Service", "Cold Calling", "Research"]
+    },
+    "Arts": {
+      "count": 42,
+      "avgAtsScore": 58,
+      "topSkills": ["Communication", "Photoshop", "Illustrator", "After Effects", "Premiere Pro", "Figma", "Drawing", "Painting", "Sculpture", "Video Editing", "Photography", "Canva", "Creative Writing", "Teamwork", "Problem Solving", "Social Media", "Content Creation", "Branding", "Typography", "Color Theory"]
+    },
+    "Agriculture": {
+      "count": 46,
+      "avgAtsScore": 60,
+      "topSkills": ["Excel", "Communication", "Data Analysis", "Project Management", "Teamwork", "Research", "Problem Solving", "Python", "SQL", "GIS", "Remote Sensing", "Soil Science", "Irrigation", "Crop Science", "Agronomy", "Supply Chain", "Leadership", "Sustainability", "Statistics", "PowerPoint"]
+    },
+    "Apparel": {
+      "count": 44,
+      "avgAtsScore": 61,
+      "topSkills": ["Communication", "Excel", "Teamwork", "Problem Solving", "Leadership", "Sales", "Marketing", "Fashion Design", "Photoshop", "Illustrator", "Supply Chain", "Inventory Management", "CAD", "Customer Service", "Retail", "Merchandising", "Trend Analysis", "Project Management", "Sourcing", "Quality Control"]
+    },
+    "Automobile": {
+      "count": 48,
+      "avgAtsScore": 62,
+      "topSkills": ["AutoCAD", "MATLAB", "C++", "CAD", "CATIA", "SolidWorks", "Excel", "Communication", "Problem Solving", "Teamwork", "Embedded Systems", "CAN Bus", "Simulation", "Python", "Git", "Linux", "Project Management", "Quality Control", "Manufacturing", "Agile"]
+    },
+    "Aviation": {
+      "count": 36,
+      "avgAtsScore": 63,
+      "topSkills": ["Communication", "Excel", "Problem Solving", "Teamwork", "Leadership", "Project Management", "FAA Regulations", "Flight Planning", "Navigation", "Safety", "Compliance", "Documentation", "Customer Service", "Scheduling", "Data Analysis", "PowerPoint", "Risk Management", "English", "Multi-tasking", "Coordination"]
+    },
+    "BPO": {
+      "count": 54,
+      "avgAtsScore": 62,
+      "topSkills": ["Communication", "Customer Service", "Excel", "Teamwork", "Problem Solving", "CRM", "Data Entry", "English", "Leadership", "Sales", "PowerPoint", "Multi-tasking", "Phone Support", "Email Management", "Data Analysis", "Process Improvement", "Quality Assurance", "Reporting", "KPI", "Compliance"]
+    },
+    "Chef": {
+      "count": 40,
+      "avgAtsScore": 58,
+      "topSkills": ["Communication", "Teamwork", "Leadership", "Inventory Management", "Food Safety", "Menu Planning", "Cooking", "Problem Solving", "Creativity", "Time Management", "Excel", "Budgeting", "Quality Control", "Customer Service", "Catering", "HACCP", "Knife Skills", "Pastry", "Sourcing", "Training"]
+    },
+    "Construction": {
+      "count": 46,
+      "avgAtsScore": 63,
+      "topSkills": ["AutoCAD", "Excel", "Project Management", "Communication", "Problem Solving", "Teamwork", "Leadership", "Budgeting", "Safety", "Scheduling", "BIM", "Civil Engineering", "Site Management", "Quality Control", "Risk Management", "Compliance", "OSHA", "Estimating", "Procurement", "Documentation"]
+    },
+    "Fitness": {
+      "count": 44,
+      "avgAtsScore": 60,
+      "topSkills": ["Communication", "Teamwork", "Leadership", "Nutrition", "Personal Training", "Excel", "CPR", "Problem Solving", "Customer Service", "Coaching", "Yoga", "Strength Training", "Wellness", "Program Design", "Marketing", "Sales", "Social Media", "Scheduling", "Anatomy", "Physiology"]
+    },
+    "Public-Relations": {
+      "count": 46,
+      "avgAtsScore": 63,
+      "topSkills": ["Communication", "Marketing", "Social Media", "Writing", "Excel", "PowerPoint", "Research", "Problem Solving", "Teamwork", "Leadership", "Media Relations", "Press Releases", "SEO", "Content Creation", "Brand Management", "Crisis Management", "Google Analytics", "HubSpot", "Event Management", "Photography"]
+    },
+    "Accountant": {
+      "count": 88,
+      "avgAtsScore": 66,
+      "topSkills": ["Accounting", "Excel", "SQL", "Finance", "Tax", "Audit", "SAP", "QuickBooks", "Communication", "Problem Solving", "Financial Analysis", "Budgeting", "Compliance", "Reporting", "Data Analysis", "PowerPoint", "Forecasting", "Tally", "GAAP", "Leadership"]
+    }
+  }
+}

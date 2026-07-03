@@ -4,12 +4,99 @@ import { GoogleGenAI } from '@google/genai';
 import Resume from '../models/Resume';
 import BuiltResume from '../models/BuiltResume';
 import { isDBConnected } from '../db';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const pdfParse = require('pdf-parse') as any;
 
 
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+
+// ---- Load Kaggle resume dataset for benchmarking ----
+let resumeDataset: any = null;
+try {
+  // Try src/data first (dev mode), then relative to __dirname (prod build)
+  const candidates = [
+    path.join(__dirname, '..', 'data', 'resume_dataset.json'),
+    path.resolve(process.cwd(), 'src', 'data', 'resume_dataset.json'),
+  ];
+  const datasetPath = candidates.find(p => fs.existsSync(p));
+  if (datasetPath) {
+    resumeDataset = JSON.parse(fs.readFileSync(datasetPath, 'utf-8'));
+    console.log(`[Resume] ✅ Loaded benchmark dataset: ${resumeDataset.totalResumes} resumes across ${resumeDataset.categories.length} categories`);
+  } else {
+    console.warn('[Resume] ⚠️ resume_dataset.json not found — benchmark features disabled');
+  }
+} catch (e) {
+  console.error('[Resume] Failed to load resume_dataset.json:', e);
+}
+
+/**
+ * Match the student's skills against the Kaggle resume dataset categories.
+ * Returns matched category, percentile rank, and missing industry skills.
+ */
+function benchmarkAgainstDataset(studentSkills: string[], studentAtsScore: number) {
+  if (!resumeDataset || !resumeDataset.byCategory) return null;
+
+  const studentSkillsLower = studentSkills.map(s => s.toLowerCase().trim());
+
+  // Score each category by skill overlap
+  let bestCategory = '';
+  let bestScore = -1;
+  const categoryScores: { category: string; overlap: number; total: number; pct: number }[] = [];
+
+  for (const [category, data] of Object.entries(resumeDataset.byCategory) as [string, any][]) {
+    const catSkillsLower = (data.topSkills || []).map((s: string) => s.toLowerCase().trim());
+    const overlap = studentSkillsLower.filter(s => catSkillsLower.includes(s)).length;
+    const pct = catSkillsLower.length > 0 ? (overlap / catSkillsLower.length) * 100 : 0;
+
+    categoryScores.push({ category, overlap, total: catSkillsLower.length, pct });
+
+    if (overlap > bestScore) {
+      bestScore = overlap;
+      bestCategory = category;
+    }
+  }
+
+  if (!bestCategory) return null;
+
+  const matchedData = resumeDataset.byCategory[bestCategory];
+  const catSkills: string[] = matchedData.topSkills || [];
+  const catSkillsLower = catSkills.map((s: string) => s.toLowerCase().trim());
+
+  // Missing industry skills — top skills in this category that the student doesn't have
+  const missingIndustrySkills = catSkills.filter(
+    (s: string) => !studentSkillsLower.includes(s.toLowerCase().trim())
+  );
+
+  // Percentile rank — compare student ATS score to the category average
+  // Simple sigmoid approximation: how far above/below the average
+  const avgAts = matchedData.avgAtsScore || 65;
+  const diff = studentAtsScore - avgAts;
+  // Map diff to percentile: 0 diff = 50th percentile, +/- 20 = ~85th/15th
+  const percentileRank = Math.round(Math.min(99, Math.max(1, 50 + diff * 1.75)));
+
+  // Top 3 matching categories
+  const topCategories = categoryScores
+    .sort((a, b) => b.overlap - a.overlap)
+    .slice(0, 3)
+    .map(c => ({
+      category: c.category,
+      skillOverlap: c.overlap,
+      matchPercent: Math.round(c.pct),
+    }));
+
+  return {
+    matchedCategory: bestCategory,
+    categoryResumeCount: matchedData.count,
+    avgCategoryAtsScore: avgAts,
+    percentileRank,
+    missingIndustrySkills: missingIndustrySkills.slice(0, 8),
+    topMatchedCategories: topCategories,
+    datasetTotalResumes: resumeDataset.totalResumes,
+  };
+}
 
 const FALLBACK_DATA = {
   skills: ["React", "Node.js", "TypeScript", "Python"],
@@ -158,9 +245,15 @@ Return ONLY a valid JSON object. Do not include any markdown syntax, wrapping, o
       }
     }
 
+    // ---- Benchmark against Kaggle resume dataset ----
+    const benchmark = benchmarkAgainstDataset(
+      parsedData.skills || [],
+      parsedData.atsScore || 65
+    );
+
     res.status(200).json({
       message: 'Resume analyzed successfully',
-      data: parsedData,
+      data: { ...parsedData, benchmark },
       url: publicUrl,
       isDemo: !process.env.GEMINI_API_KEY,
     });
