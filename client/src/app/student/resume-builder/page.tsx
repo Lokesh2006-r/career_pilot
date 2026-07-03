@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
 import { OnboardingView } from "./OnboardingView";
 import { TemplatesGallery } from "./TemplatesGallery";
+import { CreativeTemplate, ProfessionalTemplate, TechTemplate } from "./ResumeTemplates";
 
 interface Experience {
   company: string;
