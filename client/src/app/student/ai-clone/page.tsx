@@ -37,20 +37,107 @@ export default function AIClonePage() {
 
   const fetchCloneData = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/student/clone/${user?.uid}`);
-      const data = await res.json();
-      if (data.success && data.data) {
-        // Clear knowledge base if it only contains empty template labels (no real content)
-        const kb: string = data.data.knowledgeBase || "";
-        const isEmptyTemplate = kb.trim() !== "" && !/[a-zA-Z0-9]{10,}/.test(kb.replace(/^(Personal Info:|Name:|Summary:|Experience:|Projects:|Education:|Skills:|---)/gm, "").trim());
-        setKnowledgeBase(isEmptyTemplate ? "" : kb);
-        setIsActive(data.data.isActive || false);
+      const [cloneRes, resumeRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/student/clone/${user?.uid}`),
+        fetch(`${API_BASE_URL}/api/resume/build/load/${user?.uid}`)
+      ]);
+      const cloneData = await cloneRes.json();
+      const resumeData = await resumeRes.json();
+
+      let savedKB = cloneData?.data?.knowledgeBase || "";
+
+      // Detect empty/junk template (only labels, no real content)
+      const stripped = savedKB
+        .replace(/^(Personal Info:|Name:|Summary:|Experience:|Projects:|Education:|Skills:|---)/gm, "")
+        .trim();
+      const isEmptyOrJunk = !savedKB.trim() || stripped.length < 20;
+
+      if (isEmptyOrJunk && resumeData?.data) {
+        // Auto-build KB from stored resume builder data
+        savedKB = buildKnowledgeBase(resumeData.data);
       }
+
+      setKnowledgeBase(isEmptyOrJunk && !resumeData?.data ? "" : savedKB);
+      setIsActive(cloneData?.data?.isActive || false);
     } catch (err) {
       console.error("Failed to fetch clone data", err);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Build a rich knowledge base string from the student's BuiltResume data
+  const buildKnowledgeBase = (resume: any): string => {
+    const lines: string[] = [];
+    const p = resume.personalInfo || {};
+
+    // Personal Info
+    if (p.fullName || p.email || p.phone || p.location) {
+      lines.push("Personal Info:");
+      if (p.fullName) lines.push(`Name: ${p.fullName}`);
+      if (p.email) lines.push(`Email: ${p.email}`);
+      if (p.phone) lines.push(`Phone: ${p.phone}`);
+      if (p.location) lines.push(`Location: ${p.location}`);
+      if (p.linkedin) lines.push(`LinkedIn: ${p.linkedin}`);
+      if (p.github) lines.push(`GitHub: ${p.github}`);
+      if (p.website) lines.push(`Website: ${p.website}`);
+      if (p.summary) lines.push(`\nSummary:\n${p.summary}`);
+    }
+
+    // Experience
+    const experience: any[] = resume.experience || [];
+    if (experience.some((e: any) => e.company || e.role)) {
+      lines.push("\nExperience:");
+      experience.forEach((exp: any) => {
+        if (exp.company || exp.role) {
+          lines.push(`- ${exp.role || ""} at ${exp.company || ""} (${exp.startDate || ""} – ${exp.endDate || ""})${exp.location ? ` | ${exp.location}` : ""}`);
+          if (exp.description) {
+            exp.description.split("\n").filter(Boolean).forEach((b: string) =>
+              lines.push(`  • ${b.replace(/^[•\-\*\s]+/, "")}`)
+            );
+          }
+        }
+      });
+    }
+
+    // Projects
+    const projects: any[] = resume.projects || [];
+    if (projects.some((p: any) => p.title)) {
+      lines.push("\nProjects:");
+      projects.forEach((proj: any) => {
+        if (proj.title) {
+          lines.push(`- ${proj.title}${proj.techStack ? ` (${proj.techStack})` : ""}`);
+          if (proj.description) lines.push(`  ${proj.description.replace(/^[•\-\*\s]+/, "")}`);
+          if (proj.link) lines.push(`  Link: ${proj.link}`);
+        }
+      });
+    }
+
+    // Education
+    const education: any[] = resume.education || [];
+    if (education.some((e: any) => e.institution || e.degree)) {
+      lines.push("\nEducation:");
+      education.forEach((ed: any) => {
+        if (ed.institution || ed.degree) {
+          lines.push(`- ${ed.degree || ""}${ed.fieldOfStudy ? ` in ${ed.fieldOfStudy}` : ""} at ${ed.institution || ""}${ed.endDate ? ` (${ed.endDate})` : ""}`);
+          if (ed.gpa) lines.push(`  GPA: ${ed.gpa}`);
+        }
+      });
+    }
+
+    // Skills (stored as arrays in BuiltResume)
+    const skills = resume.skills || {};
+    const allSkills = [
+      ...(skills.languages || []),
+      ...(skills.frameworks || []),
+      ...(skills.databases || []),
+      ...(skills.tools || []),
+    ].map((s: string) => s.trim()).filter(Boolean);
+    if (allSkills.length > 0) {
+      lines.push(`\nSkills: ${allSkills.join(", ")}`);
+    }
+
+    return lines.join("\n").trim();
   };
 
   const handleSave = async () => {
