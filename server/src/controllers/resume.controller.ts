@@ -166,9 +166,13 @@ export const uploadResume = async (req: Request, res: Response): Promise<void> =
     // AI analysis — use Gemini if key is set, otherwise use fallback
     let parsedData = { ...FALLBACK_DATA };
 
-    if (process.env.GEMINI_API_KEY && fileBufferString) {
-      try {
-        const prompt = `You are an elite technical recruiter and Senior ATS Specialist at a top tech company.
+    if (process.env.GEMINI_API_KEY) {
+      if (fileBufferString.trim().length < 50) {
+        console.warn('[Resume] Extracted text is too short or empty (likely a scanned PDF). Using fallback data.');
+        // Leave parsedData as FALLBACK_DATA
+      } else {
+        try {
+          const prompt = `You are an elite technical recruiter and Senior ATS Specialist at a top tech company.
 Analyze the following resume text carefully and return a JSON object with these exact fields:
 - skills: string[] — comprehensive list of all technical languages, frameworks, databases, and key tools detected
 - projects: string[] — list of project names identified
@@ -185,18 +189,30 @@ Analyze the following resume text carefully and return a JSON object with these 
 Resume Text:
 ${fileBufferString}
 
-Return ONLY a valid JSON object. Do not include any markdown syntax, wrapping, or preamble.`;
+Return ONLY a valid JSON object.`;
 
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: prompt,
-        });
+          const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+              responseMimeType: "application/json",
+            }
+          });
 
-        const text = response.text || '{}';
-        const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-        parsedData = JSON.parse(jsonStr);
-      } catch (aiError) {
-        console.error('AI Analysis failed on both Pro and Flash models, using fallback data.', aiError);
+          const text = response.text || '{}';
+          const aiParsed = JSON.parse(text);
+          
+          // Merge AI data with fallback to ensure no fields are completely missing/broken
+          parsedData = { ...FALLBACK_DATA, ...aiParsed };
+
+          // If AI completely failed to find skills/score, it might be a bad PDF parse, use fallback
+          if (parsedData.skills.length === 0 && parsedData.atsScore === 0) {
+            console.warn('[Resume] AI returned 0 score and empty skills. Reverting to fallback data.');
+            parsedData = { ...FALLBACK_DATA };
+          }
+        } catch (aiError) {
+          console.error('AI Analysis failed on both Pro and Flash models, using fallback data.', aiError);
+        }
       }
     } else if (!process.env.GEMINI_API_KEY) {
       console.log('[Resume] GEMINI_API_KEY not set — returning demo data.');
