@@ -92,7 +92,7 @@ export default function AchievementPassport() {
       {/* Print Header */}
       <div className="hidden print:block mb-8 border-b-2 border-zinc-200 pb-4">
         <h1 className="text-3xl font-bold">Digital Achievement Passport</h1>
-        <p className="text-zinc-500 text-lg mt-1">{user?.displayName || 'Student'} • CareerPilot Verified</p>
+        <p className="text-zinc-500 text-lg mt-1">{user?.name || 'Student'} • CareerPilot Verified</p>
       </div>
 
       {loading ? (
