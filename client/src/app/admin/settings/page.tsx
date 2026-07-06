@@ -88,7 +88,7 @@ export default function AdminSettings() {
           {/* Platform Config panel */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <i className="fa-solid fa-sliders w-4.5 h-4.5 text-rose-555" ></i>
+              <i className="fa-solid fa-sliders w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               Platform Control Locks
             </h2>
             
@@ -136,7 +136,7 @@ export default function AdminSettings() {
           {/* API Keys Settings panel */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <i className="fa-solid fa-key w-4.5 h-4.5 text-rose-555" ></i>
+              <i className="fa-solid fa-key w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               API Developer Gateways
             </h2>
             
@@ -190,7 +190,7 @@ export default function AdminSettings() {
           {/* Developer Sandbox Options */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border-rose-500/15">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <i className="fa-solid fa-shield w-4.5 h-4.5 text-rose-555" ></i>
+              <i className="fa-solid fa-shield w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               Sandbox Variables
             </h2>
             
@@ -210,7 +210,7 @@ export default function AdminSettings() {
           {/* System Specs */}
           <div className="glass-panel rounded-3xl p-6 space-y-4 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <i className="fa-solid fa-database w-4.5 h-4.5 text-rose-555" ></i>
+              <i className="fa-solid fa-database w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               System Specs
             </h2>
             <div className="space-y-2.5 text-[10px] font-bold uppercase tracking-wider text-zinc-555 dark:text-zinc-450">

@@ -123,7 +123,7 @@ export default function AdminLayout({
               >
                 <i className="fa-solid fa-bars w-5 h-5 text-zinc-650 dark:text-zinc-400" ></i>
               </button>
-              <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 text-rose-500 animate-pulse shrink-0" ></i>
+              <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 text-zinc-900 dark:text-white animate-pulse shrink-0" ></i>
               <h1 className="text-xs sm:text-sm font-semibold tracking-wide text-zinc-500 dark:text-zinc-400 uppercase truncate">
                 Admin Control Room / <span className="text-zinc-900 dark:text-white capitalize">{pathname.split("/").pop()?.replace(/-/g, " ") || "Overview"}</span>
               </h1>

@@ -2,9 +2,8 @@ import { Request, Response } from 'express';
 import StudentProfile from '../models/StudentProfile';
 import Resume from '../models/Resume';
 import AIClone from '../models/AIClone';
-import { GoogleGenAI } from '@google/genai';
+import { generateContentWithFallback } from '../utils/gemini';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 
 // Candidates List Endpoint
@@ -103,7 +102,7 @@ ${finalKnowledgeBase}`;
       return;
     }
 
-    const response = await ai.models.generateContent({
+    const response = await generateContentWithFallback({
       model: 'gemini-2.5-flash',
       contents,
       config: { systemInstruction }

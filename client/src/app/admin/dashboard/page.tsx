@@ -107,7 +107,7 @@ export default function AdminDashboardOverview() {
         {/* Signups over time SVG Graph */}
         <div className="lg:col-span-6 glass-panel p-8 rounded-3xl space-y-6">
           <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-            <i className="fa-solid fa-chart-line w-5 h-5 text-rose-500" ></i>
+            <i className="fa-solid fa-chart-line w-5 h-5 text-zinc-900 dark:text-white" ></i>
             User Signups & Registration Flow (6 Weeks)
           </h3>
 
@@ -145,7 +145,7 @@ export default function AdminDashboardOverview() {
         <div className="lg:col-span-6 glass-panel p-8 rounded-3xl space-y-4 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <i className="fa-solid fa-terminal w-5 h-5 text-rose-500" ></i>
+              <i className="fa-solid fa-terminal w-5 h-5 text-zinc-900 dark:text-white" ></i>
               Interactive Console Monitor
             </h3>
             <span className="text-[9px] font-black uppercase bg-rose-500/10 text-rose-550 border border-rose-500/20 px-2 py-0.5 rounded">Live Stream</span>

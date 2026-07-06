@@ -485,7 +485,7 @@ export default function CodingTracker() {
 
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
-                <i className="fa-solid fa-arrows-rotate w-5 h-5 text-indigo-500 dark:text-indigo-400" ></i>
+                <i className="fa-solid fa-arrows-rotate w-5 h-5 text-zinc-900 dark:text-white dark:text-zinc-900 dark:text-white" ></i>
               </div>
               <div>
                 <h3 className="text-base font-bold text-zinc-900 dark:text-white">Connect Coding Profiles</h3>
@@ -590,7 +590,7 @@ export default function CodingTracker() {
       {/* ── Error banner ─────────────────────────────────────────────────────── */}
       {error && (
         <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start gap-3">
-          <i className="fa-solid fa-circle-exclamation w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" ></i>
+          <i className="fa-solid fa-circle-exclamation w-5 h-5 text-zinc-900 dark:text-white flex-shrink-0 mt-0.5" ></i>
           <div>
             <p className="text-sm font-bold text-red-400">Failed to fetch data</p>
             <p className="text-xs text-red-300/70 mt-0.5">{error}</p>
@@ -620,7 +620,7 @@ export default function CodingTracker() {
       {!hasHandles && !loading && (
         <div className="glass-panel rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-            <i className="fa-solid fa-code w-8 h-8 text-indigo-400" ></i>
+            <i className="fa-solid fa-code w-8 h-8 text-zinc-900 dark:text-white" ></i>
           </div>
           <div>
             <h2 className="text-lg font-extrabold text-white mb-2">Connect Your Coding Profiles</h2>
@@ -664,7 +664,7 @@ export default function CodingTracker() {
               {/* Streak */}
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/20 dark:border-orange-500/30">
-                  <i className="fa-solid fa-fire w-5 h-5 text-orange-500 flex-shrink-0" ></i>
+                  <i className="fa-solid fa-fire w-5 h-5 text-zinc-900 dark:text-white flex-shrink-0" ></i>
                   <div className="min-w-0">
                     <p className="text-[9px] text-orange-600 dark:text-orange-300 font-black uppercase tracking-widest truncate">Current Streak</p>
                     {loading ? <Skeleton className="h-5 w-10 mt-1" /> : (
@@ -673,7 +673,7 @@ export default function CodingTracker() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 dark:border-amber-500/30">
-                  <i className="fa-solid fa-bolt w-5 h-5 text-amber-500 flex-shrink-0" ></i>
+                  <i className="fa-solid fa-bolt w-5 h-5 text-zinc-900 dark:text-white flex-shrink-0" ></i>
                   <div className="min-w-0">
                     <p className="text-[9px] text-amber-600 dark:text-amber-300 font-black uppercase tracking-widest truncate">Max Streak</p>
                     {loading ? <Skeleton className="h-5 w-10 mt-1" /> : (
@@ -685,7 +685,7 @@ export default function CodingTracker() {
 
               {/* Total solved */}
               <div className="flex items-center gap-3 p-3 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 dark:border-indigo-500/30">
-                <i className="fa-solid fa-bullseye w-5 h-5 text-indigo-500 dark:text-indigo-400 flex-shrink-0" ></i>
+                <i className="fa-solid fa-bullseye w-5 h-5 text-zinc-900 dark:text-white dark:text-zinc-900 dark:text-white flex-shrink-0" ></i>
                 <div>
                   <p className="text-[10px] text-indigo-600 dark:text-indigo-300 font-black uppercase tracking-widest">Total Solved</p>
                   {loading ? <Skeleton className="h-5 w-20 mt-1" /> : (
@@ -961,7 +961,7 @@ export default function CodingTracker() {
                       {selectedCell && (
                         <div className="flex justify-center pt-2">
                           <div className="text-xs font-bold text-emerald-400 bg-emerald-500/5 border border-emerald-500/10 rounded-xl py-2 px-4 animate-fade-in flex items-center gap-2 shadow-lg shadow-emerald-500/5">
-                            <i className="fa-solid fa-chart-line w-4 h-4 text-emerald-400" ></i>
+                            <i className="fa-solid fa-chart-line w-4 h-4 text-zinc-900 dark:text-white" ></i>
                             <span>
                               {selectedCell.count} submission{selectedCell.count !== 1 ? "s" : ""} on {(() => {
                                 if (!selectedCell.date) return "";
@@ -1005,10 +1005,10 @@ export default function CodingTracker() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
                     {loading ? Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-20" />) : (
                       <>
-                        <StatCard label="LeetCode Solved" value={savedHandles.leetcode ? lc?.solved : undefined} icon={<i className="fa-solid fa-code w-4 h-4 text-amber-500" ></i>} bg="bg-amber-500/10" />
-                        <StatCard label="Codeforces Solved" value={savedHandles.codeforces ? cf?.solved : undefined} icon={<i className="fa-solid fa-bolt w-4 h-4 text-blue-500" ></i>} bg="bg-blue-500/10" />
-                        <StatCard label="CodeChef Solved" value={savedHandles.codechef ? cc?.solved : undefined} icon={<i className="fa-solid fa-star w-4 h-4 text-red-500" ></i>} bg="bg-red-500/10" />
-                        <StatCard label="Total Problems" value={totalSolved} icon={<i className="fa-solid fa-trophy w-4 h-4 text-indigo-500" ></i>} bg="bg-indigo-500/10" highlight />
+                        <StatCard label="LeetCode Solved" value={savedHandles.leetcode ? lc?.solved : undefined} icon={<i className="fa-solid fa-code w-4 h-4 text-zinc-900 dark:text-white" ></i>} bg="bg-amber-500/10" />
+                        <StatCard label="Codeforces Solved" value={savedHandles.codeforces ? cf?.solved : undefined} icon={<i className="fa-solid fa-bolt w-4 h-4 text-zinc-900 dark:text-white" ></i>} bg="bg-blue-500/10" />
+                        <StatCard label="CodeChef Solved" value={savedHandles.codechef ? cc?.solved : undefined} icon={<i className="fa-solid fa-star w-4 h-4 text-zinc-900 dark:text-white" ></i>} bg="bg-red-500/10" />
+                        <StatCard label="Total Problems" value={totalSolved} icon={<i className="fa-solid fa-trophy w-4 h-4 text-zinc-900 dark:text-white" ></i>} bg="bg-indigo-500/10" highlight />
                       </>
                     )}
                   </div>

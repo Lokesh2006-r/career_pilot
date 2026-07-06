@@ -85,7 +85,7 @@ export default function EvaluateScriptPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
-            Evaluate Answer Script <i className="fa-solid fa-chart-line text-blue-500 ml-2" />
+            Evaluate Answer Script <i className="fa-solid fa-chart-line text-zinc-900 dark:text-white ml-2" />
           </h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
             Submit a question paper and student answers for AI-powered grading and feedback.
@@ -99,7 +99,7 @@ export default function EvaluateScriptPage() {
           <div className="p-5 rounded-2xl bg-white dark:bg-[#0f0f11] border border-zinc-200 dark:border-zinc-800/60 space-y-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <i className="fa-solid fa-list-ol text-blue-500 text-sm" />
+                <i className="fa-solid fa-list-ol text-zinc-900 dark:text-white text-sm" />
               </div>
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest">
                 Exam Questions
@@ -118,7 +118,7 @@ export default function EvaluateScriptPage() {
           <div className="p-5 rounded-2xl bg-white dark:bg-[#0f0f11] border border-zinc-200 dark:border-zinc-800/60 space-y-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
-                <i className="fa-solid fa-pen-nib text-indigo-500 text-sm" />
+                <i className="fa-solid fa-pen-nib text-zinc-900 dark:text-white text-sm" />
               </div>
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest">
                 Student Answers
@@ -262,7 +262,7 @@ export default function EvaluateScriptPage() {
                             <ul className="space-y-1">
                               {r.keyPointsCovered.map((pt, j) => (
                                 <li key={j} className="text-xs text-zinc-600 dark:text-zinc-400 flex items-start gap-1.5">
-                                  <i className="fa-solid fa-check text-emerald-500 mt-0.5 shrink-0" />{pt}
+                                  <i className="fa-solid fa-check text-zinc-900 dark:text-white mt-0.5 shrink-0" />{pt}
                                 </li>
                               ))}
                             </ul>
@@ -278,7 +278,7 @@ export default function EvaluateScriptPage() {
                             <ul className="space-y-1">
                               {r.keyPointsMissed.map((pt, j) => (
                                 <li key={j} className="text-xs text-zinc-600 dark:text-zinc-400 flex items-start gap-1.5">
-                                  <i className="fa-solid fa-minus text-rose-400 mt-0.5 shrink-0" />{pt}
+                                  <i className="fa-solid fa-minus text-zinc-900 dark:text-white mt-0.5 shrink-0" />{pt}
                                 </li>
                               ))}
                             </ul>

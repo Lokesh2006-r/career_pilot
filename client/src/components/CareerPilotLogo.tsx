@@ -18,40 +18,35 @@ export function CareerPilotIcon({ size = 48, colored = true, className, ...props
       className={className}
       {...props}
     >
-      {/* Rotated Diamond Outer Border */}
-      <polygon 
-        points="50,12 88,50 50,88 12,50" 
-        stroke={color} 
-        strokeWidth="4" 
-        strokeLinejoin="round" 
-        fill="none" 
-      />
+      {/* Background Circle */}
+      <circle cx="50" cy="50" r="48" fill={color} />
       
-      {/* Bar Chart inside Diamond */}
-      <rect x="42" y="58" width="6" height="12" rx="1.5" fill={color} />
-      <rect x="52" y="44" width="6" height="26" rx="1.5" fill={color} />
-      <rect x="62" y="30" width="6" height="40" rx="1.5" fill={color} />
-      
-      {/* Magnifying Glass Lens */}
-      <circle 
-        cx="44" 
-        cy="48" 
-        r="13" 
-        stroke={color} 
-        strokeWidth="5" 
-        fill="none" 
-      />
-      
-      {/* Magnifying Glass Handle */}
-      <line 
-        x1="35" 
-        y1="57" 
-        x2="22" 
-        y2="70" 
-        stroke={color} 
-        strokeWidth="7.5" 
-        strokeLinecap="round" 
-      />
+      {/* Rocket Group rotated to point top-right */}
+      <g transform="rotate(45 50 50)">
+        {/* Left Fin */}
+        <path d="M 35 45 Q 15 55, 20 70 L 35 65 Z" fill="var(--background)" />
+        
+        {/* Right Fin */}
+        <path d="M 65 45 Q 85 55, 80 70 L 65 65 Z" fill="var(--background)" />
+        
+        {/* Rocket Body */}
+        <path d="M 50 10 C 70 25, 65 65, 65 65 L 35 65 C 35 65, 30 25, 50 10 Z" fill="var(--background)" />
+        
+        {/* Nose Cone Separator */}
+        <path d="M 37 28 Q 50 35, 63 28" stroke={color} strokeWidth="3" fill="none" />
+        
+        {/* Window */}
+        <circle cx="50" cy="42" r="7" fill={color} />
+        <circle cx="50" cy="42" r="3" fill="var(--background)" />
+        
+        {/* Nozzle */}
+        <path d="M 40 65 L 38 72 L 62 72 L 60 65 Z" fill="var(--background)" />
+        
+        {/* Exhaust Lines */}
+        <line x1="40" y1="78" x2="40" y2="92" stroke="var(--background)" strokeWidth="4" strokeLinecap="round" />
+        <line x1="50" y1="76" x2="50" y2="96" stroke="var(--background)" strokeWidth="4" strokeLinecap="round" />
+        <line x1="60" y1="78" x2="60" y2="92" stroke="var(--background)" strokeWidth="4" strokeLinecap="round" />
+      </g>
     </svg>
   );
 }

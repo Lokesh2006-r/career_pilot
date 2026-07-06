@@ -183,7 +183,7 @@ export function ExcelReportModal({ isOpen, onClose, practiceLogs, interviews = [
       <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-200">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-            <i className="fa-solid fa-file-excel text-emerald-500"></i>
+            <i className="fa-solid fa-file-excel text-zinc-900 dark:text-white"></i>
             Detailed Performance Report
           </h2>
           <button 

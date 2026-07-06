@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { db, storage, isFirebaseAdminConfigured } from '../firebaseAdmin';
-import { GoogleGenAI } from '@google/genai';
+import { generateContentWithFallback } from '../utils/gemini';
 import Resume from '../models/Resume';
 import BuiltResume from '../models/BuiltResume';
 import { isDBConnected } from '../db';
@@ -11,7 +11,6 @@ const pdfParse = require('pdf-parse') as any;
 
 
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 // ---- Load Kaggle resume dataset for benchmarking ----
 let resumeDataset: any = null;
@@ -191,7 +190,7 @@ ${fileBufferString}
 
 Return ONLY a valid JSON object.`;
 
-          const response = await ai.models.generateContent({
+          const response = await generateContentWithFallback({
             model: 'gemini-2.5-flash',
             contents: prompt,
             config: {
@@ -350,7 +349,7 @@ Do NOT output quotes, bullet point characters, intro/outro text, or markdown for
 Bullet Point:
 "${text}"`;
 
-    const response = await ai.models.generateContent({
+    const response = await generateContentWithFallback({
       model: 'gemini-2.5-flash',
       contents: prompt,
     });
@@ -535,7 +534,7 @@ Resume Text:
 ${fileBufferString}
 `;
 
-        const response = await ai.models.generateContent({
+        const response = await generateContentWithFallback({
           model: 'gemini-2.5-flash',
           contents: prompt,
         });

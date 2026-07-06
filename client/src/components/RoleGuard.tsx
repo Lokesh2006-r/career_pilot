@@ -41,7 +41,7 @@ export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
         <div className="absolute bottom-1/3 right-1/3 w-[350px] h-[350px] bg-purple-500/10 dark:bg-purple-500/5 rounded-full blur-[120px] -z-10 animate-pulse duration-6000"></div>
         
         <div className="glass-panel p-8 rounded-3xl flex flex-col items-center space-y-4 max-w-sm text-center border-zinc-250 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-950/40 backdrop-blur-xl shadow-xl">
-          <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-indigo-500 animate-spin" ></i>
+          <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-zinc-900 dark:text-white animate-spin" ></i>
           <h3 className="text-md font-bold tracking-tight">Access Verification</h3>
           <p className="text-xs text-zinc-550 dark:text-zinc-400">Syncing identity keys and role permissions...</p>
         </div>

@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
-import { GoogleGenAI } from '@google/genai';
+import { generateContentWithFallback } from '../utils/gemini';
 import RecommendedProject from '../models/RecommendedProject';
 import Resume from '../models/Resume';
 import BuiltResume from '../models/BuiltResume';
 import { isDBConnected } from '../db';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 const INITIAL_PROJECTS = [
   {
@@ -231,7 +230,7 @@ Return the recommended project in valid JSON format. Follow this exact JSON stru
 
 Return ONLY the raw JSON object. Do not wrap in markdown \`\`\`json blocks, do not include preamble or conversational output. Ensure all JSON fields are formatted correctly.`;
 
-        const response = await ai.models.generateContent({
+        const response = await generateContentWithFallback({
           model: 'gemini-2.5-flash',
           contents: prompt,
         });

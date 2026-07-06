@@ -248,7 +248,7 @@ export default function ResumeLab() {
             <div className="glass-panel p-6 rounded-3xl lg:col-span-2 space-y-6 flex flex-col justify-between group">
               <div>
                 <h3 className="font-bold text-sm text-zinc-900 dark:text-white flex items-center gap-2 mb-3.5">
-                  <i className="fa-solid fa-circle-check w-4.5 h-4.5 text-emerald-500" ></i>
+                  <i className="fa-solid fa-circle-check w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                   Extracted Skills & Competencies
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -265,7 +265,7 @@ export default function ResumeLab() {
               
               <div className="border-t border-zinc-200/50 dark:border-zinc-800/40 pt-5">
                 <h3 className="font-bold text-sm text-zinc-900 dark:text-white flex items-center gap-2 mb-3.5">
-                  <i className="fa-solid fa-circle-exclamation w-4.5 h-4.5 text-rose-500" ></i>
+                  <i className="fa-solid fa-circle-exclamation w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                   High-Priority Missing Keywords
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -304,13 +304,13 @@ export default function ResumeLab() {
                   <div className="absolute -top-6 -right-6 w-28 h-28 bg-violet-500/5 rounded-full blur-xl group-hover:scale-125 transition-transform"></div>
                   
                   <h3 className="text-xs font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i className="fa-solid fa-tag text-violet-500"></i>
+                    <i className="fa-solid fa-tag text-zinc-900 dark:text-white"></i>
                     Detected Job Category
                   </h3>
                   
                   <div className="mb-4">
                     <span className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 text-violet-700 dark:text-violet-300 rounded-xl font-bold text-base border border-violet-500/15">
-                      <i className="fa-solid fa-briefcase text-violet-500"></i>
+                      <i className="fa-solid fa-briefcase text-zinc-900 dark:text-white"></i>
                       {result.benchmark.matchedCategory.replace(/-/g, ' ')}
                     </span>
                   </div>
@@ -340,7 +340,7 @@ export default function ResumeLab() {
                   <div className="absolute -top-6 -right-6 w-28 h-28 bg-emerald-500/5 rounded-full blur-xl group-hover:scale-125 transition-transform"></div>
                   
                   <h3 className="text-xs font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider mb-5 flex items-center gap-2">
-                    <i className="fa-solid fa-ranking-star text-amber-500"></i>
+                    <i className="fa-solid fa-ranking-star text-zinc-900 dark:text-white"></i>
                     Percentile Rank
                   </h3>
                   
@@ -390,7 +390,7 @@ export default function ResumeLab() {
                   <div className="absolute -top-6 -right-6 w-28 h-28 bg-orange-500/5 rounded-full blur-xl group-hover:scale-125 transition-transform"></div>
                   
                   <h3 className="text-xs font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i className="fa-solid fa-puzzle-piece text-orange-500"></i>
+                    <i className="fa-solid fa-puzzle-piece text-zinc-900 dark:text-white"></i>
                     Skills Gap vs. Industry Peers
                   </h3>
                   
@@ -412,7 +412,7 @@ export default function ResumeLab() {
                   
                   {result.benchmark.missingIndustrySkills?.length > 0 && (
                     <p className="text-[10px] text-zinc-400 mt-4 leading-relaxed">
-                      <i className="fa-solid fa-lightbulb text-amber-400 mr-1"></i>
+                      <i className="fa-solid fa-lightbulb text-zinc-900 dark:text-white mr-1"></i>
                       Adding these skills could improve your match rate by up to {Math.min(result.benchmark.missingIndustrySkills.length * 5, 35)}%
                     </p>
                   )}
@@ -426,7 +426,7 @@ export default function ResumeLab() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
             
             <h3 className="font-extrabold text-lg mb-6 flex items-center gap-2.5">
-              <i className="fa-solid fa-microchip w-5 h-5 text-indigo-500" ></i>
+              <i className="fa-solid fa-microchip w-5 h-5 text-zinc-900 dark:text-white" ></i>
               Strategic Improvement Plan
             </h3>
             

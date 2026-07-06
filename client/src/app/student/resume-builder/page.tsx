@@ -577,7 +577,7 @@ export default function ResumeBuilder() {
           {/* 1. Personal Details */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <i className="fa-solid fa-user w-4.5 h-4.5 text-indigo-500" ></i>
+              <i className="fa-solid fa-user w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               Personal Information
             </h3>
             
@@ -678,7 +678,7 @@ export default function ResumeBuilder() {
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
               <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                <i className="fa-solid fa-file-lines w-4.5 h-4.5 text-indigo-500" ></i>
+                <i className="fa-solid fa-file-lines w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                 Professional Summary
               </h3>
               <button
@@ -715,7 +715,7 @@ export default function ResumeBuilder() {
           {/* 3. Professional Experience */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
-              <i className="fa-solid fa-briefcase w-4.5 h-4.5 text-indigo-500" ></i>
+              <i className="fa-solid fa-briefcase w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               Work Experience
             </h3>
             
@@ -833,7 +833,7 @@ export default function ResumeBuilder() {
           {/* 4. Projects */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
-              <i className="fa-solid fa-wand-magic-sparkles w-4.5 h-4.5 text-indigo-500" ></i>
+              <i className="fa-solid fa-wand-magic-sparkles w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               Projects
             </h3>
             
@@ -929,7 +929,7 @@ export default function ResumeBuilder() {
           {/* 5. Education */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
-              <i className="fa-solid fa-book-open w-4.5 h-4.5 text-indigo-500" ></i>
+              <i className="fa-solid fa-book-open w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               Education
             </h3>
             
@@ -1016,7 +1016,7 @@ export default function ResumeBuilder() {
           {/* 6. Core Skills */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border border-zinc-200/50 dark:border-zinc-800/40">
             <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 border-b border-zinc-200/50 dark:border-zinc-800/40 pb-3">
-              <i className="fa-solid fa-code w-4.5 h-4.5 text-indigo-500" ></i>
+              <i className="fa-solid fa-code w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               Core Skills
             </h3>
             
@@ -1114,7 +1114,7 @@ export default function ResumeBuilder() {
           >
             {loading ? (
               <div className="flex-1 flex flex-col items-center justify-center text-zinc-400 gap-2">
-                <i className="fa-solid fa-arrows-rotate w-8 h-8 animate-spin text-indigo-500" ></i>
+                <i className="fa-solid fa-arrows-rotate w-8 h-8 animate-spin text-zinc-900 dark:text-white" ></i>
                 <span className="text-xs font-semibold uppercase tracking-wider">Syncing Resume Layout...</span>
               </div>
             ) : (

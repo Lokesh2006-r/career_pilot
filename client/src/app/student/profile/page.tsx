@@ -125,7 +125,7 @@ export default function ProfilePage() {
             onClick={() => setIsEditing(true)}
             className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white hover:border-indigo-500/30 rounded-xl font-bold text-xs uppercase tracking-wide transition-all shadow-sm cursor-pointer"
           >
-            <i className="fa-solid fa-pencil w-4 h-4 text-indigo-500" ></i>
+            <i className="fa-solid fa-pencil w-4 h-4 text-zinc-900 dark:text-white" ></i>
             Edit Credentials
           </button>
         )}
@@ -153,7 +153,7 @@ export default function ProfilePage() {
                 onClick={() => setIsEditing(true)}
                 className="flex items-center gap-1.5 px-4.5 py-2.5 bg-black/60 hover:bg-black/80 text-white border border-white/10 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg active:scale-95"
               >
-                <i className="fa-solid fa-pencil w-3.5 h-3.5 text-indigo-400" ></i>
+                <i className="fa-solid fa-pencil w-3.5 h-3.5 text-zinc-900 dark:text-white" ></i>
                 Edit Profile
               </button>
             )}
@@ -202,7 +202,7 @@ export default function ProfilePage() {
               {/* Basic Info panel */}
               <div className="space-y-5">
                 <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                  <i className="fa-solid fa-user w-4.5 h-4.5 text-indigo-500" ></i>
+                  <i className="fa-solid fa-user w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                   Identity Details
                 </h2>
                 <div className="space-y-4">
@@ -231,7 +231,7 @@ export default function ProfilePage() {
               {/* Contact panel */}
               <div className="space-y-5 border-t border-zinc-200/50 dark:border-zinc-800/40 pt-6">
                 <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                  <i className="fa-solid fa-envelope w-4.5 h-4.5 text-indigo-500" ></i>
+                  <i className="fa-solid fa-envelope w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                   Communication Interfaces
                 </h2>
                 <div className="space-y-4">
@@ -259,7 +259,7 @@ export default function ProfilePage() {
               {/* Education panel */}
               <div className="space-y-5">
                 <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                  <i className="fa-solid fa-graduation-cap w-4.5 h-4.5 text-indigo-500" ></i>
+                  <i className="fa-solid fa-graduation-cap w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                   Academic History
                 </h2>
                 <div className="space-y-4">
@@ -289,7 +289,7 @@ export default function ProfilePage() {
               {/* Social Links panel */}
               <div className="space-y-5 border-t border-zinc-200/50 dark:border-zinc-800/40 pt-6">
                 <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                  <i className="fa-solid fa-link w-4.5 h-4.5 text-indigo-500" ></i>
+                  <i className="fa-solid fa-link w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                   Profile Links indices
                 </h2>
                 <div className="space-y-4">

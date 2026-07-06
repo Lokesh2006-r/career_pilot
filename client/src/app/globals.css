@@ -225,6 +225,10 @@
   --color-blue-750: var(--blue-750);
 }
 
+html {
+  font-size: 90%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

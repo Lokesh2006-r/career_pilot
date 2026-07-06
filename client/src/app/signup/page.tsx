@@ -129,7 +129,7 @@ export default function SignupPage() {
         {/* Firebase Config bypassed warning */}
         {!isFirebaseConfigured && (
           <div className="glass-panel border-amber-500/20 dark:border-amber-500/10 bg-amber-500/5 backdrop-blur-xl rounded-2xl p-4 flex gap-3.5 shadow-sm">
-            <i className="fa-solid fa-triangle-exclamation w-5 h-5 text-amber-500 shrink-0 mt-0.5 animate-pulse" ></i>
+            <i className="fa-solid fa-triangle-exclamation w-5 h-5 text-zinc-900 dark:text-white shrink-0 mt-0.5 animate-pulse" ></i>
             <div className="text-xs font-medium">
               <p className="font-extrabold text-amber-500 uppercase tracking-wider mb-1">Sandbox Active</p>
               <p className="text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed">

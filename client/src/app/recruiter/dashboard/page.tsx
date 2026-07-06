@@ -139,7 +139,7 @@ export default function RecruiterDashboard() {
         <div className="lg:col-span-8 glass-panel p-8 rounded-3xl space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <i className="fa-solid fa-chart-column w-5 h-5 text-purple-500" ></i>
+              <i className="fa-solid fa-chart-column w-5 h-5 text-zinc-900 dark:text-white" ></i>
               AI Pipeline Match Distribution (By Skill Groups)
             </h3>
             <span className="text-xs text-zinc-400 font-bold uppercase">Dynamic matching</span>
@@ -182,7 +182,7 @@ export default function RecruiterDashboard() {
         {/* Shortlisted Quick Summary */}
         <div className="lg:col-span-4 glass-panel p-8 rounded-3xl space-y-6">
           <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-            <i className="fa-solid fa-user-check w-5 h-5 text-pink-550" ></i>
+            <i className="fa-solid fa-user-check w-5 h-5 text-zinc-900 dark:text-white" ></i>
             Top Shortlisted
           </h3>
 

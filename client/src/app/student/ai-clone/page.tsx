@@ -246,7 +246,7 @@ ${[...(pd.skills?.languages || []), ...(pd.skills?.frameworks || []), ...(pd.ski
     <div className="p-4 md:p-8 max-w-6xl mx-auto animate-in fade-in duration-500">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-          <i className="fa-solid fa-robot text-indigo-500"></i> AI Student Clone
+          <i className="fa-solid fa-robot text-zinc-900 dark:text-white"></i> AI Student Clone
         </h1>
         <p className="text-zinc-500 text-sm mt-1">
           Train your personalized AI clone. Recruiters can interact with this clone to evaluate your skills, experience, and cultural fit even when you're offline.

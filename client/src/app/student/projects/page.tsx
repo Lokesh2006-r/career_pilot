@@ -451,7 +451,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
               {/* Why Fits */}
               {selectedProject.whyFits && (
                 <div className="p-3.5 bg-indigo-500/5 border border-indigo-500/20 rounded-2xl flex gap-3">
-                  <i className="fa-solid fa-lightbulb w-4 h-4 shrink-0 text-indigo-500 animate-pulse mt-0.5" ></i>
+                  <i className="fa-solid fa-lightbulb w-4 h-4 shrink-0 text-zinc-900 dark:text-white animate-pulse mt-0.5" ></i>
                   <div>
                     <span className="text-[10px] font-extrabold uppercase tracking-wide text-indigo-500">Why this fits your profile</span>
                     <p className="mt-1 text-xs leading-relaxed text-indigo-700 dark:text-indigo-300 font-medium">{selectedProject.whyFits}</p>
@@ -497,7 +497,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
               {/* Architecture */}
               <div className="space-y-2">
                 <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                  <i className="fa-solid fa-microchip w-3.5 h-3.5 text-indigo-500" ></i> System Architecture
+                  <i className="fa-solid fa-microchip w-3.5 h-3.5 text-zinc-900 dark:text-white" ></i> System Architecture
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {selectedProject.architecture.map((node, i) => (
@@ -516,7 +516,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                   <ul className="space-y-1.5">
                     {selectedProject.learningDeliverables.map((item, i) => (
                       <li key={i} className="flex items-start gap-2 text-xs text-zinc-600 dark:text-zinc-400 font-medium">
-                        <i className="fa-solid fa-check w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" ></i>
+                        <i className="fa-solid fa-check w-3.5 h-3.5 text-zinc-900 dark:text-white shrink-0 mt-0.5" ></i>
                         {item}
                       </li>
                     ))}
@@ -528,7 +528,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                    <i className="fa-solid fa-code-branch w-3.5 h-3.5 text-indigo-500" ></i> Weekly Roadmap
+                    <i className="fa-solid fa-code-branch w-3.5 h-3.5 text-zinc-900 dark:text-white" ></i> Weekly Roadmap
                   </h3>
                   <span className="text-[10px] font-bold text-emerald-500">
                     {getProjectProgress(selectedProject).percent}% done
@@ -560,9 +560,9 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                               className={`flex items-start gap-2.5 p-2.5 rounded-xl border border-transparent hover:border-zinc-200/50 dark:hover:border-zinc-800/40 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 transition-all cursor-pointer ${task.completed ? "opacity-70" : ""}`}
                             >
                               {isTaskLoading ? (
-                                <i className="fa-solid fa-spinner fa-spin w-4 h-4 text-indigo-500 animate-spin shrink-0 mt-0.5" ></i>
+                                <i className="fa-solid fa-spinner fa-spin w-4 h-4 text-zinc-900 dark:text-white animate-spin shrink-0 mt-0.5" ></i>
                               ) : task.completed ? (
-                                <i className="fa-solid fa-check w-4 h-4 text-indigo-500 shrink-0 mt-0.5" ></i>
+                                <i className="fa-solid fa-check w-4 h-4 text-zinc-900 dark:text-white shrink-0 mt-0.5" ></i>
                               ) : (
                                 <i className="fa-regular fa-square w-4 h-4 text-zinc-400 shrink-0 mt-0.5" ></i>
                               )}
@@ -677,7 +677,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
           {/* Resume Gaps Alert Summary */}
           {focusOnGaps && resumeData && resumeData.missingKeywords?.length > 0 && (
             <div className="p-4 bg-amber-500/10 border border-amber-550/20 rounded-2xl flex items-start gap-3">
-              <i className="fa-solid fa-circle-exclamation w-5 h-5 text-amber-500 shrink-0 mt-0.5" ></i>
+              <i className="fa-solid fa-circle-exclamation w-5 h-5 text-zinc-900 dark:text-white shrink-0 mt-0.5" ></i>
               <div>
                 <span className="text-xs font-extrabold text-amber-500 uppercase tracking-wide">Detected Resume Gap Keywords:</span>
                 <div className="flex flex-wrap gap-1.5 mt-2">
@@ -720,7 +720,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
       {/* Main Layout Grid */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-4">
-          <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-indigo-500 animate-spin" ></i>
+          <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-zinc-900 dark:text-white animate-spin" ></i>
           <p className="text-sm text-zinc-400 font-bold uppercase tracking-wider animate-pulse">Consulting AI Twin for recommendations...</p>
         </div>
       ) : (
@@ -815,7 +815,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                             }}
                             className="p-1 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 rounded-lg text-zinc-400 hover:text-amber-500 transition-all cursor-pointer"
                           >
-                            <i className={`fa-solid fa-star ${`w-3.5 h-3.5 ${proj.isSaved ? "text-amber-500 fill-amber-500" : ""}`} `}></i>
+                            <i className={`fa-solid fa-star ${`w-3.5 h-3.5 ${proj.isSaved ? "text-zinc-900 dark:text-white fill-amber-500" : ""}`} `}></i>
                           </button>
                           <button 
                             onClick={(e) => {
@@ -896,7 +896,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                           : "bg-zinc-100 dark:bg-zinc-900 text-zinc-500 border-zinc-200/60 dark:border-zinc-800 hover:border-zinc-350"
                       }`}
                     >
-                      <i className={`fa-solid fa-star ${`w-3.5 h-3.5 ${selectedProject.isSaved ? "fill-amber-500 text-amber-500" : ""}`} `}></i>
+                      <i className={`fa-solid fa-star ${`w-3.5 h-3.5 ${selectedProject.isSaved ? "fill-amber-500 text-zinc-900 dark:text-white" : ""}`} `}></i>
                       {selectedProject.isSaved ? "Saved Spec" : "Save Spec"}
                     </button>
                   </div>
@@ -908,7 +908,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                 {/* Personalization Relevance ("Why fits your profile") */}
                 {selectedProject.whyFits && (
                   <div className="p-4 bg-indigo-500/5 border border-indigo-500/20 rounded-2xl flex gap-3 text-xs text-indigo-700 dark:text-indigo-300">
-                    <i className="fa-solid fa-lightbulb w-5 h-5 shrink-0 text-indigo-500 animate-pulse" ></i>
+                    <i className="fa-solid fa-lightbulb w-5 h-5 shrink-0 text-zinc-900 dark:text-white animate-pulse" ></i>
                     <div>
                       <span className="font-extrabold uppercase tracking-wide">Why this fits your profile:</span>
                       <p className="mt-1 leading-relaxed font-semibold">{selectedProject.whyFits}</p>
@@ -937,7 +937,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                     <ul className="space-y-2 text-xs text-zinc-550 dark:text-zinc-400 font-semibold pl-1">
                       {selectedProject.learningDeliverables.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <i className="fa-solid fa-check w-4 h-4 text-emerald-500 shrink-0 mt-0.5" ></i>
+                          <i className="fa-solid fa-check w-4 h-4 text-zinc-900 dark:text-white shrink-0 mt-0.5" ></i>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -967,7 +967,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                 {/* Architecture Nodes */}
                 <div className="space-y-3">
                   <h3 className="text-xs font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                    <i className="fa-solid fa-microchip w-4 h-4 text-indigo-500" ></i> System Architecture Nodes
+                    <i className="fa-solid fa-microchip w-4 h-4 text-zinc-900 dark:text-white" ></i> System Architecture Nodes
                   </h3>
                   <div className="flex flex-wrap gap-2.5">
                     {selectedProject.architecture.map((node, i) => (
@@ -985,7 +985,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-xs font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                      <i className="fa-solid fa-code-branch w-4 h-4 text-indigo-500" ></i> Complete Roadmap Phases
+                      <i className="fa-solid fa-code-branch w-4 h-4 text-zinc-900 dark:text-white" ></i> Complete Roadmap Phases
                     </h3>
                     <span className="text-xs font-bold text-emerald-500 uppercase tracking-wide">
                       {getProjectProgress(selectedProject).percent}% Checked Off
@@ -1021,9 +1021,9 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                                 }`}
                               >
                                 {isTaskLoading ? (
-                                  <i className="fa-solid fa-spinner fa-spin w-4.5 h-4.5 text-indigo-500 animate-spin shrink-0" ></i>
+                                  <i className="fa-solid fa-spinner fa-spin w-4.5 h-4.5 text-zinc-900 dark:text-white animate-spin shrink-0" ></i>
                                 ) : task.completed ? (
-                                  <i className="fa-solid fa-check w-4.5 h-4.5 text-indigo-500 shrink-0" ></i>
+                                  <i className="fa-solid fa-check w-4.5 h-4.5 text-zinc-900 dark:text-white shrink-0" ></i>
                                 ) : (
                                   <i className="fa-regular fa-square w-4.5 h-4.5 text-zinc-400 shrink-0" ></i>
                                 )}
@@ -1047,7 +1047,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
                 {/* Action Buttons */}
                 <div className="border-t border-zinc-200/50 dark:border-zinc-800/40 pt-5 flex flex-wrap gap-4 items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <i className="fa-solid fa-terminal w-4.5 h-4.5 text-emerald-500" ></i>
+                    <i className="fa-solid fa-terminal w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                     <span className="text-xs font-extrabold text-emerald-500 uppercase tracking-wider">Ready to deploy portfolio spec</span>
                   </div>
                   
@@ -1084,7 +1084,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
             <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-black flex items-center gap-2">
-                  <i className="fa-solid fa-terminal w-5 h-5 text-indigo-500" ></i>
+                  <i className="fa-solid fa-terminal w-5 h-5 text-zinc-900 dark:text-white" ></i>
                   Export Repository Specification
                 </h3>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{selectedProject.title}</p>
@@ -1132,7 +1132,7 @@ ${ph.tasks.map((task, tIdx) => `- [ ] Step ${tIdx + 1}: ${task.text}`).join("\n"
               >
                 {copiedSpec ? (
                   <>
-                    <i className="fa-solid fa-check w-3.5 h-3.5 text-emerald-500" ></i>
+                    <i className="fa-solid fa-check w-3.5 h-3.5 text-zinc-900 dark:text-white" ></i>
                     Copied to Clipboard!
                   </>
                 ) : (

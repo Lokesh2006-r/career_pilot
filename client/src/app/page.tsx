@@ -131,7 +131,7 @@ export default function LandingPage() {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider"
             >
-              <i className="fa-solid fa-wand-magic-sparkles w-3.5 h-3.5 text-indigo-500 animate-pulse" ></i>
+              <i className="fa-solid fa-wand-magic-sparkles w-3.5 h-3.5 text-zinc-900 dark:text-white animate-pulse" ></i>
               Meet your professional clone
             </motion.div>
 
@@ -280,7 +280,7 @@ export default function LandingPage() {
             <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-indigo-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all md:col-span-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-indigo-500/10 transition-colors"></div>
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6">
-                <i className="fa-solid fa-microchip w-6 h-6 text-indigo-500" ></i>
+                <i className="fa-solid fa-microchip w-6 h-6 text-zinc-900 dark:text-white" ></i>
               </div>
               <h3 className="text-xl font-extrabold tracking-tight mb-2 flex items-center gap-2">
                 Personal AI RAG Twin Agent
@@ -295,7 +295,7 @@ export default function LandingPage() {
             <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-cyan-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-6">
-                <i className="fa-solid fa-bullseye w-6 h-6 text-cyan-500" ></i>
+                <i className="fa-solid fa-bullseye w-6 h-6 text-zinc-900 dark:text-white" ></i>
               </div>
               <h3 className="text-xl font-extrabold tracking-tight mb-2">ATS Resume Lab</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">
@@ -306,7 +306,7 @@ export default function LandingPage() {
             {/* Box 3 - Coding metrics */}
             <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-yellow-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all relative overflow-hidden group">
               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6">
-                <i className="fa-solid fa-code w-6 h-6 text-amber-500" ></i>
+                <i className="fa-solid fa-code w-6 h-6 text-zinc-900 dark:text-white" ></i>
               </div>
               <h3 className="text-xl font-extrabold tracking-tight mb-2">Coding Trackers</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">
@@ -318,7 +318,7 @@ export default function LandingPage() {
             <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-sm border-zinc-200/50 dark:border-zinc-800/40 hover:border-purple-500/20 hover:shadow-[0_10px_30px_-10px_var(--glow-color)] transition-all md:col-span-2 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
               <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-6">
-                <i className="fa-solid fa-bolt w-6 h-6 text-purple-500" ></i>
+                <i className="fa-solid fa-bolt w-6 h-6 text-zinc-900 dark:text-white" ></i>
               </div>
               <h3 className="text-xl font-extrabold tracking-tight mb-2">Real-time AI Mock Interviews</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium max-w-xl">

@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import { GoogleGenAI } from '@google/genai';
+import { generateContentWithFallback } from '../utils/gemini';
 import InterviewModel from '../models/Interview';
 import { isDBConnected } from '../db';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 const OFFLINE_QUESTIONS: Record<string, Record<string, string[]>> = {
   "Frontend Engineer": {
@@ -189,7 +188,7 @@ The question should ask them to dive deep into a specific technical decision, ar
 Keep the question brief and focused (1-2 sentences). Return ONLY the question text.`;
     }
 
-    const response = await ai.models.generateContent({
+    const response = await generateContentWithFallback({
       model: 'gemini-2.5-flash',
       contents: prompt,
     });
@@ -334,7 +333,7 @@ Return ONLY a valid JSON object matching this structure:
 }
 Do NOT return markdown, explanation, or wrap it in anything other than the raw JSON.`;
 
-      const response = await ai.models.generateContent({
+      const response = await generateContentWithFallback({
         model: 'gemini-2.5-flash',
         contents: prompt,
       });
@@ -401,7 +400,7 @@ Generate a JSON object containing:
 
 Return ONLY a valid JSON object. No explanation, no markdown.`;
 
-      const response = await ai.models.generateContent({
+      const response = await generateContentWithFallback({
         model: 'gemini-2.5-flash',
         contents: prompt,
       });
@@ -518,7 +517,7 @@ Provide the execution details. Return ONLY a valid JSON object matching this str
 }
 Do NOT return any markdown, explanation, or wrap the JSON in anything other than the raw JSON itself. Ensure standard error messages look authentic (e.g. including line numbers if applicable).`;
 
-    const response = await ai.models.generateContent({
+    const response = await generateContentWithFallback({
       model: 'gemini-2.5-flash',
       contents: prompt,
     });

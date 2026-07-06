@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { GoogleGenAI } from '@google/genai';
+import { generateContentWithFallback } from '../utils/gemini';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 const pdfParse = require('pdf-parse') as any;
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -31,7 +30,7 @@ async function extractText(file: Express.Multer.File): Promise<string> {
 }
 
 async function callGemini(prompt: string): Promise<string> {
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithFallback({
     model: 'gemini-2.5-flash',
     contents: prompt,
   });

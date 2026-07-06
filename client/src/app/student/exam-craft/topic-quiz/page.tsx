@@ -117,8 +117,8 @@ export default function TopicQuizPage() {
 
   const optionIcon = (idx: number, q: QuizQuestion) => {
     if (!showExplanation) return null;
-    if (idx === q.correctIndex) return <i className="fa-solid fa-circle-check text-emerald-500 ml-auto" />;
-    if (idx === selectedOption) return <i className="fa-solid fa-circle-xmark text-rose-500 ml-auto" />;
+    if (idx === q.correctIndex) return <i className="fa-solid fa-circle-check text-zinc-900 dark:text-white ml-auto" />;
+    if (idx === selectedOption) return <i className="fa-solid fa-circle-xmark text-zinc-900 dark:text-white ml-auto" />;
     return null;
   };
 
@@ -262,7 +262,7 @@ export default function TopicQuizPage() {
             {showExplanation && (
               <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-1.5 animate-fade-in">
                 <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <i className="fa-solid fa-lightbulb text-amber-400" /> Explanation
+                  <i className="fa-solid fa-lightbulb text-zinc-900 dark:text-white" /> Explanation
                 </p>
                 <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">{quiz[currentIdx].explanation}</p>
               </div>

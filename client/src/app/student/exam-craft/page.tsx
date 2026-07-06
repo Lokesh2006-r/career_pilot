@@ -44,7 +44,7 @@ export default function ExamCraftPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
-            Exam Craft <i className="fa-solid fa-wand-magic-sparkles text-indigo-500 ml-2"></i>
+            Exam Craft <i className="fa-solid fa-wand-magic-sparkles text-zinc-900 dark:text-white ml-2"></i>
           </h1>
           <p className="text-sm sm:text-base text-zinc-550 dark:text-zinc-400 mt-2 max-w-2xl">
             Empower your academic preparation with AI-driven tools. Generate questions, draft comprehensive answers, and auto-grade scripts instantly.

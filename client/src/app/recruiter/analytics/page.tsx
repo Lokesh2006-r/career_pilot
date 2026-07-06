@@ -149,7 +149,7 @@ export default function RecruiterAnalytics() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-purple-500 animate-spin" ></i>
+        <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-zinc-900 dark:text-white animate-spin" ></i>
         <p className="text-sm text-zinc-400 font-bold uppercase tracking-wider animate-pulse">Syncing recruiter pipeline diagnostics...</p>
       </div>
     );
@@ -220,7 +220,7 @@ export default function RecruiterAnalytics() {
         <div className="lg:col-span-8 glass-panel p-8 rounded-3xl space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <i className="fa-solid fa-arrow-trend-up w-5 h-5 text-purple-500" ></i>
+              <i className="fa-solid fa-arrow-trend-up w-5 h-5 text-zinc-900 dark:text-white" ></i>
               Talent Pipeline Comparison Metrics
             </h3>
             <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Visual audit</span>
@@ -233,7 +233,7 @@ export default function RecruiterAnalytics() {
         <div className="lg:col-span-4 glass-panel p-8 rounded-3xl space-y-6 flex flex-col justify-between">
           <div>
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <i className="fa-solid fa-clock w-5 h-5 text-purple-500" ></i>
+              <i className="fa-solid fa-clock w-5 h-5 text-zinc-900 dark:text-white" ></i>
               Sourcing Efficiency Gain
             </h3>
 
@@ -265,7 +265,7 @@ export default function RecruiterAnalytics() {
       <div className="glass-panel p-8 rounded-3xl space-y-6">
         <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-zinc-800/40 pb-4">
           <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-            <i className="fa-solid fa-user-check w-5 h-5 text-purple-500" ></i>
+            <i className="fa-solid fa-user-check w-5 h-5 text-zinc-900 dark:text-white" ></i>
             Candidate Shortlist Audit Pipeline
           </h3>
           <span className="text-[10px] font-black uppercase text-purple-500 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">

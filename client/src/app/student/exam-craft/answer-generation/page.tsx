@@ -87,7 +87,7 @@ export default function AnswerGenerationPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
-            Answer Generation <i className="fa-solid fa-book-open text-pink-500 ml-2" />
+            Answer Generation <i className="fa-solid fa-book-open text-zinc-900 dark:text-white ml-2" />
           </h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
             Paste your questions and get comprehensive, formatted answers instantly.
@@ -172,7 +172,7 @@ export default function AnswerGenerationPage() {
           {loading ? (
             <div className="h-full min-h-[400px] flex flex-col items-center justify-center gap-4 rounded-2xl bg-white dark:bg-[#0f0f11] border border-zinc-200 dark:border-zinc-800/60">
               <div className="w-16 h-16 rounded-2xl bg-pink-500/10 flex items-center justify-center">
-                <i className="fa-solid fa-spinner fa-spin text-3xl text-pink-500" />
+                <i className="fa-solid fa-spinner fa-spin text-3xl text-zinc-900 dark:text-white" />
               </div>
               <div className="text-center">
                 <p className="font-bold text-zinc-900 dark:text-white">Writing your answers…</p>
@@ -182,7 +182,7 @@ export default function AnswerGenerationPage() {
           ) : answers.length === 0 ? (
             <div className="h-full min-h-[400px] flex flex-col items-center justify-center gap-4 rounded-2xl bg-white dark:bg-[#0f0f11] border border-dashed border-zinc-300 dark:border-zinc-700">
               <div className="w-16 h-16 rounded-2xl bg-pink-500/10 flex items-center justify-center">
-                <i className="fa-solid fa-book-open text-3xl text-pink-400" />
+                <i className="fa-solid fa-book-open text-3xl text-zinc-900 dark:text-white" />
               </div>
               <div className="text-center">
                 <p className="font-bold text-zinc-700 dark:text-zinc-300">Answers will appear here</p>
@@ -194,7 +194,7 @@ export default function AnswerGenerationPage() {
               <div className="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-[#0f0f11] border border-zinc-200 dark:border-zinc-800/60">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center">
-                    <i className="fa-solid fa-check-circle text-pink-500" />
+                    <i className="fa-solid fa-check-circle text-zinc-900 dark:text-white" />
                   </div>
                   <div>
                     <p className="font-bold text-zinc-900 dark:text-white text-sm">{answers.length} Answers Generated</p>
@@ -230,7 +230,7 @@ export default function AnswerGenerationPage() {
                           onClick={() => handleCopy(i, item.answer)}
                           className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
                         >
-                          {copied === i ? <><i className="fa-solid fa-check text-emerald-500" /> Copied</> : <><i className="fa-regular fa-copy" /> Copy</>}
+                          {copied === i ? <><i className="fa-solid fa-check text-zinc-900 dark:text-white" /> Copied</> : <><i className="fa-regular fa-copy" /> Copy</>}
                         </button>
                       </div>
                       <div className="space-y-1.5 pl-2 border-l-2 border-pink-500/40">

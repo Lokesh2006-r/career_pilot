@@ -1070,7 +1070,7 @@ export default function MockInterviews() {
       <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <i className="fa-solid fa-wand-magic-sparkles w-5 h-5 text-indigo-500 animate-pulse" ></i>
+            <i className="fa-solid fa-wand-magic-sparkles w-5 h-5 text-zinc-900 dark:text-white animate-pulse" ></i>
             <span className="text-xs font-black uppercase tracking-widest text-indigo-500">Placement Assessment loops</span>
           </div>
           <h1 className="text-3xl font-black tracking-tight mt-1 bg-gradient-to-r from-zinc-900 via-indigo-950 to-purple-900 dark:from-white dark:via-indigo-200 dark:to-purple-300 bg-clip-text text-transparent">
@@ -1086,7 +1086,7 @@ export default function MockInterviews() {
             onClick={() => setViewState("config")}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-98"
           >
-            <i className="fa-solid fa-arrow-left w-4 h-4 text-indigo-500" ></i>
+            <i className="fa-solid fa-arrow-left w-4 h-4 text-zinc-900 dark:text-white" ></i>
             Return to Panel
           </button>
         )}
@@ -1102,7 +1102,7 @@ export default function MockInterviews() {
               <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-3xl group-hover:scale-110 transition-all duration-700"></div>
               
               <h2 className="text-lg font-black mb-6 text-zinc-900 dark:text-white flex items-center gap-2">
-                <i className="fa-solid fa-bullseye w-5 h-5 text-indigo-500" ></i>
+                <i className="fa-solid fa-bullseye w-5 h-5 text-zinc-900 dark:text-white" ></i>
                 Configure Placement Parameters
               </h2>
               
@@ -1121,7 +1121,7 @@ export default function MockInterviews() {
                   >
                     <div className="flex flex-col">
                       <span className="font-extrabold text-sm text-zinc-900 dark:text-white flex items-center gap-2">
-                        <i className="fa-solid fa-chart-line w-4 h-4 text-indigo-500 animate-pulse" ></i>
+                        <i className="fa-solid fa-chart-line w-4 h-4 text-zinc-900 dark:text-white animate-pulse" ></i>
                         {selectedRole}
                       </span>
                       <span className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1 font-semibold leading-normal">
@@ -1129,7 +1129,7 @@ export default function MockInterviews() {
                       </span>
                     </div>
                     <div className="shrink-0 ml-4 p-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-200 transition-colors">
-                      <i className={`fa-solid fa-chevron-right ${`w-4 h-4 transform transition-transform duration-300 ${isRoleDropdownOpen ? "rotate-90 text-indigo-500" : ""}`} `}></i>
+                      <i className={`fa-solid fa-chevron-right ${`w-4 h-4 transform transition-transform duration-300 ${isRoleDropdownOpen ? "rotate-90 text-zinc-900 dark:text-white" : ""}`} `}></i>
                     </div>
                   </button>
 
@@ -1186,7 +1186,7 @@ export default function MockInterviews() {
                                 <span className={`font-extrabold text-xs flex items-center gap-1.5 ${
                                   selectedRole === role.name ? "text-indigo-500 dark:text-indigo-400" : "text-zinc-900 dark:text-white"
                                 }`}>
-                                  <i className={`fa-solid fa-chart-line ${`w-3 h-3 ${selectedRole === role.name ? "text-indigo-500" : "text-zinc-400"}`} `}></i>
+                                  <i className={`fa-solid fa-chart-line ${`w-3 h-3 ${selectedRole === role.name ? "text-zinc-900 dark:text-white" : "text-zinc-400"}`} `}></i>
                                   {role.name}
                                 </span>
                                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 font-semibold leading-normal">
@@ -1403,10 +1403,10 @@ export default function MockInterviews() {
             <div className="glass-panel rounded-3xl p-6 md:p-8 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-black text-zinc-900 dark:text-white flex items-center gap-2">
-                  <i className="fa-solid fa-calendar w-5 h-5 text-indigo-500" ></i>
+                  <i className="fa-solid fa-calendar w-5 h-5 text-zinc-900 dark:text-white" ></i>
                   Past Sessions History
                 </h2>
-                {loadingHistory && <i className="fa-solid fa-spinner fa-spin w-4 h-4 text-indigo-500 animate-spin" ></i>}
+                {loadingHistory && <i className="fa-solid fa-spinner fa-spin w-4 h-4 text-zinc-900 dark:text-white animate-spin" ></i>}
               </div>
 
               {historySessions.length === 0 ? (
@@ -1479,7 +1479,7 @@ export default function MockInterviews() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl"></div>
               
               <h3 className="font-black text-sm text-zinc-900 dark:text-white flex items-center gap-2 mb-6">
-                <i className="fa-solid fa-award w-4.5 h-4.5 text-indigo-500" ></i>
+                <i className="fa-solid fa-award w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                 Competency Aggregates
               </h3>
 
@@ -1513,7 +1513,7 @@ export default function MockInterviews() {
 
             <div className="glass-panel rounded-3xl p-6 border border-zinc-200/50 dark:border-zinc-800/40 relative">
               <h3 className="font-black text-sm text-zinc-900 dark:text-white flex items-center gap-2 mb-4">
-                <i className="fa-solid fa-shield-halved w-4.5 h-4.5 text-indigo-500" ></i>
+                <i className="fa-solid fa-shield-halved w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                 Candidate Integrity Shield
               </h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-normal font-medium">
@@ -1536,13 +1536,13 @@ export default function MockInterviews() {
           <div className="flex justify-between items-center mb-8 border-b border-zinc-200/50 dark:border-zinc-800/50 pb-4">
             <div>
               <h2 className="text-xl font-black text-zinc-900 dark:text-white flex items-center gap-2">
-                <i className="fa-solid fa-brain text-purple-500"></i> Round 1: Aptitude
+                <i className="fa-solid fa-brain text-zinc-900 dark:text-white"></i> Round 1: Aptitude
               </h2>
               <p className="text-xs text-zinc-500 font-bold mt-1">Question {currentMcqIndex + 1} of {APTITUDE_QUESTIONS.length}</p>
             </div>
             
             <div className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
-              <i className={`fa-solid fa-clock ${timeLeft < 60 ? "text-rose-500 animate-bounce" : "text-zinc-500"}`}></i>
+              <i className={`fa-solid fa-clock ${timeLeft < 60 ? "text-zinc-900 dark:text-white animate-bounce" : "text-zinc-500"}`}></i>
               <span className={`text-lg font-black ${timeLeft < 60 ? "text-rose-500" : "text-zinc-700 dark:text-zinc-300"}`}>
                 {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
               </span>
@@ -1626,7 +1626,7 @@ export default function MockInterviews() {
                   <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Round 2 · Challenge {currentCodingIndex + 1}/{CODING_CHALLENGES.length}</span>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                  <i className={`fa-solid fa-clock text-xs ${timeLeft < 120 ? "text-rose-500 animate-bounce" : "text-zinc-500"}`}></i>
+                  <i className={`fa-solid fa-clock text-xs ${timeLeft < 120 ? "text-zinc-900 dark:text-white animate-bounce" : "text-zinc-500"}`}></i>
                   <span className={`text-sm font-black ${timeLeft < 120 ? "text-rose-500" : "text-zinc-700 dark:text-zinc-300"}`}>
                     {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                   </span>
@@ -1871,7 +1871,7 @@ export default function MockInterviews() {
               
               {isLoading && !currentQuestion ? (
                 <div className="py-32 flex flex-col items-center justify-center space-y-4 flex-1">
-                  <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-indigo-500 animate-spin" ></i>
+                  <i className="fa-solid fa-spinner fa-spin w-10 h-10 text-zinc-900 dark:text-white animate-spin" ></i>
                   <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest animate-pulse">
                     Synthesizing Question Context...
                   </span>
@@ -1915,7 +1915,7 @@ export default function MockInterviews() {
                     <div className="flex flex-col space-y-3">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                          <i className="fa-solid fa-code w-4 h-4 text-indigo-500" ></i>
+                          <i className="fa-solid fa-code w-4 h-4 text-zinc-900 dark:text-white" ></i>
                           <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                             Coding Compiler Workspace
                           </h3>
@@ -1987,7 +1987,7 @@ export default function MockInterviews() {
                     <div className="flex flex-col space-y-3">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                          <i className="fa-solid fa-comment w-4 h-4 text-indigo-500" ></i>
+                          <i className="fa-solid fa-comment w-4 h-4 text-zinc-900 dark:text-white" ></i>
                           <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                             Conceptual Explanation & STAR log
                           </h3>
@@ -2002,7 +2002,7 @@ export default function MockInterviews() {
                               : "bg-white dark:bg-zinc-900/60 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/30"
                           }`}
                         >
-                          {isListening ? <i className="fa-solid fa-microphone-slash w-3 h-3" ></i> : <i className="fa-solid fa-microphone w-3 h-3 text-indigo-500" ></i>}
+                          {isListening ? <i className="fa-solid fa-microphone-slash w-3 h-3" ></i> : <i className="fa-solid fa-microphone w-3 h-3 text-zinc-900 dark:text-white" ></i>}
                           {isListening ? "Listening..." : "Dictate"}
                         </button>
                       </div>
@@ -2127,7 +2127,7 @@ export default function MockInterviews() {
             <div className="glass-panel p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800/40 relative overflow-hidden">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <i className={`fa-solid fa-clock ${`w-4 h-4 ${timeLeft < 20 ? "text-rose-500 animate-bounce" : "text-indigo-500"}`} `}></i>
+                  <i className={`fa-solid fa-clock ${`w-4 h-4 ${timeLeft < 20 ? "text-zinc-900 dark:text-white animate-bounce" : "text-zinc-900 dark:text-white"}`} `}></i>
                   <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                     Time Allotted
                   </span>
@@ -2306,7 +2306,7 @@ export default function MockInterviews() {
                 onClick={handlePrint}
                 className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-white text-xs font-black uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer"
               >
-                <i className="fa-solid fa-download w-4 h-4 text-indigo-500" ></i>
+                <i className="fa-solid fa-download w-4 h-4 text-zinc-900 dark:text-white" ></i>
                 Export PDF Report
               </button>
               <button 

@@ -1,4 +1,5 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ override: true });
 import express from 'express';
 import cors from 'cors';
 import { connectDB } from './db';
@@ -11,6 +12,7 @@ import studentRoutes from './routes/student.routes';
 import adminRoutes from './routes/admin.routes';
 import recruiterRoutes from './routes/recruiter.routes';
 import examRoutes from './routes/exam.routes';
+import aiToolsRoutes from './routes/ai-tools.routes';
 
 
 const app = express();
@@ -28,6 +30,7 @@ app.use('/api/student', studentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/recruiter', recruiterRoutes);
 app.use('/api/exam', examRoutes);
+app.use('/api/ai-tools', aiToolsRoutes);
 
 app.get('/', (req, res) => {
   res.send('CareerPilot API is running');

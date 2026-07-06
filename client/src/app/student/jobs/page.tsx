@@ -544,7 +544,7 @@ export default function InternshipJobMatcher() {
                     {selectedJob.company.charAt(0)}
                   </div>
                   <span className="text-xs font-black text-emerald-500 dark:text-emerald-400 tracking-wide flex items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded-lg">
-                    <i className="fa-solid fa-bullseye w-3.5 h-3.5 text-emerald-500" ></i>
+                    <i className="fa-solid fa-bullseye w-3.5 h-3.5 text-zinc-900 dark:text-white" ></i>
                     {selectedJob.matchScore}% Match
                   </span>
                 </div>
@@ -585,7 +585,7 @@ export default function InternshipJobMatcher() {
               {/* AI Alignment Rationale */}
               {selectedJob.aiRationale && (
                 <div className="p-3.5 bg-indigo-500/5 border border-indigo-500/20 rounded-2xl flex gap-3 text-xs text-indigo-700 dark:text-indigo-300">
-                  <i className="fa-solid fa-microchip w-5 h-5 shrink-0 text-indigo-500 animate-pulse mt-0.5" ></i>
+                  <i className="fa-solid fa-microchip w-5 h-5 shrink-0 text-zinc-900 dark:text-white animate-pulse mt-0.5" ></i>
                   <div>
                     <span className="font-extrabold uppercase tracking-wide text-[10px]">AI Match Analysis:</span>
                     <p className="mt-1 leading-relaxed font-medium">{selectedJob.aiRationale}</p>
@@ -597,7 +597,7 @@ export default function InternshipJobMatcher() {
               {selectedJob.responsibilities && selectedJob.responsibilities.length > 0 && (
                 <div className="space-y-3">
                   <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                    <i className="fa-solid fa-briefcase w-3.5 h-3.5 text-indigo-500" ></i> Key Responsibilities
+                    <i className="fa-solid fa-briefcase w-3.5 h-3.5 text-zinc-900 dark:text-white" ></i> Key Responsibilities
                   </h3>
                   <ul className="space-y-2">
                     {selectedJob.responsibilities.map((resp, idx) => (
@@ -789,7 +789,7 @@ export default function InternshipJobMatcher() {
                   </div>
 
                   <span className="text-xs font-black text-emerald-500 dark:text-emerald-400 tracking-wide flex items-center gap-1">
-                    <i className="fa-solid fa-bullseye w-4 h-4 text-emerald-500" ></i>
+                    <i className="fa-solid fa-bullseye w-4 h-4 text-zinc-900 dark:text-white" ></i>
                     {selectedJob.matchScore}% Matching Index
                   </span>
                 </div>
@@ -815,7 +815,7 @@ export default function InternshipJobMatcher() {
               {/* AI Alignment Rationale */}
               {selectedJob.aiRationale && (
                 <div className="p-4 bg-indigo-500/5 border border-indigo-500/20 rounded-2xl flex gap-3 text-xs text-indigo-700 dark:text-indigo-300">
-                  <i className="fa-solid fa-microchip w-5 h-5 shrink-0 text-indigo-500 animate-pulse" ></i>
+                  <i className="fa-solid fa-microchip w-5 h-5 shrink-0 text-zinc-900 dark:text-white animate-pulse" ></i>
                   <div>
                     <span className="font-extrabold uppercase tracking-wide">AI Match Analysis:</span>
                     <p className="mt-1 leading-relaxed font-semibold">{selectedJob.aiRationale}</p>
@@ -827,7 +827,7 @@ export default function InternshipJobMatcher() {
               {selectedJob.responsibilities && selectedJob.responsibilities.length > 0 && (
                 <div className="space-y-3">
                   <h3 className="text-xs font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                    <i className="fa-solid fa-briefcase w-4 h-4 text-indigo-500" ></i> Key Responsibilities
+                    <i className="fa-solid fa-briefcase w-4 h-4 text-zinc-900 dark:text-white" ></i> Key Responsibilities
                   </h3>
                   <ul className="space-y-2">
                     {selectedJob.responsibilities.map((resp, idx) => (
@@ -860,7 +860,7 @@ export default function InternshipJobMatcher() {
               {/* Bottom Action Apply Section */}
               <div className="border-t border-zinc-200/50 dark:border-zinc-800/40 pt-5 flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <i className="fa-solid fa-building w-4.5 h-4.5 text-emerald-500" ></i>
+                  <i className="fa-solid fa-building w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
                   <span className="text-xs font-extrabold text-emerald-500 uppercase tracking-wider">Hiring Directly in India</span>
                 </div>
 

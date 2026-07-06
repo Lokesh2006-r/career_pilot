@@ -241,7 +241,7 @@ export default function SettingsPage() {
           {/* AI Settings panel */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <i className="fa-solid fa-sliders w-4.5 h-4.5 text-indigo-500" ></i>
+              <i className="fa-solid fa-sliders w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               AI Assistant Orchestration
             </h2>
             
@@ -274,7 +274,7 @@ export default function SettingsPage() {
                     onClick={handleTestVoice}
                     className="px-4 py-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border border-zinc-250 dark:border-zinc-800 active:scale-95 cursor-pointer"
                   >
-                    <i className="fa-solid fa-volume-high w-4 h-4 text-indigo-500" ></i>
+                    <i className="fa-solid fa-volume-high w-4 h-4 text-zinc-900 dark:text-white" ></i>
                     Test Voice
                   </button>
                 </div>
@@ -324,7 +324,7 @@ export default function SettingsPage() {
           {/* API Keys Settings panel */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <i className="fa-solid fa-key w-4.5 h-4.5 text-indigo-500" ></i>
+              <i className="fa-solid fa-key w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               API Developer Gateways
             </h2>
             
@@ -388,7 +388,7 @@ export default function SettingsPage() {
           {/* Developer Sandbox Options */}
           <div className="glass-panel rounded-3xl p-6 space-y-6 shadow-sm border-indigo-500/15">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <i className="fa-solid fa-shield w-4.5 h-4.5 text-indigo-500" ></i>
+              <i className="fa-solid fa-shield w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               Sandbox Variables
             </h2>
             
@@ -421,7 +421,7 @@ export default function SettingsPage() {
           {/* System Specs */}
           <div className="glass-panel rounded-3xl p-6 space-y-4 shadow-sm">
             <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <i className="fa-solid fa-database w-4.5 h-4.5 text-indigo-500" ></i>
+              <i className="fa-solid fa-database w-4.5 h-4.5 text-zinc-900 dark:text-white" ></i>
               System Specs
             </h2>
             <div className="space-y-2.5 text-[10px] font-bold uppercase tracking-wider text-zinc-550 dark:text-zinc-400">

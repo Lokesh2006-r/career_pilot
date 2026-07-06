@@ -9,6 +9,7 @@ import RoleGuard from "@/components/RoleGuard";
 import CareerPilotLogo from "@/components/CareerPilotLogo";
 import { API_BASE_URL } from "@/lib/api";
 import { useEffect } from "react";
+import AIChatbot from "@/components/AIChatbot";
 
 const NAV_ITEMS = [
   { href: "/student/dashboard",       icon: "fa-solid fa-house",               label: "Dashboard" },
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { href: "/student/projects",        icon: "fa-solid fa-lightbulb",           label: "Projects" },
   { href: "/student/jobs",            icon: "fa-solid fa-briefcase",           label: "Jobs" },
   { href: "/student/ai-clone",        icon: "fa-solid fa-robot",               label: "AI Clone" },
+  { href: "/student/ai-tools",        icon: "fa-solid fa-wand-magic-sparkles", label: "AI Tools" },
 ];
 
 
@@ -96,7 +98,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
             {/* Notification Bell */}
             <button className="hidden sm:flex p-2 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-all duration-300 relative group cursor-pointer">
               <i className="fa-solid fa-bell w-4 h-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-indigo-500 rounded-full ring-2 ring-white dark:ring-zinc-900 animate-pulse" />
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-zinc-900 dark:bg-white rounded-full ring-2 ring-white dark:ring-zinc-900 animate-pulse" />
             </button>
 
             <ThemeToggle />
@@ -155,11 +157,12 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('openAITwin'))}
           title="Consult AI Twin"
-          className="fixed bottom-[5.5rem] md:bottom-8 right-5 z-[60] w-14 h-14 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-2xl shadow-indigo-600/40 transition-colors flex items-center justify-center cursor-pointer"
+          className="fixed bottom-[5.5rem] md:bottom-8 right-5 z-[60] w-14 h-14 rounded-full bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-100 text-white dark:text-zinc-900 shadow-2xl shadow-zinc-900/40 dark:shadow-white/40 transition-colors flex items-center justify-center cursor-pointer"
         >
           <i className="fa-solid fa-microchip text-xl animate-pulse" />
         </button>
 
+        <AIChatbot />
       </div>
     </RoleGuard>
   );
@@ -172,13 +175,13 @@ function TopNavItem({ href, label, active }: { href: string; label: string; acti
       href={href}
       className={`flex items-center px-3 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 relative ${
         active
-          ? "text-indigo-600 dark:text-indigo-400"
+          ? "text-zinc-900 dark:text-white"
           : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/40 hover:text-zinc-900 dark:hover:text-white"
       }`}
     >
       {label}
       {active && (
-        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-indigo-500 dark:bg-indigo-400 rounded-full shadow-[0_0_6px_rgba(99,102,241,0.8)]" />
+        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-zinc-900 dark:bg-white rounded-full shadow-none" />
       )}
     </Link>
   );
@@ -191,13 +194,13 @@ function BottomTab({ href, icon, label, active }: { href: string; icon: string; 
       href={href}
       className={`flex flex-col items-center justify-center gap-0.5 shrink-0 min-w-[60px] px-2 py-1.5 rounded-xl transition-all duration-200 ${
         active
-          ? "bg-indigo-500/10 dark:bg-indigo-400/15 text-indigo-600 dark:text-indigo-400"
+          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
           : "text-zinc-400 dark:text-zinc-500 active:bg-zinc-100/80 dark:active:bg-zinc-800/50"
       }`}
     >
       <i className={`${icon} text-[18px] transition-transform duration-200 ${active ? "scale-110" : ""}`} />
       <span className={`text-[9px] font-bold tracking-wide whitespace-nowrap ${
-        active ? "text-indigo-600 dark:text-indigo-400" : ""
+        active ? "text-zinc-900 dark:text-white" : ""
       }`}>{label}</span>
     </Link>
   );

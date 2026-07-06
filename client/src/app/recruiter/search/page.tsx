@@ -324,14 +324,14 @@ export default function CandidateSearch() {
                 <div className="p-3 bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/50 dark:border-zinc-850 rounded-2xl space-y-1">
                   <span className="text-[10px] text-zinc-400 font-bold uppercase">ATS Score</span>
                   <p className="font-extrabold text-zinc-850 dark:text-zinc-205 flex items-center gap-1.5">
-                    <i className="fa-solid fa-file-lines w-4 h-4 text-purple-500" ></i>
+                    <i className="fa-solid fa-file-lines w-4 h-4 text-zinc-900 dark:text-white" ></i>
                     {selectedCandidate.atsScore}/100 Match
                   </p>
                 </div>
                 <div className="p-3 bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/50 dark:border-zinc-850 rounded-2xl space-y-1">
                   <span className="text-[10px] text-zinc-400 font-bold uppercase">Leetcode solved</span>
                   <p className="font-extrabold text-zinc-850 dark:text-zinc-205 flex items-center gap-1.5">
-                    <i className="fa-solid fa-code w-4 h-4 text-purple-500" ></i>
+                    <i className="fa-solid fa-code w-4 h-4 text-zinc-900 dark:text-white" ></i>
                     {selectedCandidate.leetcodeSolved} Solved
                   </p>
                 </div>
@@ -386,7 +386,7 @@ export default function CandidateSearch() {
                   <div>
                     <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white flex items-center gap-1">
                       Twin Replica
-                      <i className="fa-solid fa-wand-magic-sparkles w-3.5 h-3.5 text-purple-500" ></i>
+                      <i className="fa-solid fa-wand-magic-sparkles w-3.5 h-3.5 text-zinc-900 dark:text-white" ></i>
                     </h3>
                     <p className="text-[10px] text-zinc-400">Autonomous Interview Screening</p>
                   </div>

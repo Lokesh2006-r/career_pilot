@@ -121,7 +121,7 @@ export default function RecruiterLayout({
               >
                 <i className="fa-solid fa-bars w-5 h-5 text-zinc-650 dark:text-zinc-400" ></i>
               </button>
-              <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 text-purple-500 animate-pulse shrink-0" ></i>
+              <i className="fa-solid fa-wand-magic-sparkles w-4 h-4 text-zinc-900 dark:text-white animate-pulse shrink-0" ></i>
               <h1 className="text-xs sm:text-sm font-semibold tracking-wide text-zinc-500 dark:text-zinc-400 uppercase truncate">
                 Recruiter Portal / <span className="text-zinc-900 dark:text-white capitalize">{pathname.split("/").pop()?.replace(/-/g, " ") || "Overview"}</span>
               </h1>
@@ -130,7 +130,7 @@ export default function RecruiterLayout({
             <div className="flex items-center gap-4">
               <button className="hidden sm:block p-2.5 rounded-xl border border-zinc-200/50 dark:border-zinc-800/40 bg-white/40 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 shadow-sm relative group cursor-pointer">
                 <i className="fa-solid fa-bell w-5 h-5 text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" ></i>
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-purple-500 rounded-full ring-2 ring-white dark:ring-zinc-900 animate-pulse"></span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-zinc-900 dark:bg-white rounded-full ring-2 ring-white dark:ring-zinc-900 animate-pulse"></span>
               </button>
 
               <ThemeToggle />
@@ -173,7 +173,7 @@ function NavItem({ href, icon, label, active }: { href: string; icon: React.Reac
       href={href}
       className={`flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all duration-300 group/item relative ${
         active
-          ? "bg-purple-500/10 text-purple-500 dark:text-purple-400 border border-purple-500/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_0_15px_rgba(168,85,247,0.1)]"
+          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700 shadow-none"
           : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/30 hover:text-zinc-900 dark:hover:text-white border border-transparent"
       }`}
     >
@@ -184,7 +184,7 @@ function NavItem({ href, icon, label, active }: { href: string; icon: React.Reac
         {label}
       </span>
       {active && (
-        <span className="absolute left-0 w-1 h-5 bg-purple-500 dark:bg-purple-400 rounded-r-full shadow-[0_0_10px_rgba(168,85,247,0.8)]"></span>
+        <span className="absolute left-0 w-1 h-5 bg-zinc-900 dark:bg-white rounded-r-full shadow-none"></span>
       )}
     </Link>
   );
@@ -197,7 +197,7 @@ function MobileNavItem({ href, icon, label, active, onClick }: { href: string; i
       onClick={onClick}
       className={`flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all duration-300 group/item relative ${
         active
-          ? "bg-purple-500/10 text-purple-500 dark:text-purple-400 border border-purple-500/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_0_15px_rgba(168,85,247,0.1)]"
+          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700 shadow-none"
           : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/30 hover:text-zinc-900 dark:hover:text-white border border-transparent"
       }`}
     >
@@ -208,7 +208,7 @@ function MobileNavItem({ href, icon, label, active, onClick }: { href: string; i
         {label}
       </span>
       {active && (
-        <span className="absolute left-0 w-1 h-5 bg-purple-500 dark:bg-purple-400 rounded-r-full shadow-[0_0_10px_rgba(168,85,247,0.8)]"></span>
+        <span className="absolute left-0 w-1 h-5 bg-zinc-900 dark:bg-white rounded-r-full shadow-none"></span>
       )}
     </Link>
   );
@@ -220,7 +220,7 @@ function BottomTabItem({ href, icon, label, active }: { href: string; icon: Reac
       href={href}
       className={`flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-all duration-300 ${
         active
-          ? "text-purple-500 dark:text-purple-400 scale-105"
+          ? "text-zinc-900 dark:text-white scale-105"
           : "text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200"
       }`}
     >

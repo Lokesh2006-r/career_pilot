@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { GoogleGenAI } from '@google/genai';
+import { generateContentWithFallback } from '../utils/gemini';
 import ChatModel from '../models/Chat';
 import { isDBConnected } from '../db';
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 interface Message {
   role: 'user' | 'model' | 'assistant';
@@ -49,7 +47,7 @@ export const handleChat = async (req: Request, res: Response): Promise<void> => 
       parts: [{ text: msg.content }]
     }));
 
-    const response = await ai.models.generateContent({
+    const response = await generateContentWithFallback({
       model: 'gemini-2.5-flash',
       contents: contents,
       config: {

@@ -76,7 +76,7 @@ export default function AdminAiUsage() {
         <div className="lg:col-span-8 glass-panel p-8 rounded-3xl space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-              <i className="fa-solid fa-chart-column w-5 h-5 text-rose-555" ></i>
+              <i className="fa-solid fa-chart-column w-5 h-5 text-zinc-900 dark:text-white" ></i>
               Gateway Router Traffic Share (By Core Models)
             </h3>
             <span className="text-xs text-zinc-400 font-bold uppercase">Token based</span>
@@ -118,7 +118,7 @@ export default function AdminAiUsage() {
         {/* System Specs */}
         <div className="lg:col-span-4 glass-panel p-8 rounded-3xl space-y-6">
           <h3 className="font-extrabold text-base text-zinc-900 dark:text-white flex items-center gap-2">
-            <i className="fa-solid fa-microchip w-5 h-5 text-rose-550" ></i>
+            <i className="fa-solid fa-microchip w-5 h-5 text-zinc-900 dark:text-white" ></i>
             Infrastructure Info
           </h3>
 
