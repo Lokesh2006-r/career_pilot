@@ -137,7 +137,7 @@ export default function WeeklyReport() {
                 {/* Print Header */}
                 <div className="hidden print:block mb-8 border-b-2 border-zinc-200 pb-4">
                   <h1 className="text-2xl font-bold">CareerPilot Weekly AI Report</h1>
-                  <p className="text-zinc-500">Student: {user?.displayName || 'User'} | Week: {selectedReport.weekStart} to {selectedReport.weekEnd}</p>
+                  <p className="text-zinc-500">Student: {user?.name || 'User'} | Week: {selectedReport.weekStart} to {selectedReport.weekEnd}</p>
                 </div>
 
                 <div className="flex items-center justify-between mb-8 pb-6 border-b border-zinc-100 dark:border-zinc-800 print:hidden">
