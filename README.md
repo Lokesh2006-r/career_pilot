@@ -2,6 +2,10 @@
 
 CareerPilot is a premium, AI-powered academic and career mentorship platform designed to act as your personalized professional clone. It provides a comprehensive technical suite built on modern artificial intelligence to help students secure high-growth career options.
 
+## 📱 Download APK
+
+[⬇️ Download CareerPilot APK](./CareerPilot.apk)
+
 ## 🚀 Key Features
 
 *   **Personal AI RAG Twin Agent**: Synthesizes a custom conversational agent trained on your project files, coding ratings, and work history. Built using ChromaDB for Retrieval-Augmented Generation (RAG) and Google Gemini AI.
